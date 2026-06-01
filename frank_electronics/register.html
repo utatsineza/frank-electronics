@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Create Account — Frank Electronics</title>
+  <link rel="stylesheet" href="auth.css"/>
+</head>
+<body>
+
+<div class="auth-topbar">
+  <a class="auth-brand" href="index.html">
+    <div class="auth-logo">
+      <img src="assets/logo.png" alt="Frank Electronics" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+      <span class="auth-logo-fallback" style="display:none">FE</span>
+    </div>
+    <div>
+      <div class="auth-brand-name">Frank Electronics</div>
+      <div class="auth-brand-tag">Your plug for smart electronics</div>
+    </div>
+  </a>
+  <a class="auth-topbar-link" href="login.html">Already have an account? <span>Sign in →</span></a>
+</div>
+
+<div class="auth-page">
+  <div class="auth-card auth-card-wide">
+    <div class="auth-header">
+      <div class="auth-header-icon">🦅</div>
+      <div class="auth-title">Create <span>Account</span></div>
+      <p class="auth-subtitle">Join thousands of happy customers. Get exclusive deals and fast delivery across Rwanda.</p>
+    </div>
+
+    <div class="alert alert-error" id="regAlert"></div>
+
+    <div class="social-btns">
+      <button class="social-btn" onclick="socialReg('Google')"><span class="social-icon">🌐</span> Sign up with Google</button>
+      <button class="social-btn" onclick="socialReg('Facebook')"><span class="social-icon">📘</span> Sign up with Facebook</button>
+    </div>
+
+    <div class="auth-divider">or fill in your details</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="fname">First name</label>
+        <input class="form-control" id="fname" type="text" placeholder="Jean" oninput="clearErr('fname')"/>
+        <div class="field-error" id="fname-error">First name is required.</div>
+      </div>
+      <div class="form-group">
+        <label for="lname">Last name</label>
+        <input class="form-control" id="lname" type="text" placeholder="Mugisha" oninput="clearErr('lname')"/>
+        <div class="field-error" id="lname-error">Last name is required.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email address</label>
+      <div class="input-wrap">
+        <input class="form-control has-icon" id="email" type="email" placeholder="jean@example.com" oninput="clearErr('email')"/>
+        <span class="input-icon">✉️</span>
+      </div>
+      <div class="field-error" id="email-error">Please enter a valid email.</div>
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Phone number (MTN / Airtel)</label>
+      <div class="input-wrap">
+        <input class="form-control has-icon" id="phone" type="tel" placeholder="+250 7XX XXX XXX" oninput="clearErr('phone')"/>
+        <span class="input-icon">📱</span>
+      </div>
+      <div class="field-error" id="phone-error">Enter a valid Rwandan phone number.</div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="province">Province</label>
+        <select class="form-control" id="province">
+          <option value="">Select province</option>
+          <option>Kigali City</option>
+          <option>Northern Province</option>
+          <option>Southern Province</option>
+          <option>Eastern Province</option>
+          <option>Western Province</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="district">District</label>
+        <input class="form-control" id="district" type="text" placeholder="Gasabo"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <div class="input-wrap">
+        <input class="form-control has-icon" id="password" type="password" placeholder="Create a strong password"
+          oninput="checkStrength(this.value);clearErr('password')"/>
+        <button class="input-icon" onclick="togglePw('password',this)" type="button">👁️</button>
+      </div>
+      <div class="pw-strength">
+        <div class="pw-bar"><div class="pw-bar-fill" id="pwBar"></div></div>
+        <div class="pw-label" id="pwLabel">Enter a password</div>
+      </div>
+      <div class="field-error" id="password-error">Password must be at least 8 characters.</div>
+    </div>
+
+    <div class="form-group">
+      <label for="confirm">Confirm password</label>
+      <div class="input-wrap">
+        <input class="form-control has-icon" id="confirm" type="password" placeholder="Repeat your password" oninput="clearErr('confirm')"/>
+        <button class="input-icon" onclick="togglePw('confirm',this)" type="button">👁️</button>
+      </div>
+      <div class="field-error" id="confirm-error">Passwords do not match.</div>
+    </div>
+
+    <div class="form-group">
+      <label>Verify account via</label>
+      <div class="otp-method-tabs">
+        <button class="otp-tab active" onclick="setMethod('both',this)">📱 + ✉️ Both</button>
+        <button class="otp-tab" onclick="setMethod('sms',this)">📱 SMS</button>
+        <button class="otp-tab" onclick="setMethod('email',this)">✉️ Email</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="check-group">
+        <input type="checkbox" id="terms"/>
+        <label for="terms" style="text-transform:none;letter-spacing:0;font-weight:400;font-size:12px">
+          I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a> of Frank Electronics.
+        </label>
+      </div>
+      <div class="field-error" id="terms-error">You must accept the terms to continue.</div>
+    </div>
+
+    <button class="btn btn-orange" onclick="doRegister()" id="regBtn">Create my account →</button>
+    <div class="auth-bottom">Already have an account? <a href="login.html">Sign in →</a></div>
+  </div>
+</div>
+
+<div class="auth-footer">© 2026 Frank Electronics · <a href="contact.html">Support</a> · <a href="#">Privacy</a></div>
+<div class="toast" id="toast"></div>
+
+<script>
+let otpMethod = 'both';
+
+function setMethod(m, btn) {
+  otpMethod = m;
+  document.querySelectorAll('.otp-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+function togglePw(id, btn) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁️' : '🙈';
+}
+function clearErr(field) {
+  document.getElementById(field)?.classList.remove('error');
+  document.getElementById(field+'-error')?.classList.remove('show');
+}
+function checkStrength(pw) {
+  const bar = document.getElementById('pwBar'), label = document.getElementById('pwLabel');
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  const lvl = [
+    {w:'0%',bg:'transparent',lbl:'Enter a password'},
+    {w:'25%',bg:'#e74c3c',lbl:'Weak'},
+    {w:'50%',bg:'#e67e22',lbl:'Fair'},
+    {w:'75%',bg:'#f1c40f',lbl:'Good'},
+    {w:'100%',bg:'#2ecc71',lbl:'Strong ✓'}
+  ][score];
+  bar.style.width=lvl.w; bar.style.background=lvl.bg;
+  label.textContent=lvl.lbl; label.style.color=lvl.bg||'#bbb';
+}
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+function mark(f) {
+  document.getElementById(f)?.classList.add('error');
+  document.getElementById(f+'-error')?.classList.add('show');
+}
+
+function socialReg(provider) {
+  // Redirect to login page social modal (same flow)
+  window.location.href = 'login.html';
+}
+
+function doRegister() {
+  const fname    = document.getElementById('fname').value.trim();
+  const lname    = document.getElementById('lname').value.trim();
+  const email    = document.getElementById('email').value.trim();
+  const phone    = document.getElementById('phone').value.trim();
+  const province = document.getElementById('province').value;
+  const district = document.getElementById('district').value.trim();
+  const pw       = document.getElementById('password').value;
+  const conf     = document.getElementById('confirm').value;
+  const terms    = document.getElementById('terms').checked;
+  let valid = true;
+
+  if (!fname)                         { mark('fname'); valid=false; }
+  if (!lname)                         { mark('lname'); valid=false; }
+  if (!email||!/\S+@\S+\.\S+/.test(email)) { mark('email'); valid=false; }
+  if (!phone||phone.length<10)        { mark('phone'); valid=false; }
+  if (!pw||pw.length<8)               { mark('password'); valid=false; }
+  if (pw!==conf)                      { mark('confirm'); valid=false; }
+  if (!terms)                         { mark('terms'); valid=false; }
+  if (!valid) return;
+
+  const btn = document.getElementById('regBtn');
+  btn.disabled=true; btn.textContent='Creating account...';
+
+  // ── Save ALL registration data so profile shows correct user ──
+  const user = {
+    name: fname + ' ' + lname,
+    fname, lname, email, phone, province, district,
+    avatar: fname[0].toUpperCase(),
+    joined: new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'})
+  };
+  localStorage.setItem('fe_user', JSON.stringify(user));
+
+  setTimeout(() => {
+    window.location.href = 'otp.html?action=register&method=' + otpMethod;
+  }, 1200);
+}
+</script>
+</body>
+</html>

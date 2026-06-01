@@ -1,0 +1,20 @@
+# Frank Electronics — Netlify Redirects
+
+# Explicit page routes (must come first)
+/products          /products.html     200
+/product           /product.html      200
+/deals             /deals.html        200
+/about             /about.html        200
+/contact           /contact.html      200
+/checkout          /checkout.html     200
+/wishlist          /wishlist.html     200
+/login             /login.html        200
+/register          /register.html     200
+/otp               /otp.html          200
+/forgot            /forgot.html       200
+/reset-password    /reset-password.html 200
+/profile           /profile.html      200
+/admin             /admin.html        200
+
+# Fallback — unknown routes go to homepage
+/*                 /index.html        200

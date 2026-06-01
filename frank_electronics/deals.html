@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Deals — Frank Electronics</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .deals-hero{background:var(--black);padding:52px 28px;text-align:center;border-bottom:3px solid var(--orange)}
+    .deals-hero-tag{display:inline-block;background:var(--orange);color:var(--white);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:4px;margin-bottom:16px}
+    .deals-hero-title{font-family:'Bebas Neue',sans-serif;font-size:54px;color:var(--white);letter-spacing:1px;line-height:1;margin-bottom:10px}
+    .deals-hero-title span{color:var(--orange)}
+    .deals-hero-sub{font-size:14px;color:#888;margin-bottom:24px}
+    .countdown{display:flex;gap:16px;justify-content:center;margin-bottom:28px}
+    .cd-block{background:var(--black-2);border:1px solid #333;border-radius:10px;padding:14px 20px;text-align:center;min-width:80px}
+    .cd-num{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--orange);line-height:1}
+    .cd-lbl{font-size:9px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+    .coupon-box{display:inline-flex;align-items:center;gap:0;background:var(--black-2);border:1.5px dashed var(--orange);border-radius:8px;overflow:hidden}
+    .coupon-code{padding:10px 18px;font-size:16px;font-weight:800;color:var(--orange);letter-spacing:2px;font-family:'Bebas Neue',sans-serif}
+    .coupon-copy{background:var(--orange);border:none;color:var(--white);padding:10px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+    .coupon-copy:hover{background:var(--orange-d)}
+
+    .deals-section{padding:32px 28px}
+    .deal-banner{background:linear-gradient(135deg,var(--black) 0%,#2a1a00 100%);border:1.5px solid var(--orange);border-radius:14px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+    .deal-banner-left{}
+    .deal-banner-tag{font-size:9px;color:var(--orange);text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:6px}
+    .deal-banner-title{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--white);letter-spacing:.5px;line-height:1}
+    .deal-banner-sub{font-size:12px;color:#888;margin-top:4px}
+    .deal-banner-pct{font-family:'Bebas Neue',sans-serif;font-size:64px;color:var(--orange);letter-spacing:-2px;line-height:1}
+
+    .deals-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    @media(max-width:900px){.deals-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:640px){.deals-grid{grid-template-columns:1fr}.deals-hero-title{font-size:38px}.countdown{gap:8px}}
+  </style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="deals-hero">
+  <div class="deals-hero-tag">🔥 Hot deals</div>
+  <div class="deals-hero-title">Save <span>Big</span> Today</div>
+  <p class="deals-hero-sub">Flash sales, bundle offers & exclusive discount codes — updated daily.</p>
+  <div class="countdown">
+    <div class="cd-block"><div class="cd-num" id="cdH">00</div><div class="cd-lbl">Hours</div></div>
+    <div class="cd-block"><div class="cd-num" id="cdM">00</div><div class="cd-lbl">Mins</div></div>
+    <div class="cd-block"><div class="cd-num" id="cdS">00</div><div class="cd-lbl">Secs</div></div>
+  </div>
+  <div class="coupon-box">
+    <span class="coupon-code">FRANK30</span>
+    <button class="coupon-copy" onclick="copyCoupon()">Copy code</button>
+  </div>
+</div>
+
+<div class="deals-section">
+  <div class="deal-banner">
+    <div class="deal-banner-left">
+      <div class="deal-banner-tag">⚡ Flash offer</div>
+      <div class="deal-banner-title">Audio Week<br>Special</div>
+      <div class="deal-banner-sub">All headphones & speakers on sale</div>
+      <a href="products.html" class="btn btn-orange" style="margin-top:14px">Shop audio →</a>
+    </div>
+    <div class="deal-banner-pct">-30%</div>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title">Today's Deals</div>
+    <span style="font-size:12px;color:var(--gray-m)">Prices may change — shop now!</span>
+  </div>
+
+  <div class="deals-grid" id="dealsGrid"></div>
+</div>
+
+<div id="footer-placeholder"></div>
+<div id="cart-placeholder"></div>
+
+<script src="app.js"></script>
+<script src="components.js"></script>
+<script>
+  injectNav('deals');
+  injectCart();
+  injectFooter();
+
+  // Countdown to midnight
+  function tick() {
+    const now  = new Date();
+    const end  = new Date(now); end.setHours(23,59,59,999);
+    const diff = end - now;
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cdH').textContent = String(h).padStart(2,'0');
+    document.getElementById('cdM').textContent = String(m).padStart(2,'0');
+    document.getElementById('cdS').textContent = String(s).padStart(2,'0');
+  }
+  tick(); setInterval(tick, 1000);
+
+  function copyCoupon() {
+    navigator.clipboard.writeText('FRANK30').then(() => showToast('Code FRANK30 copied!'));
+  }
+
+  // Only show discounted products
+  const deals = PRODUCTS.filter(p => p.old);
+  document.getElementById('dealsGrid').innerHTML = deals.map(p => {
+    const pct = Math.round((1 - p.price / p.old) * 100);
+    return `
+    <div class="pcard" onclick="window.location.href='product.html?id='+p.id" style="cursor:pointer">
+      <div class="pcard-img">
+        <span style="font-size:50px">${p.em}</span>
+        <span class="pbadge pbadge-sale">-${pct}%</span>
+        <button class="wish-btn ${liked.has(p.id)?'liked':''}" onclick="toggleLike(${p.id},this)">♡</button>
+      </div>
+      <div class="pcard-body">
+        <div class="pcat">${p.cat}</div>
+        <div class="pname">${p.name}</div>
+        <div class="prating"><span class="pstars">${stars(p.rating)}</span><span class="prev">${p.rating} (${p.rev})</span></div>
+        <div class="pfoot">
+          <div><div class="pprice">${fmt(p.price)}</div><div class="pold">${fmt(p.old)}</div></div>
+          <button class="padd-btn" onclick="addToCart('${p.name}',${p.price},'${p.em}')">+</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+</script>
+</body>
+</html>

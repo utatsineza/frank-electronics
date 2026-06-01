@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Products — Frank Electronics</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .main{flex:1;padding:22px 24px;background:var(--white);min-width:0}
+    .main-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .main-title{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--black);letter-spacing:.5px}
+    .result-count{font-size:11px;color:var(--gray-m);margin-top:3px}
+    .controls{display:flex;gap:10px;align-items:center}
+    .sort-sel{background:var(--white);border:1px solid var(--gray-b);border-radius:6px;padding:7px 12px;font-size:12px;color:#555}
+    .sort-sel:focus{outline:none;border-color:var(--orange)}
+    .no-results{text-align:center;padding:60px 0;color:var(--gray-m);font-size:14px}
+    .no-results-icon{font-size:48px;opacity:.3;margin-bottom:12px}  </style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+
+<div class="body-wrap">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo-area">
+      <div class="sb-logo-mini">
+        <img src="assets/logo.png" alt="logo" onerror="this.style.display='none'"/>
+      </div>
+      <div>
+        <div class="sb-logo-name">Frank Electronics</div>
+        <div class="sb-logo-sub">Kigali, Rwanda</div>
+      </div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-title">Categories</div>
+      <div class="sb-item active" onclick="filterCat(this,'all')"><span class="sb-icon">⚡</span><span class="sb-label">All products</span><span class="sb-count" id="cnt-all">12</span></div>
+      <div class="sb-item" onclick="filterCat(this,'phones')"><span class="sb-icon">📱</span><span class="sb-label">Phones & tablets</span><span class="sb-count">3</span></div>
+      <div class="sb-item" onclick="filterCat(this,'laptops')"><span class="sb-icon">💻</span><span class="sb-label">Laptops</span><span class="sb-count">2</span></div>
+      <div class="sb-item" onclick="filterCat(this,'audio')"><span class="sb-icon">🎧</span><span class="sb-label">Audio</span><span class="sb-count">3</span></div>
+      <div class="sb-item" onclick="filterCat(this,'tv')"><span class="sb-icon">📺</span><span class="sb-label">TVs & displays</span><span class="sb-count">2</span></div>
+      <div class="sb-item" onclick="filterCat(this,'accessories')"><span class="sb-icon">🔌</span><span class="sb-label">Accessories</span><span class="sb-count">2</span></div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-section">
+      <div class="sb-title">Price range</div>
+      <div class="sb-price-wrap">
+        <div class="price-row"><span class="price-min">RWF 0</span><span class="price-max" id="priceVal">RWF 3,500,000</span></div>
+        <input type="range" class="price-range" min="0" max="3500000" value="3500000" step="50000" id="priceRange"
+          oninput="document.getElementById('priceVal').textContent='RWF '+parseInt(this.value).toLocaleString();applyFilters()"/>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-section">
+      <div class="sb-title">Brands</div>
+      <div class="sb-brand-list">
+        <label class="sb-brand-item"><input type="checkbox" checked onchange="applyFilters()"/> Apple</label>
+        <label class="sb-brand-item"><input type="checkbox" checked onchange="applyFilters()"/> Samsung</label>
+        <label class="sb-brand-item"><input type="checkbox" checked onchange="applyFilters()"/> Sony</label>
+        <label class="sb-brand-item"><input type="checkbox" checked onchange="applyFilters()"/> Logitech</label>
+        <label class="sb-brand-item"><input type="checkbox" checked onchange="applyFilters()"/> Dell</label>
+        <label class="sb-brand-item"><input type="checkbox" checked onchange="applyFilters()"/> Xiaomi</label>
+        <label class="sb-brand-item"><input type="checkbox" checked onchange="applyFilters()"/> JBL</label>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-section">
+      <div class="sb-title">Rating</div>
+      <div class="sb-rating-list">
+        <div class="sb-rating-row" onclick="setRating(5,this)"><span class="sb-stars">★★★★★</span><span class="sb-rating-lbl">5 stars</span></div>
+        <div class="sb-rating-row" onclick="setRating(4,this)"><span class="sb-stars">★★★★☆</span><span class="sb-rating-lbl">4 & up</span></div>
+        <div class="sb-rating-row" onclick="setRating(3,this)"><span class="sb-stars">★★★☆☆</span><span class="sb-rating-lbl">3 & up</span></div>
+        <div class="sb-rating-row" onclick="setRating(0,this)"><span class="sb-stars" style="color:#ccc">★★★★★</span><span class="sb-rating-lbl">All ratings</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="main-top">
+      <div>
+        <div class="main-title">All Products</div>
+        <div class="result-count" id="resultCount">Showing 12 products</div>
+      </div>
+      <div class="controls">
+        <select class="sort-sel" onchange="currentSort=this.value;applyFilters()">
+          <option value="featured">Sort: Featured</option>
+          <option value="price-asc">Price: Low → High</option>
+          <option value="price-desc">Price: High → Low</option>
+          <option value="rating">Best rated</option>
+          <option value="name">Name A–Z</option>
+        </select>
+      </div>
+    </div>
+    <div class="pgrid" id="pgrid"></div>
+    <div class="no-results" id="noResults" style="display:none">
+      <div class="no-results-icon">🔍</div>
+      No products found.<br/>Try adjusting your filters.
+    </div>
+  </main>
+</div>
+
+<div id="footer-placeholder"></div>
+<div id="cart-placeholder"></div>
+
+<script src="app.js"></script>
+<script src="components.js"></script>
+<script>
+  injectNav('products');
+  injectCart();
+  injectFooter();
+
+  let currentCat  = 'all';
+  let currentSort = 'featured';
+  let minRating   = 0;
+
+  // Check for URL query param
+  const _urlParams = new URLSearchParams(window.location.search);
+  const urlQ   = _urlParams.get('q');
+  const urlCat = _urlParams.get('cat');
+  let searchQuery = urlQ ? urlQ.toLowerCase() : '';
+  if (urlQ && document.getElementById('searchInput')) {
+    document.getElementById('searchInput').value = urlQ;
+  }
+  // Pre-select category from URL
+  if (urlCat) {
+    currentCat = urlCat;
+    // Highlight correct sidebar item
+    document.querySelectorAll('.sb-item').forEach(el => {
+      if (el.dataset && el.dataset.cat === urlCat) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    });
+  }
+
+  function applyFilters() {
+    // Always reload from admin-synced localStorage
+    const _s = localStorage.getItem('fe_products');
+    if (_s) { try { PRODUCTS = JSON.parse(_s); } catch(e) {} }
+    let list = [...PRODUCTS];
+    if (currentCat !== 'all') list = list.filter(p => p.cat === currentCat);
+    const maxPrice = parseInt(document.getElementById('priceRange').value);
+    list = list.filter(p => p.price <= maxPrice);
+    if (minRating > 0) list = list.filter(p => p.rating >= minRating);
+    if (searchQuery) list = list.filter(p => p.name.toLowerCase().includes(searchQuery));
+    if (currentSort === 'price-asc')  list.sort((a,b) => a.price - b.price);
+    if (currentSort === 'price-desc') list.sort((a,b) => b.price - a.price);
+    if (currentSort === 'rating')     list.sort((a,b) => b.rating - a.rating);
+    if (currentSort === 'name')       list.sort((a,b) => a.name.localeCompare(b.name));
+    renderGrid(list);
+  }
+
+  function renderGrid(list) {
+    const grid = document.getElementById('pgrid');
+    const none = document.getElementById('noResults');
+    document.getElementById('resultCount').textContent = 'Showing ' + list.length + ' product' + (list.length !== 1 ? 's' : '');
+    if (!list.length) { grid.innerHTML = ''; none.style.display = 'block'; return; }
+    none.style.display = 'none';
+    grid.innerHTML = list.map(p => `
+      <div class="pcard" onclick="window.location.href='product.html?id='+p.id" style="cursor:pointer">
+        <div class="pcard-img">
+          <span style="font-size:50px">${p.em}</span>
+          <span class="pbadge pbadge-${p.badge}">${p.badge==='sale'?'Sale':p.badge==='new'?'New':'Hot'}</span>
+          <button class="wish-btn ${liked.has(p.id)?'liked':''}" onclick="toggleLike(${p.id},this)">♡</button>
+        </div>
+        <div class="pcard-body">
+          <div class="pcat">${p.cat}</div>
+          <div class="pname">${p.name}</div>
+          <div class="prating"><span class="pstars">${stars(p.rating)}</span><span class="prev">${p.rating} (${p.rev})</span></div>
+          <div class="pfoot">
+            <div><div class="pprice">${fmt(p.price)}</div>${p.old?`<div class="pold">${fmt(p.old)}</div>`:''}</div>
+            <button class="padd-btn" onclick="addToCart('${p.name}',${p.price},'${p.em}')">+</button>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  function filterCat(el, cat) {
+    document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    currentCat = cat; applyFilters();
+  }
+
+  function setRating(r, el) {
+    document.querySelectorAll('.sb-rating-row').forEach(i => i.style.fontWeight = '');
+    el.style.fontWeight = '700'; el.style.color = 'var(--orange)';
+    minRating = r; applyFilters();
+  }
+
+  applyFilters();
+</script>
+</body>
+</html>

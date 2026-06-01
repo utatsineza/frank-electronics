@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>My Profile — Frank Electronics</title>
+  <link rel="stylesheet" href="auth.css"/>
+  <style>
+    body{background:var(--gray-bg)}
+    .profile-page-wrap{max-width:860px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:220px 1fr;gap:24px}
+    @media(max-width:700px){.profile-page-wrap{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<div class="auth-topbar">
+  <a class="auth-brand" href="index.html">
+    <div class="auth-logo">
+      <img src="assets/logo.png" alt="Frank Electronics" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+      <span class="auth-logo-fallback" style="display:none">FE</span>
+    </div>
+    <div>
+      <div class="auth-brand-name">Frank Electronics</div>
+      <div class="auth-brand-tag">Your plug for smart electronics</div>
+    </div>
+  </a>
+  <a class="auth-topbar-link" href="index.html">← <span>Back to shop</span></a>
+</div>
+
+<div class="profile-page-wrap">
+  <!-- SIDEBAR -->
+  <aside class="profile-sidebar">
+    <div class="profile-avatar-area">
+      <div class="profile-avatar" id="avatarCircle" onclick="changeAvatar()" title="Change photo">
+        <span id="avatarLetter">?</span>
+        <div class="avatar-edit">✏️</div>
+      </div>
+      <div class="profile-name"  id="profileName">Loading...</div>
+      <div class="profile-email" id="profileEmail">Loading...</div>
+      <div style="font-size:10px;color:#555;margin-top:4px" id="profileJoined"></div>
+    </div>
+    <nav>
+      <div class="profile-nav-item active" onclick="showTab('personal',this)"><span class="profile-nav-icon">👤</span> Personal info</div>
+      <div class="profile-nav-item" onclick="showTab('orders',this)"><span class="profile-nav-icon">📦</span> My orders</div>
+      <div class="profile-nav-item" onclick="showTab('wishlist',this)"><span class="profile-nav-icon">♡</span> Wishlist</div>
+      <div class="profile-nav-item" onclick="showTab('address',this)"><span class="profile-nav-icon">📍</span> Addresses</div>
+      <div class="profile-nav-item" onclick="showTab('security',this)"><span class="profile-nav-icon">🔒</span> Security</div>
+      <div class="profile-nav-item" onclick="showTab('notif',this)"><span class="profile-nav-icon">🔔</span> Notifications</div>
+      <div style="height:1px;background:#2a2a2a;margin:10px 16px"></div>
+      <div class="profile-nav-item danger" onclick="doLogout()"><span class="profile-nav-icon">🚪</span> Sign out</div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="profile-main">
+
+    <!-- PERSONAL INFO -->
+    <div class="profile-section" id="tab-personal">
+      <div class="profile-section-title">Personal <span>Info</span></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>First name</label>
+          <input class="form-control" id="pFname" type="text" placeholder="First name"/>
+        </div>
+        <div class="form-group">
+          <label>Last name</label>
+          <input class="form-control" id="pLname" type="text" placeholder="Last name"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email address</label>
+        <div class="input-wrap">
+          <input class="form-control has-icon" id="pEmail" type="email" placeholder="Email"/>
+          <span class="input-icon" style="color:var(--green)">✓</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Phone number</label>
+        <div class="input-wrap">
+          <input class="form-control has-icon" id="pPhone" type="tel" placeholder="+250 7XX XXX XXX"/>
+          <span class="input-icon" style="color:var(--green)">✓</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Province</label>
+          <select class="form-control" id="pProvince">
+            <option value="">Select province</option>
+            <option>Kigali City</option>
+            <option>Northern Province</option>
+            <option>Southern Province</option>
+            <option>Eastern Province</option>
+            <option>Western Province</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>District</label>
+          <input class="form-control" id="pDistrict" type="text" placeholder="District"/>
+        </div>
+      </div>
+      <button class="btn btn-orange" style="width:auto;padding:10px 24px" onclick="saveProfile()">Save changes</button>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="profile-section" id="tab-orders" style="display:none">
+      <div class="profile-section-title">My <span>Orders</span></div>
+      <div id="ordersList"></div>
+    </div>
+
+    <!-- WISHLIST -->
+    <div class="profile-section" id="tab-wishlist" style="display:none">
+      <div class="profile-section-title">My <span>Wishlist</span></div>
+      <p style="font-size:13px;color:var(--gray-t);margin-bottom:16px">Items you've saved while browsing.</p>
+      <div id="wishPreview"></div>
+      <a href="wishlist.html" class="btn btn-orange" style="width:auto;padding:10px 22px;margin-top:14px;display:inline-flex">View full wishlist →</a>
+    </div>
+
+    <!-- ADDRESS -->
+    <div class="profile-section" id="tab-address" style="display:none">
+      <div class="profile-section-title">Delivery <span>Addresses</span></div>
+      <div id="addressCard"></div>
+      <button class="btn btn-black" style="width:auto;padding:10px 22px;margin-top:14px" onclick="showToast('Address form coming soon!')">+ Add new address</button>
+    </div>
+
+    <!-- SECURITY -->
+    <div class="profile-section" id="tab-security" style="display:none">
+      <div class="profile-section-title">Account <span>Security</span></div>
+      <div style="border:1.5px solid var(--gray-b);border-radius:10px;padding:18px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--black)">🔑 Password</div>
+          <div style="font-size:12px;color:var(--gray-t);margin-top:3px">Last changed recently</div>
+        </div>
+        <a href="reset-password.html" class="btn btn-outline btn-sm" style="width:auto">Change</a>
+      </div>
+      <div style="border:1.5px solid var(--gray-b);border-radius:10px;padding:18px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--black)">📱 Two-Factor Authentication</div>
+          <div style="font-size:12px;color:var(--gray-t);margin-top:3px">OTP sent to your phone & email</div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:500;font-size:13px">
+          <input type="checkbox" checked style="accent-color:var(--orange);width:16px;height:16px"/> Enabled
+        </label>
+      </div>
+      <div style="border:1.5px solid var(--gray-b);border-radius:10px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--black)">📧 Email verification</div>
+          <div style="font-size:12px;color:var(--green);margin-top:3px">✓ Verified</div>
+        </div>
+        <span style="font-size:11px;background:#edfaf3;border:1px solid #b7e8cc;color:#1a7c45;padding:4px 12px;border-radius:20px;font-weight:700">Active</span>
+      </div>
+      <div style="height:1px;background:var(--gray-b);margin:24px 0"></div>
+      <div style="background:#fdf0ef;border:1.5px solid #f5c6c2;border-radius:10px;padding:18px 20px">
+        <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:6px">⚠️ Danger Zone</div>
+        <div style="font-size:12px;color:#c0392b;margin-bottom:14px">Deleting your account is permanent and cannot be undone.</div>
+        <button class="btn btn-sm" style="background:#e74c3c;color:var(--white);width:auto;border:none" onclick="confirmDelete()">Delete my account</button>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div class="profile-section" id="tab-notif" style="display:none">
+      <div class="profile-section-title">Notification <span>Preferences</span></div>
+      <div id="notifRows"></div>
+      <button class="btn btn-orange" style="width:auto;padding:10px 24px;margin-top:16px" onclick="showToast('✓ Preferences saved!')">Save preferences</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="auth-footer">© 2026 Frank Electronics · <a href="contact.html">Support</a> · <a href="#">Privacy</a></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── LOAD REAL USER FROM localStorage ──
+const user = JSON.parse(localStorage.getItem('fe_user') || '{}');
+
+// Populate sidebar
+const fullName = user.name || ((user.fname||'') + ' ' + (user.lname||'')).trim() || 'Guest User';
+const initials = fullName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2) || '?';
+document.getElementById('profileName').textContent  = fullName;
+document.getElementById('profileEmail').textContent = user.email || 'Not set';
+document.getElementById('avatarLetter').textContent = user.avatar || initials;
+if (user.joined) document.getElementById('profileJoined').textContent = 'Member since ' + user.joined;
+
+// Populate form fields with REAL data
+const nameParts = fullName.split(' ');
+document.getElementById('pFname').value    = user.fname || nameParts[0] || '';
+document.getElementById('pLname').value    = user.lname || nameParts.slice(1).join(' ') || '';
+document.getElementById('pEmail').value    = user.email    || '';
+document.getElementById('pPhone').value    = user.phone    || '';
+document.getElementById('pDistrict').value = user.district || '';
+
+// Set province dropdown
+if (user.province) {
+  const sel = document.getElementById('pProvince');
+  for (let opt of sel.options) {
+    if (opt.value === user.province || opt.text === user.province) { opt.selected = true; break; }
+  }
+}
+
+// ── TABS ──
+function showTab(tab, navEl) {
+  document.querySelectorAll('.profile-section').forEach(s => s.style.display='none');
+  document.querySelectorAll('.profile-nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-'+tab).style.display = 'block';
+  if (navEl) navEl.classList.add('active');
+  if (tab==='orders')   renderOrders();
+  if (tab==='notif')    renderNotif();
+  if (tab==='wishlist') renderWishPreview();
+  if (tab==='address')  renderAddress();
+}
+
+// ── ORDERS ──
+function renderOrders() {
+  const orders = JSON.parse(localStorage.getItem('fe_orders') || '[]');
+  const el = document.getElementById('ordersList');
+  const demo = [
+    {ref:'FE-384712',date:'22 May 2026',items:'iPhone 15 Pro, AirPods Pro',total:2230000,status:'delivered'},
+    {ref:'FE-291048',date:'10 May 2026',items:'MacBook Air M3',total:3100000,status:'delivered'},
+    {ref:'FE-503821',date:'28 May 2026',items:'Sony WH-1000XM5',total:420000,status:'transit'},
+  ];
+  const all = [...orders, ...demo];
+  el.innerHTML = all.map(o=>`
+    <div class="order-row">
+      <div><div class="order-ref">${o.ref}</div><div class="order-date">${o.date}</div></div>
+      <div class="order-items-preview">${o.items}</div>
+      <div style="text-align:right">
+        <div class="order-total">RWF ${o.total.toLocaleString()}</div>
+        <span class="order-status status-${o.status}">${o.status==='delivered'?'✓ Delivered':o.status==='transit'?'🚚 In transit':'⏳ Pending'}</span>
+      </div>
+    </div>`).join('');
+}
+
+// ── WISHLIST PREVIEW ──
+function renderWishPreview() {
+  const liked = new Set(JSON.parse(localStorage.getItem('fe_liked')||'[]'));
+  const PRODUCTS = JSON.parse(localStorage.getItem('fe_products') || '[]');
+  const el = document.getElementById('wishPreview');
+  const items = PRODUCTS.filter ? PRODUCTS.filter(p=>liked.has(p.id)) : [];
+  if (!items.length) { el.innerHTML='<p style="font-size:13px;color:var(--gray-t)">No saved items yet. Browse products and tap ♡.</p>'; return; }
+  el.innerHTML = items.slice(0,3).map(p=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-b)">
+      <span style="font-size:28px">${p.em}</span>
+      <div style="flex:1"><div style="font-size:13px;font-weight:700">${p.name}</div><div style="font-size:12px;color:var(--orange);font-weight:700">RWF ${p.price.toLocaleString()}</div></div>
+    </div>`).join('');
+}
+
+// ── ADDRESS ──
+function renderAddress() {
+  const u = JSON.parse(localStorage.getItem('fe_user')||'{}');
+  const name = u.name || 'Your name';
+  const phone = u.phone || 'Not set';
+  const loc = [u.district, u.province].filter(Boolean).join(' · ') || 'Not set';
+  document.getElementById('addressCard').innerHTML = `
+    <div style="border:1.5px solid var(--orange);border-radius:10px;padding:16px 20px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">🏠 Home (Default)</div>
+          <div style="font-size:13px;font-weight:700;color:var(--black)">${name}</div>
+          <div style="font-size:12px;color:var(--gray-t);margin-top:3px">${loc}</div>
+          <div style="font-size:12px;color:var(--gray-t)">${phone}</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline btn-sm" style="width:auto" onclick="showToast('Edit address coming soon!')">Edit</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── NOTIFICATIONS ──
+const notifItems = [
+  {id:'n1',label:'Order updates & delivery status',checked:true},
+  {id:'n2',label:'Exclusive deals & flash sales',checked:true},
+  {id:'n3',label:'New product arrivals',checked:false},
+  {id:'n4',label:'Account security alerts',checked:true},
+  {id:'n5',label:'Promotional emails',checked:false},
+  {id:'n6',label:'SMS notifications',checked:true},
+];
+function renderNotif() {
+  document.getElementById('notifRows').innerHTML = notifItems.map(n=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--gray-b)">
+      <div style="font-size:13px;color:var(--black);font-weight:500">${n.label}</div>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:12px;font-weight:500;color:var(--gray-t)">
+        <input type="checkbox" id="${n.id}" ${n.checked?'checked':''} style="accent-color:var(--orange);width:16px;height:16px"/> ${n.checked?'On':'Off'}
+      </label>
+    </div>`).join('');
+}
+
+// ── SAVE PROFILE ──
+function saveProfile() {
+  const fname    = document.getElementById('pFname').value.trim();
+  const lname    = document.getElementById('pLname').value.trim();
+  const email    = document.getElementById('pEmail').value.trim();
+  const phone    = document.getElementById('pPhone').value.trim();
+  const province = document.getElementById('pProvince').value;
+  const district = document.getElementById('pDistrict').value.trim();
+  const updated  = { ...user, fname, lname, name: fname+' '+lname, email, phone, province, district, avatar: fname[0]?.toUpperCase()||'?' };
+  localStorage.setItem('fe_user', JSON.stringify(updated));
+  document.getElementById('profileName').textContent  = updated.name;
+  document.getElementById('profileEmail').textContent = email;
+  document.getElementById('avatarLetter').textContent = updated.avatar;
+  showToast('✓ Profile saved successfully!');
+}
+
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+function changeAvatar() { showToast('Photo upload coming soon!'); }
+function confirmDelete() {
+  if (confirm('Delete your account? This cannot be undone.')) {
+    localStorage.clear();
+    window.location.href='index.html';
+  }
+}
+function doLogout() {
+  localStorage.removeItem('fe_user');
+  localStorage.removeItem('fe_verified');
+  showToast('Signed out. See you soon!');
+  setTimeout(()=>window.location.href='login.html',1200);
+}
+
+showTab('personal', document.querySelector('.profile-nav-item'));
+</script>
+</body>
+</html>

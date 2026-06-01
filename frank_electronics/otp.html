@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Verify — Frank Electronics</title>
+  <link rel="stylesheet" href="auth.css"/>
+  <!-- EmailJS for real OTP emails -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    .otp-sent-info{background:#f0f6ff;border:1.5px solid #c5d9f5;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:#1a4a8a;line-height:1.6}
+    .otp-sent-info strong{display:block;margin-bottom:4px;font-size:14px}
+    .method-tabs{display:flex;gap:0;border:1.5px solid var(--gray-b);border-radius:8px;overflow:hidden;margin-bottom:20px}
+    .method-tab{flex:1;padding:9px;text-align:center;font-size:12px;font-weight:700;cursor:pointer;background:var(--white);color:var(--gray-t);border:none;font-family:inherit;transition:background .2s,color .2s}
+    .method-tab.active{background:var(--orange);color:#fff}
+  </style>
+</head>
+<body>
+
+<div class="auth-topbar">
+  <a class="auth-brand" href="index.html">
+    <div class="auth-logo">
+      <img src="assets/logo.png" alt="Frank Electronics" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+      <span class="auth-logo-fallback" style="display:none">FE</span>
+    </div>
+    <div>
+      <div class="auth-brand-name">Frank Electronics</div>
+      <div class="auth-brand-tag">Your plug for smart electronics</div>
+    </div>
+  </a>
+  <span class="auth-topbar-link" style="color:#666">Step 2 — Verification</span>
+</div>
+
+<div class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-header">
+      <div class="auth-header-icon" id="otpIcon">🔐</div>
+      <div class="auth-title">Verify <span>Your</span> Account</div>
+      <p class="auth-subtitle" id="otpSubtitle">We've sent a 6-digit code to verify your identity.</p>
+    </div>
+
+    <!-- METHOD TABS (when both available) -->
+    <div class="method-tabs" id="methodTabs">
+      <button class="method-tab active" onclick="switchMethod('email',this)">✉️ Email code</button>
+      <button class="method-tab" onclick="switchMethod('sms',this)">📱 SMS code</button>
+    </div>
+
+    <!-- SENT INFO -->
+    <div class="otp-sent-info" id="otpSentInfo">
+      <strong id="otpSentTitle">Code sent!</strong>
+      <span id="otpSentDesc">Check your inbox for the 6-digit verification code.</span>
+    </div>
+
+    <div class="alert alert-error"   id="otpError">❌ Incorrect code. Please try again.</div>
+    <div class="alert alert-success" id="otpSuccess">✅ Verified! Redirecting...</div>
+
+    <!-- OTP INPUTS -->
+    <div style="text-align:center;margin-bottom:10px;font-size:11px;color:var(--gray-m);font-weight:700;text-transform:uppercase;letter-spacing:1px">Enter 6-digit code</div>
+    <div class="otp-group" id="otpGroup">
+      <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="otp0"/>
+      <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="otp1"/>
+      <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="otp2"/>
+      <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="otp3"/>
+      <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="otp4"/>
+      <input class="otp-input" maxlength="1" type="text" inputmode="numeric" id="otp5"/>
+    </div>
+
+    <!-- Demo note (remove when EmailJS is configured) -->
+    <div id="demoNote" style="text-align:center;margin-bottom:14px">
+      <span style="font-size:11px;background:#fff8f5;border:1px dashed var(--orange);border-radius:6px;padding:4px 12px;color:var(--orange);font-weight:600">
+        Demo mode: use code <strong>123456</strong>
+      </span>
+    </div>
+
+    <button class="btn btn-orange" onclick="verifyOTP()" id="verifyBtn">Verify →</button>
+
+    <div class="resend-row">
+      Didn't receive it?
+      <button class="resend-btn" id="resendBtn" onclick="resendCode()" disabled>
+        Resend (<span id="timerDisp">60s</span>)
+      </button>
+    </div>
+
+    <div class="auth-bottom"><a href="login.html">← Back to login</a></div>
+  </div>
+</div>
+
+<div class="auth-footer">© 2026 Frank Electronics · <a href="contact.html">Support</a></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// EMAILJS CONFIGURATION
+// To enable real OTP emails:
+// 1. Sign up free at https://www.emailjs.com
+// 2. Create a service (Gmail works great)
+// 3. Create an email template with variables: {{otp_code}}, {{to_email}}, {{to_name}}
+// 4. Replace the values below with your own
+// ═══════════════════════════════════════════════
+const EMAILJS_CONFIG = {
+  publicKey:   'YOUR_EMAILJS_PUBLIC_KEY',   // from EmailJS dashboard → Account
+  serviceId:   'YOUR_SERVICE_ID',           // from EmailJS → Email Services
+  templateId:  'YOUR_TEMPLATE_ID',          // from EmailJS → Email Templates
+  enabled:     false,                       // ← set to TRUE after configuring above
+};
+
+// ── ADMIN EMAILS ──
+const ADMIN_EMAILS = ['admin@frankelectronics.rw','frank@frankelectronics.rw','manager@frankelectronics.rw'];
+
+// ── READ PARAMS ──
+const params = new URLSearchParams(window.location.search);
+const action = params.get('action') || 'login';
+const method = params.get('method') || 'both';
+const user   = JSON.parse(localStorage.getItem('fe_user') || '{}');
+const userEmail = user.email || '';
+const userName  = user.name  || 'Customer';
+
+// ── GENERATED OTP ──
+let generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+let activeMethod = 'email';
+
+// ── INIT EmailJS ──
+if (EMAILJS_CONFIG.enabled) {
+  emailjs.init(EMAILJS_CONFIG.publicKey);
+}
+
+// ── SEND OTP ──
+async function sendOTP(toEmail, toName, otp) {
+  if (!EMAILJS_CONFIG.enabled) {
+    console.log('[Demo] OTP for', toEmail, ':', otp);
+    return;
+  }
+  try {
+    await emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, {
+      to_email: toEmail,
+      to_name:  toName,
+      otp_code: otp,
+      app_name: 'Frank Electronics',
+    });
+    console.log('OTP email sent to', toEmail);
+  } catch(err) {
+    console.error('EmailJS error:', err);
+    showToast('Email send failed — using demo code 123456');
+  }
+}
+
+// ── UI SETUP ──
+function setupUI() {
+  const tabs   = document.getElementById('methodTabs');
+  const icon   = document.getElementById('otpIcon');
+  const sub    = document.getElementById('otpSubtitle');
+  const title  = document.getElementById('otpSentTitle');
+  const desc   = document.getElementById('otpSentDesc');
+
+  if (method === 'email') {
+    tabs.style.display = 'none';
+    icon.textContent = '✉️';
+    sub.textContent  = 'We sent a 6-digit code to your email.';
+    title.textContent = 'Code sent to your email';
+    desc.textContent  = userEmail || 'your registered email address';
+    activeMethod = 'email';
+    sendOTP(userEmail, userName, generatedOTP);
+  } else if (method === 'sms') {
+    tabs.style.display = 'none';
+    icon.textContent = '📱';
+    sub.textContent  = 'We sent a 6-digit code via SMS.';
+    title.textContent = 'SMS code sent';
+    desc.textContent  = user.phone || 'your registered phone number';
+    activeMethod = 'sms';
+    // For SMS: integrate Twilio/Africa's Talking in production
+    console.log('[Demo] SMS OTP:', generatedOTP);
+  } else {
+    // Both — show tabs, default to email
+    tabs.style.display = 'flex';
+    icon.textContent = '✉️';
+    sub.textContent  = 'We sent codes to your email and phone.';
+    activeMethod = 'email';
+    updateMethodUI('email');
+    sendOTP(userEmail, userName, generatedOTP);
+  }
+}
+
+function switchMethod(m, btn) {
+  document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  activeMethod = m;
+  updateMethodUI(m);
+  clearInputs();
+  document.getElementById('otpError').classList.remove('show');
+}
+
+function updateMethodUI(m) {
+  const icon  = document.getElementById('otpIcon');
+  const title = document.getElementById('otpSentTitle');
+  const desc  = document.getElementById('otpSentDesc');
+  if (m === 'email') {
+    icon.textContent  = '✉️';
+    title.textContent = 'Code sent to your email';
+    desc.textContent  = userEmail || 'your email';
+  } else {
+    icon.textContent  = '📱';
+    title.textContent = 'SMS code sent';
+    desc.textContent  = user.phone || 'your phone number';
+  }
+}
+
+// ── OTP INPUT HANDLING ──
+function setupInputs() {
+  const inputs = document.querySelectorAll('.otp-input');
+  inputs.forEach((inp, i) => {
+    inp.addEventListener('input', () => {
+      inp.value = inp.value.replace(/[^0-9]/g, '').slice(0,1);
+      if (inp.value) {
+        inp.classList.add('filled');
+        if (i < inputs.length - 1) inputs[i+1].focus();
+      } else {
+        inp.classList.remove('filled');
+      }
+      if ([...inputs].every(el => el.value)) verifyOTP();
+    });
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !inp.value && i > 0) inputs[i-1].focus();
+      if (e.key === 'ArrowLeft'  && i > 0)              inputs[i-1].focus();
+      if (e.key === 'ArrowRight' && i < inputs.length-1) inputs[i+1].focus();
+    });
+    inp.addEventListener('paste', e => {
+      e.preventDefault();
+      const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+      pasted.split('').forEach((ch, j) => {
+        if (inputs[j]) { inputs[j].value = ch; inputs[j].classList.add('filled'); }
+      });
+      if (pasted.length === 6) verifyOTP();
+    });
+  });
+}
+
+function clearInputs() {
+  document.querySelectorAll('.otp-input').forEach(inp => {
+    inp.value = ''; inp.classList.remove('filled','error');
+  });
+  document.getElementById('otp0').focus();
+}
+
+// ── VERIFY ──
+function verifyOTP() {
+  const entered = [...document.querySelectorAll('.otp-input')].map(i => i.value).join('');
+  if (entered.length < 6) { showToast('Enter all 6 digits.'); return; }
+
+  const btn = document.getElementById('verifyBtn');
+  btn.disabled = true; btn.textContent = 'Verifying...';
+
+  setTimeout(() => {
+    // Check against generated OTP OR demo code 123456
+    const isValid = entered === generatedOTP || entered === '123456';
+
+    if (isValid) {
+      document.getElementById('otpSuccess').classList.add('show');
+      document.getElementById('otpError').classList.remove('show');
+      localStorage.setItem('fe_verified', '1');
+
+      setTimeout(() => {
+        const _next  = localStorage.getItem('fe_login_next') || '';
+        localStorage.removeItem('fe_login_next');
+        const _email = (user.email || '').toLowerCase();
+        const _isAdmin = ADMIN_EMAILS.includes(_email);
+
+        if (action === 'forgot') {
+          window.location.replace('reset-password.html');
+        } else if (_isAdmin) {
+          localStorage.setItem('fe_admin', JSON.stringify({ email: user.email, loggedIn: true, time: Date.now() }));
+          window.location.replace('admin.html');
+        } else if (_next && _next !== '') {
+          window.location.replace(_next.replace('.html','') + '.html');
+        } else {
+          window.location.replace('index.html'); // ← goes to HOME after login
+        }
+      }, 1200);
+    } else {
+      document.getElementById('otpError').classList.add('show');
+      document.querySelectorAll('.otp-input').forEach(inp => inp.classList.add('error'));
+      btn.disabled = false; btn.textContent = 'Verify →';
+      clearInputs();
+    }
+  }, 800);
+}
+
+// ── RESEND ──
+let timerSec = 60;
+let timerInterval;
+
+function startTimer() {
+  const btn  = document.getElementById('resendBtn');
+  const disp = document.getElementById('timerDisp');
+  btn.disabled = true; timerSec = 60;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timerSec--;
+    disp.textContent = timerSec + 's';
+    if (timerSec <= 0) {
+      clearInterval(timerInterval);
+      btn.disabled = false;
+      disp.textContent = 'now';
+    }
+  }, 1000);
+}
+
+function resendCode() {
+  generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+  clearInputs();
+  document.getElementById('otpError').classList.remove('show');
+  startTimer();
+  if (activeMethod === 'email') {
+    sendOTP(userEmail, userName, generatedOTP);
+    showToast('New code sent to ' + (userEmail || 'your email') + '!');
+  } else {
+    showToast('New SMS code sent!');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── START ──
+setupUI();
+setupInputs();
+startTimer();
+setTimeout(() => document.getElementById('otp0').focus(), 300);
+</script>
+</body>
+</html>

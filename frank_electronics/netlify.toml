@@ -1,0 +1,4 @@
+[build]
+  publish = "."
+
+# No [[redirects]] here — using _redirects file instead

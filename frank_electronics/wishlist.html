@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Wishlist — Frank Electronics</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .wishlist-hero{background:var(--black);padding:48px 28px;text-align:center;border-bottom:3px solid var(--orange)}
+    .wishlist-hero-title{font-family:'Bebas Neue',sans-serif;font-size:46px;color:var(--white);letter-spacing:1px;margin-bottom:8px}
+    .wishlist-hero-title span{color:var(--orange)}
+    .wishlist-hero-sub{font-size:14px;color:#888}
+    .wishlist-wrap{max-width:1000px;margin:0 auto;padding:36px 28px}
+    .wishlist-empty{text-align:center;padding:80px 0;color:var(--gray-m)}
+    .wishlist-empty-icon{font-size:64px;opacity:.3;margin-bottom:16px}
+    .wishlist-empty-title{font-size:18px;font-weight:700;color:var(--black);margin-bottom:8px}
+    .wishlist-empty-sub{font-size:13px;color:var(--gray-t);margin-bottom:24px}
+    .wishlist-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .wishlist-count{font-size:13px;color:var(--gray-m)}
+    .clear-btn{background:none;border:1.5px solid var(--gray-b);border-radius:6px;padding:6px 14px;font-size:12px;color:var(--gray-t);cursor:pointer;font-family:inherit}
+    .clear-btn:hover{border-color:#e74c3c;color:#e74c3c}
+  </style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="wishlist-hero">
+  <div class="badge-pill">My saved items</div>
+  <div class="wishlist-hero-title">My <span>Wishlist</span></div>
+  <p class="wishlist-hero-sub">Items you've saved — add them to cart when you're ready.</p>
+</div>
+
+<div class="wishlist-wrap">
+  <div id="wishlistEmpty" class="wishlist-empty" style="display:none">
+    <div class="wishlist-empty-icon">♡</div>
+    <div class="wishlist-empty-title">Your wishlist is empty</div>
+    <p class="wishlist-empty-sub">Browse our products and tap ♡ to save items here.</p>
+    <a href="products.html" class="btn btn-orange">Browse products →</a>
+  </div>
+
+  <div id="wishlistContent">
+    <div class="wishlist-top">
+      <div class="section-title">Saved Items</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="wishlist-count" id="wishlistCount">0 items</span>
+        <button class="clear-btn" onclick="clearWishlist()">Clear all</button>
+      </div>
+    </div>
+    <div class="pgrid" id="wishGrid"></div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<div id="cart-placeholder"></div>
+
+<script src="app.js"></script>
+<script src="components.js"></script>
+<script>
+  injectNav('');
+  injectCart();
+  injectFooter();
+
+  function renderWishlist() {
+    const wishItems = PRODUCTS.filter(p => liked.has(p.id));
+    const empty     = document.getElementById('wishlistEmpty');
+    const content   = document.getElementById('wishlistContent');
+    const grid      = document.getElementById('wishGrid');
+    const count     = document.getElementById('wishlistCount');
+
+    if (!wishItems.length) {
+      empty.style.display   = 'block';
+      content.style.display = 'none';
+      return;
+    }
+    empty.style.display   = 'none';
+    content.style.display = 'block';
+    count.textContent     = wishItems.length + ' item' + (wishItems.length !== 1 ? 's' : '');
+
+    grid.innerHTML = wishItems.map(p => `
+      <div class="pcard" id="wcard-${p.id}" onclick="window.location.href='product.html?id='+p.id" style="cursor:pointer">
+        <div class="pcard-img">
+          <span style="font-size:50px">${p.em}</span>
+          <span class="pbadge pbadge-${p.badge}">${p.badge==='sale'?'Sale':p.badge==='new'?'New':'Hot'}</span>
+          <button class="wish-btn liked" onclick="removeFromWishlist(${p.id})">♥</button>
+        </div>
+        <div class="pcard-body">
+          <div class="pcat">${p.cat}</div>
+          <div class="pname">${p.name}</div>
+          <div class="prating"><span class="pstars">${stars(p.rating)}</span><span class="prev">${p.rating} (${p.rev})</span></div>
+          <div class="pfoot">
+            <div><div class="pprice">${fmt(p.price)}</div>${p.old?`<div class="pold">${fmt(p.old)}</div>`:''}</div>
+            <button class="padd-btn" onclick="addToCart('${p.name}',${p.price},'${p.em}')">+</button>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  function removeFromWishlist(id) {
+    liked.delete(id);
+    saveLiked();
+    renderWishlist();
+    showToast('Removed from wishlist');
+  }
+
+  function clearWishlist() {
+    liked.clear();
+    saveLiked();
+    renderWishlist();
+    showToast('Wishlist cleared');
+  }
+
+  renderWishlist();
+</script>
+</body>
+</html>

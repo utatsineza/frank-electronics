@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Sign In — Frank Electronics</title>
+  <link rel="stylesheet" href="auth.css"/>
+  <style>
+    /* ─── GOOGLE MODAL ─── */
+    .g-overlay{display:none;position:fixed;inset:0;background:rgba(60,64,67,.5);z-index:400;align-items:center;justify-content:center;padding:16px}
+    .g-overlay.open{display:flex}
+    .g-box{background:#fff;border-radius:28px;width:100%;max-width:450px;box-shadow:0 4px 24px rgba(0,0,0,.3);overflow:hidden;animation:gPop .22s ease;font-family:'Google Sans',Roboto,Arial,sans-serif;display:flex;flex-direction:column;max-height:90vh}
+    @keyframes gPop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+
+    .g-topbar{display:flex;align-items:center;gap:8px;padding:20px 28px 0;font-size:14px;color:#5f6368;font-weight:500}
+    .g-content{flex:1;padding:24px 28px 0;overflow-y:auto}
+
+    /* Account picker */
+    .g-pick-title{font-size:24px;font-weight:400;color:#202124;margin-bottom:4px}
+    .g-pick-sub{font-size:14px;color:#5f6368;margin-bottom:16px}
+    .g-account{display:flex;align-items:center;gap:14px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .15s;border:1px solid transparent}
+    .g-account:hover{background:#f8f9fa;border-color:#e8eaed}
+    .g-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff;flex-shrink:0}
+    .g-acc-name{font-size:14px;font-weight:500;color:#202124}
+    .g-acc-email{font-size:13px;color:#5f6368}
+    .g-divider{height:1px;background:#e8eaed;margin:8px 0}
+    .g-use-another{display:flex;align-items:center;gap:14px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .15s}
+    .g-use-another:hover{background:#f8f9fa}
+    .g-circle-icon{width:40px;height:40px;border-radius:50%;background:#f1f3f4;border:1px solid #dadce0;display:flex;align-items:center;justify-content:center;font-size:20px;color:#5f6368;flex-shrink:0}
+    .g-use-another-text{font-size:14px;color:#202124}
+
+    /* Email screen */
+    .g-screen{display:none}
+    .g-screen.active{display:block}
+    .g-screen-title{font-size:24px;font-weight:400;color:#202124;margin-bottom:6px}
+    .g-screen-sub{font-size:14px;color:#202124;margin-bottom:24px}
+    .g-screen-sub span{color:#1a73e8}
+
+    /* Input field (Google style) */
+    .g-field{position:relative;margin-bottom:6px}
+    .g-input{width:100%;border:1px solid #dadce0;border-radius:4px;padding:14px 14px 6px;font-size:16px;color:#202124;outline:none;font-family:inherit;background:#fff;transition:border-color .2s}
+    .g-input:focus{border-color:#1a73e8;border-width:2px;padding:13px 13px 5px}
+    .g-label{position:absolute;left:14px;top:13px;font-size:16px;color:#5f6368;pointer-events:none;transition:all .15s;background:transparent}
+    .g-input:focus ~ .g-label,
+    .g-input.has-val ~ .g-label{top:-8px;font-size:12px;color:#1a73e8;background:#fff;padding:0 3px}
+    .g-input:not(:focus).has-val ~ .g-label{color:#5f6368}
+    .g-err{font-size:12px;color:#d93025;margin-top:4px;min-height:16px}
+
+    /* Email chip (shown on password screen) */
+    .g-chip{display:inline-flex;align-items:center;gap:8px;background:#f1f3f4;border-radius:20px;padding:6px 14px;cursor:pointer;margin-bottom:20px;transition:background .15s}
+    .g-chip:hover{background:#e8eaed}
+    .g-chip-avatar{width:26px;height:26px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff}
+    .g-chip-email{font-size:13px;color:#202124;font-weight:500}
+    .g-chip-arrow{font-size:12px;color:#5f6368}
+
+    /* Footer */
+    .g-footer{display:flex;justify-content:space-between;align-items:center;padding:20px 28px;margin-top:auto}
+    .g-link{font-size:14px;color:#1a73e8;cursor:pointer;background:none;border:none;font-family:inherit;padding:0}
+    .g-link:hover{text-decoration:underline}
+    .g-btns{display:flex;gap:8px}
+    .g-btn{padding:9px 22px;border-radius:4px;font-size:14px;font-weight:500;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+    .g-btn-secondary{background:transparent;color:#1a73e8}
+    .g-btn-secondary:hover{background:#f0f6ff}
+    .g-btn-primary{background:#1a73e8;color:#fff}
+    .g-btn-primary:hover{background:#1557b0;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+    .g-bottom{background:#f8f9fa;padding:12px 28px;display:flex;justify-content:space-between;font-size:12px;color:#5f6368;border-top:1px solid #e8eaed}
+    .g-bottom a{color:#5f6368;text-decoration:none}
+    .g-bottom a:hover{text-decoration:underline}
+    .g-bottom-links{display:flex;gap:16px}
+
+    /* ─── FACEBOOK ─── */
+    .fb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;align-items:center;justify-content:center;padding:16px}
+    .fb-overlay.open{display:flex}
+    .fb-box{background:#fff;border-radius:8px;width:100%;max-width:396px;box-shadow:0 8px 40px rgba(0,0,0,.3);overflow:hidden;animation:gPop .2s ease;font-family:Helvetica,Arial,sans-serif}
+    .fb-head{background:#1877f2;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+    .fb-head-title{color:#fff;font-size:18px;font-weight:700}
+    .fb-close{background:none;border:none;color:rgba(255,255,255,.8);font-size:22px;cursor:pointer;line-height:1}
+    .fb-close:hover{color:#fff}
+    .fb-body{padding:18px}
+    .fb-inp{width:100%;background:#f0f2f5;border:1px solid #dddfe2;border-radius:6px;padding:11px 13px;font-size:14px;color:#1c1e21;font-family:inherit;margin-bottom:10px}
+    .fb-inp:focus{outline:none;border-color:#1877f2;background:#fff}
+    .fb-err{font-size:12px;color:#e74c3c;margin-bottom:8px;display:none}
+    .fb-err.show{display:block}
+    .fb-btn{width:100%;background:#1877f2;border:none;border-radius:6px;padding:11px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px}
+    .fb-btn:hover{background:#166fe5}
+    .fb-sep{height:1px;background:#dddfe2;margin:12px 0}
+    .fb-new{display:block;width:fit-content;margin:0 auto;background:#42b72a;border:none;border-radius:6px;padding:10px 18px;color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+  </style>
+</head>
+<body>
+
+<div class="auth-topbar">
+  <a class="auth-brand" href="index.html">
+    <div class="auth-logo">
+      <img src="assets/logo.png" alt="FE" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+      <span class="auth-logo-fallback" style="display:none">FE</span>
+    </div>
+    <div>
+      <div class="auth-brand-name">Frank Electronics</div>
+      <div class="auth-brand-tag">Your plug for smart electronics</div>
+    </div>
+  </a>
+  <a class="auth-topbar-link" href="register.html">New here? <span>Create account →</span></a>
+</div>
+
+<div class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-header">
+      <div class="auth-header-icon dark">🔐</div>
+      <div class="auth-title">Welcome <span>Back</span></div>
+      <p class="auth-subtitle">Sign in to your Frank Electronics account.</p>
+    </div>
+
+    <div class="alert alert-error" id="loginAlert">⚠️ Incorrect email or password.</div>
+
+    <div class="social-btns">
+      <button class="social-btn" onclick="openGoogle()">
+        <span class="social-icon">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        </span>
+        Continue with Google
+      </button>
+      <button class="social-btn" onclick="openFacebook()">
+        <span class="social-icon">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#1877F2" d="M48 24C48 10.745 37.255 0 24 0S0 10.745 0 24c0 11.979 8.776 21.908 20.25 23.708V30.938h-6.094V24h6.094v-5.288c0-6.014 3.583-9.338 9.065-9.338 2.626 0 5.373.469 5.373.469v5.906h-3.026c-2.981 0-3.912 1.85-3.912 3.75V24h6.656l-1.063 6.938H27.75v16.77C39.224 45.908 48 35.979 48 24z"/></svg>
+        </span>
+        Continue with Facebook
+      </button>
+    </div>
+
+    <div class="auth-divider">or sign in with email</div>
+
+    <div class="form-group">
+      <label for="lemail">Email address</label>
+      <div class="input-wrap">
+        <input class="form-control has-icon" id="lemail" type="email" placeholder="your@email.com" oninput="clearErr()"/>
+        <span class="input-icon">✉️</span>
+      </div>
+      <div class="field-error" id="lemail-err">Enter a valid email.</div>
+    </div>
+
+    <div class="form-group">
+      <label for="lpw">
+        Password
+        <a href="forgot.html" style="float:right;font-size:11px;color:var(--orange);font-weight:600;text-transform:none;letter-spacing:0">Forgot password?</a>
+      </label>
+      <div class="input-wrap">
+        <input class="form-control has-icon" id="lpw" type="password" placeholder="Your password"
+          oninput="clearErr()" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <button class="input-icon" type="button" onclick="togglePw()">👁️</button>
+      </div>
+      <div class="field-error" id="lpw-err">Password is required.</div>
+    </div>
+
+    <div class="check-group" style="margin-bottom:18px">
+      <input type="checkbox" id="remember" checked/>
+      <label for="remember" style="text-transform:none;letter-spacing:0;font-weight:500;font-size:12px">Remember me</label>
+    </div>
+
+    <button class="btn btn-orange" onclick="doLogin()" id="loginBtn">Sign in →</button>
+    <div class="auth-bottom">Don't have an account? <a href="register.html">Create one free →</a></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+  GOOGLE SIGN-IN MODAL
+════════════════════════════════ -->
+<div class="g-overlay" id="gOverlay" onclick="if(event.target.id==='gOverlay')closeGoogle()">
+  <div class="g-box">
+
+    <div class="g-topbar">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Sign in with Google
+    </div>
+
+    <div class="g-content">
+
+      <!-- SCREEN 1: Account picker -->
+      <div id="gScreenPicker" class="g-screen active">
+        <div class="g-pick-title">Choose an account</div>
+        <div class="g-pick-sub">to continue to Frank Electronics</div>
+        <div id="gAccountList"></div>
+        <div class="g-divider"></div>
+        <div class="g-use-another" onclick="goToEmailScreen()">
+          <div class="g-circle-icon">⊕</div>
+          <span class="g-use-another-text">Use another account</span>
+        </div>
+      </div>
+
+      <!-- SCREEN 2: Email input -->
+      <div id="gScreenEmail" class="g-screen">
+        <div class="g-screen-title">Sign in</div>
+        <div class="g-screen-sub">to continue to <span>Frank Electronics</span></div>
+        <div class="g-field">
+          <input class="g-input" id="gEmailInp" type="email" placeholder=" "
+            oninput="this.classList.toggle('has-val',!!this.value);clearGErr()"
+            onkeydown="if(event.key==='Enter')submitEmail()"/>
+          <label class="g-label">Email or phone</label>
+        </div>
+        <div class="g-err" id="gEmailErr"></div>
+        <div style="margin-top:10px">
+          <a class="g-link" onclick="showToast('Forgot email? Please create a new account.')">Forgot email?</a>
+        </div>
+      </div>
+
+      <!-- SCREEN 3: Password input -->
+      <div id="gScreenPw" class="g-screen">
+        <div id="gEmailChip" class="g-chip" onclick="goToEmailScreen()">
+          <div class="g-chip-avatar" id="gChipAvatar">?</div>
+          <span class="g-chip-email" id="gChipEmail"></span>
+          <span class="g-chip-arrow">▾</span>
+        </div>
+        <div class="g-screen-title">Welcome</div>
+        <div class="g-screen-sub">to continue to <span>Frank Electronics</span></div>
+        <div class="g-field">
+          <input class="g-input" id="gPwInp" type="password" placeholder=" "
+            oninput="this.classList.toggle('has-val',!!this.value);clearGPwErr()"
+            onkeydown="if(event.key==='Enter')submitPassword()"/>
+          <label class="g-label">Enter your password</label>
+        </div>
+        <div class="g-err" id="gPwErr"></div>
+      </div>
+
+    </div><!-- /g-content -->
+
+    <!-- FOOTER (changes per screen) -->
+    <div class="g-footer" id="gFooterPicker">
+      <span></span>
+      <div class="g-btns">
+        <button class="g-btn g-btn-primary" onclick="goToEmailScreen()">Use another account</button>
+      </div>
+    </div>
+
+    <div class="g-footer" id="gFooterEmail" style="display:none">
+      <button class="g-link" onclick="window.location.href='register.html'">Create account</button>
+      <div class="g-btns">
+        <button class="g-btn g-btn-secondary" onclick="goToPickerOrClose()">Cancel</button>
+        <button class="g-btn g-btn-primary" onclick="submitEmail()">Next</button>
+      </div>
+    </div>
+
+    <div class="g-footer" id="gFooterPw" style="display:none">
+      <button class="g-link" onclick="showToast('Password reset coming soon!')">Forgot password?</button>
+      <div class="g-btns">
+        <button class="g-btn g-btn-secondary" onclick="goToEmailScreen()">Back</button>
+        <button class="g-btn g-btn-primary" onclick="submitPassword()">Sign in</button>
+      </div>
+    </div>
+
+    <div class="g-bottom">
+      <span>English (Rwanda)</span>
+      <div class="g-bottom-links">
+        <a href="#">Help</a><a href="#">Privacy</a><a href="#">Terms</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FACEBOOK MODAL -->
+<div class="fb-overlay" id="fbOverlay" onclick="if(event.target.id==='fbOverlay')closeFacebook()">
+  <div class="fb-box">
+    <div class="fb-head">
+      <span class="fb-head-title">Log in with Facebook</span>
+      <button class="fb-close" onclick="closeFacebook()">✕</button>
+    </div>
+    <div class="fb-body">
+      <p style="font-size:14px;color:#606770;margin-bottom:14px;line-height:1.5">Log in to Frank Electronics using your Facebook account.</p>
+      <input class="fb-inp" id="fbEmail" type="email" placeholder="Email or phone number"/>
+      <input class="fb-inp" id="fbPw"    type="password" placeholder="Password" onkeydown="if(event.key==='Enter')confirmFacebook()"/>
+      <div class="fb-err" id="fbErr">Please fill in your email and password.</div>
+      <button class="fb-btn" onclick="confirmFacebook()">Log in</button>
+      <div class="fb-sep"></div>
+      <button class="fb-new" onclick="window.location.href='register.html'">Create new account</button>
+    </div>
+  </div>
+</div>
+
+<div class="auth-footer">© 2026 Frank Electronics · <a href="contact.html">Support</a> · <a href="#">Privacy</a></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── HELPERS ──
+function togglePw() {
+  const i = document.getElementById('lpw');
+  i.type = i.type === 'password' ? 'text' : 'password';
+}
+function clearErr() {
+  document.getElementById('loginAlert').classList.remove('show');
+  document.getElementById('lemail').classList.remove('error');
+  document.getElementById('lpw').classList.remove('error');
+  ['lemail-err','lpw-err'].forEach(id => document.getElementById(id).classList.remove('show'));
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+function getNext() { return new URLSearchParams(window.location.search).get('next') || ''; }
+
+// ── EMAIL LOGIN ──
+const ADMIN_EMAILS = ['admin@frankelectronics.rw','frank@frankelectronics.rw','manager@frankelectronics.rw'];
+function isAdmin(email) { return ADMIN_EMAILS.includes((email||'').toLowerCase()); }
+
+function doLogin() {
+  const email = document.getElementById('lemail').value.trim();
+  const pw    = document.getElementById('lpw').value;
+  let ok = true;
+  if (!email || !/\S+@\S+\.\S+/.test(email)) {
+    document.getElementById('lemail').classList.add('error');
+    document.getElementById('lemail-err').classList.add('show'); ok = false;
+  }
+  if (!pw) {
+    document.getElementById('lpw').classList.add('error');
+    document.getElementById('lpw-err').classList.add('show'); ok = false;
+  }
+  if (!ok) return;
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  setTimeout(() => {
+    // Accept: admin123 for admin, frank123 for anyone, or matching saved password
+    const saved = JSON.parse(localStorage.getItem('fe_user') || '{}');
+    const validPw = pw === 'frank123' || pw === 'admin123' || (saved.email === email && pw.length >= 4);
+    if (validPw) {
+      const name = saved.name || email.split('@')[0];
+      localStorage.setItem('fe_user', JSON.stringify({ ...saved, email, name, avatar: name[0].toUpperCase() }));
+      localStorage.setItem('fe_login_next', getNext());
+      window.location.href = 'otp.html?action=login&method=email';
+    } else {
+      document.getElementById('loginAlert').classList.add('show');
+      btn.disabled = false; btn.textContent = 'Sign in →';
+    }
+  }, 1000);
+}
+
+// ── GOOGLE ──
+const COLORS = ['#4285f4','#ea4335','#34a853','#fbbc04','#9c27b0','#00bcd4','#ff5722'];
+let gAccounts = JSON.parse(localStorage.getItem('fe_google_accounts') || '[]');
+let gEmail = '';
+
+function openGoogle() {
+  renderAccounts();
+  if (gAccounts.length > 0) {
+    showGScreen('picker');
+  } else {
+    showGScreen('email');
+  }
+  document.getElementById('gOverlay').classList.add('open');
+  if (gAccounts.length === 0) setTimeout(() => document.getElementById('gEmailInp').focus(), 200);
+}
+function closeGoogle() {
+  document.getElementById('gOverlay').classList.remove('open');
+}
+
+function showGScreen(name) {
+  // Hide all screens + footers
+  ['gScreenPicker','gScreenEmail','gScreenPw'].forEach(id => {
+    document.getElementById(id).classList.remove('active');
+  });
+  ['gFooterPicker','gFooterEmail','gFooterPw'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  // Show selected
+  document.getElementById('gScreen' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+  document.getElementById('gFooter' + name.charAt(0).toUpperCase() + name.slice(1)).style.display = 'flex';
+}
+
+function renderAccounts() {
+  document.getElementById('gAccountList').innerHTML = gAccounts.map((a,i) => `
+    <div class="g-account" onclick="selectAccount(${i})">
+      <div class="g-avatar" style="background:${a.color}">${a.initial}</div>
+      <div>
+        <div class="g-acc-name">${a.name}</div>
+        <div class="g-acc-email">${a.email}</div>
+      </div>
+    </div>`).join('');
+}
+
+function goToEmailScreen() {
+  document.getElementById('gEmailInp').value = '';
+  document.getElementById('gEmailInp').classList.remove('has-val');
+  clearGErr();
+  showGScreen('email');
+  setTimeout(() => document.getElementById('gEmailInp').focus(), 100);
+}
+
+function goToPickerOrClose() {
+  if (gAccounts.length > 0) showGScreen('picker');
+  else closeGoogle();
+}
+
+function clearGErr()   { document.getElementById('gEmailErr').textContent = ''; }
+function clearGPwErr() { document.getElementById('gPwErr').textContent = ''; }
+
+function submitEmail() {
+  const email = document.getElementById('gEmailInp').value.trim();
+  if (!email || !/\S+@\S+\.\S+/.test(email)) {
+    document.getElementById('gEmailErr').textContent = 'Enter a valid email or phone number.';
+    return;
+  }
+  gEmail = email;
+  // Go to password screen
+  document.getElementById('gChipAvatar').textContent = email[0].toUpperCase();
+  document.getElementById('gChipEmail').textContent  = email;
+  document.getElementById('gPwInp').value = '';
+  document.getElementById('gPwInp').classList.remove('has-val');
+  clearGPwErr();
+  showGScreen('pw');
+  setTimeout(() => document.getElementById('gPwInp').focus(), 100);
+}
+
+function submitPassword() {
+  const pw = document.getElementById('gPwInp').value;
+  if (!pw) {
+    document.getElementById('gPwErr').textContent = 'Enter your password.';
+    return;
+  }
+  // Build name from email
+  const name    = gEmail.split('@')[0].replace(/[._-]/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+  const initial = name[0].toUpperCase();
+  const color   = COLORS[gAccounts.length % COLORS.length];
+  const joined  = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  // Save to accounts list
+  if (!gAccounts.find(a => a.email === gEmail)) {
+    gAccounts.push({ name, email: gEmail, initial, color, joined });
+    localStorage.setItem('fe_google_accounts', JSON.stringify(gAccounts));
+  }
+  finishSocialLogin(name, gEmail, joined);
+}
+
+function selectAccount(i) {
+  const a = gAccounts[i];
+  finishSocialLogin(a.name, a.email, a.joined);
+}
+
+function finishSocialLogin(name, email, joined) {
+  const nameParts = name.split(' ');
+  localStorage.setItem('fe_user', JSON.stringify({
+    name, email, fname: nameParts[0], lname: nameParts.slice(1).join(' '),
+    avatar: name[0].toUpperCase(), provider: 'google', joined
+  }));
+  localStorage.setItem('fe_login_next', getNext());
+  closeGoogle();
+  showToast('Signing in as ' + name + '...');
+  setTimeout(() => window.location.href = 'otp.html?action=login&method=email', 900);
+}
+
+// ── FACEBOOK ──
+function openFacebook() {
+  document.getElementById('fbOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('fbEmail').focus(), 100);
+}
+function closeFacebook() { document.getElementById('fbOverlay').classList.remove('open'); }
+function confirmFacebook() {
+  const email = document.getElementById('fbEmail').value.trim();
+  const pw    = document.getElementById('fbPw').value;
+  const err   = document.getElementById('fbErr');
+  err.classList.remove('show');
+  if (!email || !pw) { err.classList.add('show'); return; }
+  const name = email.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+  localStorage.setItem('fe_user', JSON.stringify({
+    name, email, fname: name.split(' ')[0], lname: name.split(' ').slice(1).join(' '),
+    avatar: name[0].toUpperCase(), provider: 'facebook',
+    joined: new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})
+  }));
+  localStorage.setItem('fe_login_next', getNext());
+  closeFacebook();
+  showToast('Signing in with Facebook...');
+  setTimeout(() => window.location.href = 'otp.html?action=login&method=email', 900);
+}
+</script>
+</body>
+</html>

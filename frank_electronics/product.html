@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Product — Frank Electronics</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .pd-wrap{max-width:1100px;margin:0 auto;padding:28px 24px}
+    .pd-breadcrumb{font-size:12px;color:var(--gray-m);margin-bottom:20px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .pd-breadcrumb a{color:var(--orange);font-weight:600}
+    .pd-breadcrumb a:hover{text-decoration:underline}
+    .pd-breadcrumb-sep{color:#ccc}
+    .pd-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-bottom:40px}
+    .pd-main-img{background:var(--gray-bg);border:1.5px solid var(--gray-b);border-radius:14px;height:380px;display:flex;align-items:center;justify-content:center;font-size:110px;margin-bottom:12px;position:relative}
+    .pd-badge-large{position:absolute;top:14px;left:14px;font-size:11px;font-weight:800;padding:5px 12px;border-radius:5px;text-transform:uppercase;letter-spacing:.5px}
+    .pd-badge-sale{background:var(--black);color:#fff}
+    .pd-badge-new{background:var(--orange);color:#fff}
+    .pd-badge-hot{background:#e05800;color:#fff}
+    .pd-thumbnails{display:flex;gap:8px}
+    .pd-thumb{width:70px;height:70px;background:var(--gray-bg);border:1.5px solid var(--gray-b);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;transition:border-color .2s}
+    .pd-thumb:hover,.pd-thumb.active{border-color:var(--orange)}
+    .pd-cat-tag{font-size:10px;color:var(--orange);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:8px}
+    .pd-name{font-size:26px;font-weight:800;color:var(--black);line-height:1.2;margin-bottom:12px}
+    .pd-rating-row{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+    .pd-stars{color:var(--orange);font-size:16px}
+    .pd-rating-num{font-size:14px;font-weight:700;color:var(--black)}
+    .pd-rev-count{font-size:13px;color:var(--gray-m)}
+    .pd-rev-count a{color:var(--orange);font-weight:600}
+    .pd-price-block{background:var(--gray-bg);border:1.5px solid var(--gray-b);border-radius:12px;padding:18px 20px;margin-bottom:20px}
+    .pd-price{font-size:32px;font-weight:800;color:var(--black);line-height:1}
+    .pd-old-price{font-size:16px;color:var(--gray-m);text-decoration:line-through;margin-left:10px}
+    .pd-saving{display:inline-block;background:#edfaf3;border:1px solid #b7e8cc;color:#1a7c45;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:8px}
+    .pd-stock{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;margin-top:10px}
+    .pd-stock-dot{width:8px;height:8px;border-radius:50%;background:#2ecc71;flex-shrink:0}
+    .pd-variants{margin-bottom:20px}
+    .pd-variants-label{font-size:12px;font-weight:700;color:var(--black);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+    .pd-variant-btns{display:flex;gap:8px;flex-wrap:wrap}
+    .pd-variant-btn{padding:7px 16px;border:1.5px solid var(--gray-b);border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:var(--black);transition:all .15s;font-family:inherit}
+    .pd-variant-btn:hover,.pd-variant-btn.active{border-color:var(--orange);background:#fff8f5;color:var(--orange)}
+    .pd-actions{display:flex;gap:12px;margin-bottom:16px;align-items:center}
+    .pd-qty{display:flex;align-items:center;border:1.5px solid var(--gray-b);border-radius:8px;overflow:hidden}
+    .pd-qty-btn{width:38px;height:44px;background:var(--gray-bg);border:none;font-size:18px;cursor:pointer;font-family:inherit;color:var(--black);transition:background .15s}
+    .pd-qty-btn:hover{background:#ffe8d6;color:var(--orange)}
+    .pd-qty-val{width:44px;height:44px;text-align:center;border:none;font-size:15px;font-weight:700;color:var(--black);font-family:inherit;background:#fff}
+    .pd-add-btn{flex:1;background:var(--orange);border:none;border-radius:8px;padding:13px 20px;color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;transition:background .2s}
+    .pd-add-btn:hover{background:var(--orange-d)}
+    .pd-wish-btn{width:48px;height:48px;border:1.5px solid var(--gray-b);border-radius:8px;background:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+    .pd-wish-btn:hover,.pd-wish-btn.liked{border-color:var(--orange);color:var(--orange)}
+    .pd-buy-btn{width:100%;background:var(--black);border:none;border-radius:8px;padding:13px;color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:16px;transition:background .2s}
+    .pd-buy-btn:hover{background:#333}
+    .pd-delivery{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+    .pd-delivery-row{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--black)}
+    .pd-delivery-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+    .pd-delivery-sub{font-size:11px;color:var(--gray-t);margin-top:1px}
+    .pd-share-row{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--gray-t);padding-top:16px;border-top:1px solid var(--gray-b)}
+    .pd-share-btn{width:32px;height:32px;border-radius:6px;background:var(--gray-bg);border:1px solid var(--gray-b);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:background .2s}
+    .pd-share-btn:hover{background:#ffe8d6}
+    .pd-tabs-section{margin-bottom:40px}
+    .pd-tabs{display:flex;gap:0;border-bottom:2px solid var(--gray-b);margin-bottom:24px}
+    .pd-tab{padding:12px 24px;font-size:14px;font-weight:600;color:var(--gray-t);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s}
+    .pd-tab:hover{color:var(--black)}
+    .pd-tab.active{color:var(--orange);border-bottom-color:var(--orange)}
+    .pd-tab-content{display:none}
+    .pd-tab-content.active{display:block}
+    .pd-desc-text{font-size:14px;color:var(--black);line-height:1.8;margin-bottom:20px}
+    .pd-spec-table{width:100%;border-collapse:collapse}
+    .pd-spec-table tr{border-bottom:1px solid var(--gray-b)}
+    .pd-spec-table td{padding:11px 14px;font-size:13px}
+    .pd-spec-table td:first-child{font-weight:700;color:var(--black);width:40%;background:var(--gray-bg)}
+    .pd-spec-table td:last-child{color:#555}
+    .pd-review-summary{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;margin-bottom:28px;padding:24px;background:var(--gray-bg);border-radius:12px;border:1.5px solid var(--gray-b)}
+    .pd-review-big-num{font-family:'Bebas Neue',sans-serif;font-size:64px;color:var(--black);line-height:1;text-align:center}
+    .pd-review-big-stars{color:var(--orange);font-size:22px;text-align:center}
+    .pd-review-big-count{font-size:12px;color:var(--gray-t);text-align:center;margin-top:4px}
+    .pd-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+    .pd-bar-label{font-size:12px;color:var(--black);width:40px;flex-shrink:0}
+    .pd-bar-track{flex:1;height:8px;background:#eee;border-radius:4px;overflow:hidden}
+    .pd-bar-fill{height:100%;background:var(--orange);border-radius:4px}
+    .pd-bar-count{font-size:12px;color:var(--gray-t);width:28px;text-align:right;flex-shrink:0}
+    .pd-review-card{background:#fff;border:1.5px solid var(--gray-b);border-radius:10px;padding:18px 20px;margin-bottom:14px}
+    .pd-review-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .pd-reviewer{display:flex;align-items:center;gap:10px}
+    .pd-reviewer-avatar{width:36px;height:36px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:800;flex-shrink:0}
+    .pd-reviewer-name{font-size:13px;font-weight:700;color:var(--black)}
+    .pd-reviewer-date{font-size:11px;color:var(--gray-t);margin-top:1px}
+    .pd-review-title{font-size:13px;font-weight:700;color:var(--black);margin-bottom:6px}
+    .pd-review-body{font-size:13px;color:#555;line-height:1.6}
+    .pd-verified{font-size:10px;color:#2ecc71;font-weight:700;margin-top:8px}
+    .pd-related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .pd-not-found{text-align:center;padding:80px 20px}
+    .pd-not-found h2{font-size:22px;color:var(--orange);margin-bottom:10px}
+    .pd-not-found p{color:var(--gray-t);margin-bottom:20px}
+    @media(max-width:900px){.pd-grid{grid-template-columns:1fr}.pd-related-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:600px){.pd-related-grid{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="pd-wrap" id="pdWrap" style="display:none">
+  <div class="pd-breadcrumb">
+    <a href="index.html">Home</a>
+    <span class="pd-breadcrumb-sep">›</span>
+    <a href="products.html">Products</a>
+    <span class="pd-breadcrumb-sep">›</span>
+    <span id="pdBreadcrumbName" style="color:var(--black)"></span>
+  </div>
+
+  <div class="pd-grid">
+    <div class="pd-images">
+      <div class="pd-main-img">
+        <span id="pdMainEmoji"></span>
+        <span class="pd-badge-large" id="pdBadge"></span>
+      </div>
+      <div class="pd-thumbnails" id="pdThumbnails"></div>
+    </div>
+
+    <div class="pd-info">
+      <div class="pd-cat-tag" id="pdCat"></div>
+      <h1 class="pd-name" id="pdName"></h1>
+      <div class="pd-rating-row">
+        <span class="pd-stars" id="pdStars"></span>
+        <span class="pd-rating-num" id="pdRatingNum"></span>
+        <span class="pd-rev-count">(<a href="#" onclick="switchTab('reviews',document.querySelectorAll('.pd-tab')[2]);return false;" id="pdRevCount"></a>)</span>
+      </div>
+      <div class="pd-price-block">
+        <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:4px">
+          <span class="pd-price" id="pdPrice"></span>
+          <span class="pd-old-price" id="pdOldPrice"></span>
+        </div>
+        <span class="pd-saving" id="pdSaving"></span>
+        <div class="pd-stock">
+          <div class="pd-stock-dot"></div>
+          <span>In stock — Ready to ship</span>
+        </div>
+      </div>
+
+      <div class="pd-variants" id="pdVariantsWrap">
+        <div class="pd-variants-label">Storage</div>
+        <div class="pd-variant-btns" id="pdVariants"></div>
+      </div>
+      <div class="pd-variants" id="pdColorsWrap">
+        <div class="pd-variants-label">Color</div>
+        <div class="pd-variant-btns" id="pdColors"></div>
+      </div>
+
+      <div class="pd-actions">
+        <div class="pd-qty">
+          <button class="pd-qty-btn" onclick="changeQty(-1)">−</button>
+          <input class="pd-qty-val" id="pdQty" type="number" value="1" min="1" max="99" readonly/>
+          <button class="pd-qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <button class="pd-add-btn" id="pdAddBtn" onclick="addProductToCart()">Add to cart 🛒</button>
+        <button class="pd-wish-btn" id="pdWishBtn" onclick="toggleProductWish()">♡</button>
+      </div>
+      <button class="pd-buy-btn" onclick="buyNow()">Buy now →</button>
+
+      <div class="pd-delivery">
+        <div class="pd-delivery-row"><span class="pd-delivery-icon">🚚</span><div><div>Free delivery nationwide</div><div class="pd-delivery-sub">Order before 2PM for same-day dispatch · 48h delivery</div></div></div>
+        <div class="pd-delivery-row"><span class="pd-delivery-icon">🔁</span><div><div>7-day easy returns</div><div class="pd-delivery-sub">Hassle-free return if not satisfied</div></div></div>
+        <div class="pd-delivery-row"><span class="pd-delivery-icon">✅</span><div><div>100% genuine product</div><div class="pd-delivery-sub">Authorised retailer with full manufacturer warranty</div></div></div>
+        <div class="pd-delivery-row"><span class="pd-delivery-icon">💳</span><div><div>MTN MoMo · Visa · Cash on delivery</div><div class="pd-delivery-sub">Secure payment, encrypted checkout</div></div></div>
+      </div>
+
+      <div class="pd-share-row">
+        <span>Share:</span>
+        <button class="pd-share-btn" onclick="showToast('Shared on WhatsApp!')">📱</button>
+        <button class="pd-share-btn" onclick="showToast('Shared on Facebook!')">📘</button>
+        <button class="pd-share-btn" onclick="copyLink()">🔗</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pd-tabs-section">
+    <div class="pd-tabs">
+      <div class="pd-tab active" onclick="switchTab('desc',this)">Description</div>
+      <div class="pd-tab" onclick="switchTab('specs',this)">Specifications</div>
+      <div class="pd-tab" onclick="switchTab('reviews',this)">Reviews (<span id="tabRevCount">0</span>)</div>
+    </div>
+    <div class="pd-tab-content active" id="tab-desc">
+      <p class="pd-desc-text" id="pdDesc"></p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px" id="pdHighlights"></div>
+    </div>
+    <div class="pd-tab-content" id="tab-specs">
+      <table class="pd-spec-table" id="pdSpecTable"></table>
+    </div>
+    <div class="pd-tab-content" id="tab-reviews">
+      <div class="pd-review-summary">
+        <div>
+          <div class="pd-review-big-num" id="reviewBigNum"></div>
+          <div class="pd-review-big-stars">★★★★★</div>
+          <div class="pd-review-big-count" id="reviewBigCount"></div>
+        </div>
+        <div id="reviewBars"></div>
+      </div>
+      <div id="reviewList"></div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:40px">
+    <div class="section-header">
+      <div class="section-title">Related Products</div>
+      <a href="products.html" class="section-link">View all →</a>
+    </div>
+    <div class="pd-related-grid" id="relatedGrid"></div>
+  </div>
+</div>
+
+<!-- Not found -->
+<div class="pd-wrap pd-not-found" id="pdNotFound" style="display:none">
+  <h2>Product not found</h2>
+  <p>This product may have been removed by the admin.</p>
+  <a href="products.html" class="btn btn-orange" style="width:auto;padding:10px 22px">← Back to products</a>
+</div>
+
+<div id="footer-placeholder"></div>
+<div id="cart-placeholder"></div>
+
+<!-- Load shared scripts FIRST -->
+<script src="app.js"></script>
+<script src="components.js"></script>
+<script>
+// ── INJECT SHARED COMPONENTS ──
+injectNav('products');
+injectCart();
+injectFooter();
+
+// ── ALL PRODUCT DATA ──
+const ALL_PRODUCTS = [
+  {id:1,  name:"Samsung Galaxy S24 Ultra",cat:"phones",em:"📱",price:2200000,old:2500000,badge:"sale",rating:4.8,rev:234,
+   desc:"The Samsung Galaxy S24 Ultra is the ultimate Android flagship. Featuring a 200MP AI camera system, built-in titanium S-Pen, and a massive 5000mAh battery, it's engineered for productivity and creativity.",
+   specs:{Brand:"Samsung",Model:"Galaxy S24 Ultra",Display:"6.8\" Dynamic AMOLED 2X 120Hz",Processor:"Snapdragon 8 Gen 3",RAM:"12GB",Storage:"256GB / 512GB / 1TB",Camera:"200MP + 12MP + 10MP",Battery:"5000mAh","OS":"Android 14"},
+   variants:["256GB","512GB","1TB"],colors:["Titanium Black","Titanium Gray","Titanium Violet"]},
+  {id:2,  name:"MacBook Air M3",cat:"laptops",em:"💻",price:3100000,old:null,badge:"new",rating:4.9,rev:89,
+   desc:"The MacBook Air with M3 chip delivers up to 60% faster performance than M1. Enjoy all-day battery life of up to 18 hours, fanless silent operation, and a stunning Liquid Retina display.",
+   specs:{Brand:"Apple",Model:"MacBook Air M3",Display:"15.3\" Liquid Retina",Processor:"Apple M3 8-core CPU",RAM:"8GB / 16GB / 24GB",Storage:"256GB – 2TB SSD",Battery:"Up to 18 hours","OS":"macOS Sonoma"},
+   variants:["8GB RAM","16GB RAM","24GB RAM"],colors:["Midnight","Starlight","Space Gray"]},
+  {id:3,  name:"AirPods Pro 2nd Gen",cat:"audio",em:"🎵",price:380000,old:450000,badge:"sale",rating:4.7,rev:412,
+   desc:"AirPods Pro 2nd generation deliver up to 2× more Active Noise Cancellation. The H2 chip enables richer sound with Personalized Spatial Audio.",
+   specs:{Brand:"Apple",Model:"AirPods Pro (2nd Gen)",ANC:"Yes — 2× better","Battery (buds)":"6 hours","Battery (case)":"30 hours total",Charging:"USB-C / MagSafe",Resistance:"IPX4",Connectivity:"Bluetooth 5.3"},
+   variants:[],colors:["White"]},
+  {id:4,  name:'Samsung 65" QLED TV',cat:"tv",em:"📺",price:1850000,old:null,badge:"hot",rating:4.6,rev:67,
+   desc:"Samsung QLED TV uses Quantum Dot technology for over a billion shades of colour. Smart TV with Netflix, YouTube, Prime Video and more built in.",
+   specs:{Brand:"Samsung",Size:"65 inches",Resolution:"4K UHD 3840×2160",Technology:"QLED Quantum Dot",HDR:"HDR10+",Refresh:"120Hz",Audio:"40W Dolby Atmos"},
+   variants:["55\"","65\"","75\""],colors:["Black"]},
+  {id:5,  name:'iPad Pro 12.9"',cat:"phones",em:"📲",price:1650000,old:1800000,badge:"sale",rating:4.8,rev:155,
+   desc:"iPad Pro with M2 chip and Liquid Retina XDR display with 120Hz ProMotion. Compatible with Apple Pencil 2 and Magic Keyboard.",
+   specs:{Brand:"Apple",Model:"iPad Pro 12.9-inch",Display:"12.9\" Liquid Retina XDR",Processor:"Apple M2",Storage:"128GB to 2TB",Battery:"Up to 10 hours"},
+   variants:["128GB","256GB","512GB","1TB"],colors:["Space Gray","Silver"]},
+  {id:6,  name:"Logitech MX Master 3",cat:"accessories",em:"🖱️",price:145000,old:null,badge:"new",rating:4.7,rev:320,
+   desc:"MagSpeed electromagnetic scroll wheel, 70-day battery, works across 3 computers with Easy-Switch technology.",
+   specs:{Brand:"Logitech",Model:"MX Master 3S",Sensor:"Darkfield 8000 DPI",Battery:"70 days",Charging:"USB-C",Connectivity:"Bluetooth + USB"},
+   variants:[],colors:["Graphite","Pale Gray","Rose"]},
+  {id:7,  name:"Sony WH-1000XM5",cat:"audio",em:"🎧",price:420000,old:520000,badge:"sale",rating:4.9,rev:530,
+   desc:"Industry-leading noise cancellation with 8 microphones and 2 processors. 30 hours battery, 3 min quick charge = 3 hours playback.",
+   specs:{Brand:"Sony",Model:"WH-1000XM5",ANC:"8 mics + 2 processors",Battery:"30 hours","Quick Charge":"3 min = 3 hours",Charging:"USB-C",Weight:"250g"},
+   variants:[],colors:["Black","Platinum Silver"]},
+  {id:8,  name:"Dell XPS 15",cat:"laptops",em:"💻",price:2800000,old:3100000,badge:"sale",rating:4.7,rev:112,
+   desc:"OLED display with Intel Core i7 and NVIDIA RTX 4060. Built for creative professionals needing desktop-class performance.",
+   specs:{Brand:"Dell",Model:"XPS 15 9530",Display:"15.6\" OLED 3.5K 120Hz",Processor:"Intel Core i7-13700H",RAM:"16GB / 32GB",GPU:"NVIDIA RTX 4060 8GB"},
+   variants:["16GB RAM","32GB RAM"],colors:["Platinum","Black"]},
+  {id:9,  name:"iPhone 15 Pro",cat:"phones",em:"📱",price:1850000,old:null,badge:"hot",rating:4.9,rev:780,
+   desc:"Titanium design with Action Button and USB 3. A17 Pro chip delivers console-quality gaming and 48MP camera with 5× optical zoom.",
+   specs:{Brand:"Apple",Model:"iPhone 15 Pro",Display:"6.1\" Super Retina XDR 120Hz",Processor:"A17 Pro",Storage:"128GB – 1TB",Camera:"48MP Main + 12MP UW + 12MP 5× Tele",Battery:"Up to 23 hrs"},
+   variants:["128GB","256GB","512GB","1TB"],colors:["Black Titanium","White Titanium","Blue Titanium","Natural Titanium"]},
+  {id:10, name:'Xiaomi 65" Smart TV',cat:"tv",em:"📺",price:980000,old:1200000,badge:"sale",rating:4.5,rev:89,
+   desc:"4K UHD with Dolby Vision and Dolby Atmos. Android TV with instant access to Netflix, YouTube, Google Play.",
+   specs:{Brand:"Xiaomi",Size:"65 inches",Resolution:"4K UHD",HDR:"Dolby Vision",Audio:"Dolby Atmos 30W",SmartTV:"Android TV"},
+   variants:["55\"","65\""],colors:["Black"]},
+  {id:11, name:"JBL Charge 5",cat:"audio",em:"🔊",price:195000,old:240000,badge:"sale",rating:4.6,rev:204,
+   desc:"IP67 waterproof, 20hr playtime. Powerful JBL sound with separate tweeter and woofer. Built-in power bank.",
+   specs:{Brand:"JBL",Model:"Charge 5",Output:"40W",Battery:"7500mAh / 20 hours",Charging:"USB-C",Waterproof:"IP67",Connectivity:"Bluetooth 5.1"},
+   variants:[],colors:["Black","Blue","Red","Teal","White"]},
+  {id:12, name:"Samsung T7 SSD 1TB",cat:"accessories",em:"💾",price:125000,old:null,badge:"new",rating:4.8,rev:167,
+   desc:"NVMe speeds up to 1,050MB/s. AES 256-bit hardware encryption, compact shock-resistant design.",
+   specs:{Brand:"Samsung",Capacity:"1TB",Interface:"USB 3.2 Gen 2",Read:"1,050 MB/s",Write:"1,000 MB/s",Encryption:"AES 256-bit",Weight:"58g"},
+   variants:["500GB","1TB","2TB"],colors:["Beige","Black","Blue"]},
+];
+
+const REVIEWS_DATA = {
+  1:[{name:"Eric M.",rating:5,date:"20 May 2026",title:"Best phone I've ever owned",body:"The camera is absolutely insane. 200MP photos are crystal clear.",verified:true},{name:"Aline K.",rating:5,date:"14 May 2026",title:"Worth every franc",body:"Battery lasts 2 full days. Screen is gorgeous.",verified:true}],
+  2:[{name:"Grace U.",rating:5,date:"18 May 2026",title:"Silent and fast",body:"M3 chip is ridiculously fast and fanless = total silence.",verified:true}],
+  7:[{name:"Omar D.",rating:5,date:"22 May 2026",title:"Best headphones ever",body:"Noise cancellation is unreal. 30hr battery is a game changer.",verified:true}],
+  9:[{name:"Henriette U.",rating:5,date:"25 May 2026",title:"Titanium feels premium",body:"Noticeably lighter. Camera zoom is outstanding.",verified:true},{name:"Jean-Claude N.",rating:4,date:"15 May 2026",title:"Great upgrade",body:"Coming from iPhone 12 this is a huge leap.",verified:false}],
+};
+
+// ── LOAD PRODUCT ──
+// Get fresh products from localStorage (admin-synced), fallback to embedded list
+function getFreshProducts() {
+  try {
+    const stored = localStorage.getItem('fe_products');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch(e) {}
+  return ALL_PRODUCTS;
+}
+
+const urlParams  = new URLSearchParams(window.location.search);
+const productId  = parseInt(urlParams.get('id'));
+const freshProds = getFreshProducts();
+
+// Find product — first in localStorage (admin-managed), then in embedded list
+let product = freshProds.find(p => p.id === productId);
+if (!product) product = ALL_PRODUCTS.find(p => p.id === productId);
+
+if (!product) {
+  document.getElementById('pdNotFound').style.display = 'block';
+} else {
+  document.getElementById('pdWrap').style.display = 'block';
+  populatePage(product);
+}
+
+function populatePage(p) {
+  document.title = p.name + ' — Frank Electronics';
+  document.getElementById('pdBreadcrumbName').textContent = p.name;
+  document.getElementById('pdCat').textContent = p.cat.charAt(0).toUpperCase() + p.cat.slice(1);
+  document.getElementById('pdName').textContent = p.name;
+  document.getElementById('pdMainEmoji').textContent = p.em;
+  document.getElementById('pdPrice').textContent = fmt(p.price);
+  document.getElementById('pdRatingNum').textContent = p.rating;
+  document.getElementById('pdRevCount').textContent = (p.rev||0) + ' reviews';
+  document.getElementById('tabRevCount').textContent = p.rev||0;
+  document.getElementById('reviewBigNum').textContent = p.rating;
+  document.getElementById('reviewBigCount').textContent = (p.rev||0) + ' reviews';
+  document.getElementById('pdDesc').textContent = p.desc || 'No description available.';
+
+  // Stars
+  document.getElementById('pdStars').textContent = '★'.repeat(Math.floor(p.rating)) + '☆'.repeat(5 - Math.floor(p.rating));
+
+  // Badge
+  const badgeEl = document.getElementById('pdBadge');
+  badgeEl.textContent = p.badge ? (p.badge.charAt(0).toUpperCase() + p.badge.slice(1)) : '';
+  badgeEl.className = 'pd-badge-large pd-badge-' + (p.badge||'new');
+
+  // Old price
+  if (p.old) {
+    document.getElementById('pdOldPrice').textContent = fmt(p.old);
+    const pct = Math.round((1 - p.price/p.old)*100);
+    document.getElementById('pdSaving').style.display = '';
+    document.getElementById('pdSaving').textContent = 'You save RWF ' + (p.old - p.price).toLocaleString() + ' (' + pct + '% off)';
+  } else {
+    document.getElementById('pdOldPrice').textContent = '';
+    document.getElementById('pdSaving').style.display = 'none';
+  }
+
+  // Thumbnails
+  document.getElementById('pdThumbnails').innerHTML = [p.em,p.em,p.em,p.em].map((em,i) =>
+    `<div class="pd-thumb ${i===0?'active':''}" onclick="selectThumb(this)">${em}</div>`).join('');
+
+  // Variants
+  if (p.variants && p.variants.length) {
+    document.getElementById('pdVariants').innerHTML = p.variants.map((v,i) =>
+      `<button class="pd-variant-btn ${i===0?'active':''}" onclick="selectVariant(this)">${v}</button>`).join('');
+    document.getElementById('pdVariantsWrap').style.display = '';
+  } else {
+    document.getElementById('pdVariantsWrap').style.display = 'none';
+  }
+
+  // Colors
+  if (p.colors && p.colors.length) {
+    document.getElementById('pdColors').innerHTML = p.colors.map((c,i) =>
+      `<button class="pd-variant-btn ${i===0?'active':''}" onclick="selectVariant(this)">${c}</button>`).join('');
+    document.getElementById('pdColorsWrap').style.display = '';
+  } else {
+    document.getElementById('pdColorsWrap').style.display = 'none';
+  }
+
+  // Specs
+  const specs = p.specs || {};
+  document.getElementById('pdSpecTable').innerHTML = Object.entries(specs).length
+    ? Object.entries(specs).map(([k,v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')
+    : '<tr><td colspan="2" style="color:#aaa;text-align:center;padding:20px">No specifications available</td></tr>';
+
+  // Highlights
+  document.getElementById('pdHighlights').innerHTML = [
+    {icon:'⚡',title:'Top performance',desc:'Industry-leading speed and efficiency'},
+    {icon:'✅',title:'100% Genuine',desc:'Authorised product with full warranty'},
+    {icon:'🚚',title:'Fast delivery',desc:'Nationwide in 48 hours'},
+  ].map(h => `<div style="background:var(--gray-bg);border:1.5px solid var(--gray-b);border-radius:10px;padding:18px;text-align:center">
+    <div style="font-size:28px;margin-bottom:8px">${h.icon}</div>
+    <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:4px">${h.title}</div>
+    <div style="font-size:12px;color:var(--gray-t)">${h.desc}</div></div>`).join('');
+
+  // Reviews
+  const reviews = REVIEWS_DATA[p.id] || [{name:"Frank E.",rating:5,date:"1 May 2026",title:"Excellent product",body:"Very happy with this purchase. Great quality and fast delivery.",verified:true}];
+  document.getElementById('reviewBars').innerHTML = [5,4,3,2,1].map(n => {
+    const count = reviews.filter(r=>r.rating===n).length;
+    const pct   = Math.round(count/reviews.length*100);
+    return `<div class="pd-bar-row"><span class="pd-bar-label">${n} ★</span><div class="pd-bar-track"><div class="pd-bar-fill" style="width:${pct}%"></div></div><span class="pd-bar-count">${count}</span></div>`;
+  }).join('');
+  document.getElementById('reviewList').innerHTML = reviews.map(r => `
+    <div class="pd-review-card">
+      <div class="pd-review-head">
+        <div class="pd-reviewer">
+          <div class="pd-reviewer-avatar">${r.name[0]}</div>
+          <div><div class="pd-reviewer-name">${r.name}</div><div class="pd-reviewer-date">${r.date}</div></div>
+        </div>
+        <span style="color:var(--orange);font-size:13px">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
+      </div>
+      <div class="pd-review-title">${r.title}</div>
+      <div class="pd-review-body">${r.body}</div>
+      ${r.verified?'<div class="pd-verified">✓ Verified purchase</div>':''}
+    </div>`).join('');
+
+  // Related
+  const allProds = getFreshProducts();
+  const related  = allProds.filter(x => x.cat===p.cat && x.id!==p.id).slice(0,4);
+  const showList = related.length ? related : allProds.filter(x=>x.id!==p.id).slice(0,4);
+  document.getElementById('relatedGrid').innerHTML = showList.map(x => `
+    <a href="product.html?id=${x.id}" style="text-decoration:none">
+      <div class="pcard">
+        <div class="pcard-img">
+          <span style="font-size:44px">${x.em}</span>
+          <span class="pbadge pbadge-${x.badge}">${x.badge==='sale'?'Sale':x.badge==='new'?'New':'Hot'}</span>
+        </div>
+        <div class="pcard-body">
+          <div class="pcat">${x.cat}</div>
+          <div class="pname">${x.name}</div>
+          <div class="prating"><span class="pstars">${'★'.repeat(Math.floor(x.rating))}</span><span class="prev"> ${x.rating}</span></div>
+          <div class="pfoot">
+            <div><div class="pprice">${fmt(x.price)}</div>${x.old?`<div class="pold">${fmt(x.old)}</div>`:''}</div>
+            <button class="padd-btn" onclick="event.preventDefault();event.stopPropagation();addToCart('${x.name}',${x.price},'${x.em}')">+</button>
+          </div>
+        </div>
+      </div>
+    </a>`).join('');
+
+  // Wishlist state
+  if (liked && liked.has(p.id)) {
+    document.getElementById('pdWishBtn').classList.add('liked');
+    document.getElementById('pdWishBtn').textContent = '♥';
+  }
+}
+
+// ── ACTIONS ──
+let qty = 1;
+let currentProduct = product;
+
+function changeQty(d) {
+  qty = Math.max(1, Math.min(99, qty + d));
+  document.getElementById('pdQty').value = qty;
+}
+
+function selectThumb(el) {
+  document.querySelectorAll('.pd-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function selectVariant(el) {
+  el.closest('.pd-variant-btns').querySelectorAll('.pd-variant-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function addProductToCart() {
+  if (!currentProduct) return;
+  for (let i = 0; i < qty; i++) {
+    addToCart(currentProduct.name, currentProduct.price, currentProduct.em);
+  }
+  const btn = document.getElementById('pdAddBtn');
+  const orig = btn.textContent;
+  btn.textContent = '✓ Added!';
+  btn.style.background = '#2ecc71';
+  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 2000);
+}
+
+function buyNow() {
+  if (!currentProduct) return;
+  const u = JSON.parse(localStorage.getItem('fe_user') || '{}');
+  if (!u.email) {
+    showToast('Please sign in to checkout');
+    setTimeout(() => window.location.href = 'login.html?next=checkout', 1200);
+    return;
+  }
+  addToCart(currentProduct.name, currentProduct.price, currentProduct.em);
+  setTimeout(() => window.location.href = 'checkout.html', 400);
+}
+
+function toggleProductWish() {
+  if (!currentProduct) return;
+  const btn = document.getElementById('pdWishBtn');
+  if (liked.has(currentProduct.id)) {
+    liked.delete(currentProduct.id);
+    btn.classList.remove('liked');
+    btn.textContent = '♡';
+    showToast('Removed from wishlist');
+  } else {
+    liked.add(currentProduct.id);
+    btn.classList.add('liked');
+    btn.textContent = '♥';
+    showToast('Added to wishlist!');
+  }
+  saveLiked();
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.pd-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.pd-tab-content').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => showToast('Link copied!'));
+}
+</script>
+</body>
+</html>

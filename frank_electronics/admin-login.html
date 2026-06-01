@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin Login — Frank Electronics</title>
+  <link rel="stylesheet" href="auth.css"/>
+  <style>
+    body { background: #0f0f0f; }
+
+    .admin-login-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+      background: #0f0f0f;
+    }
+
+    .admin-login-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+    .admin-login-logo {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      border: 3px solid var(--orange);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; margin-bottom: 14px;
+    }
+    .admin-login-logo img { width: 62px; height: 62px; object-fit: contain; }
+    .admin-login-name { color: #fff; font-size: 20px; font-weight: 800; letter-spacing: .4px; }
+    .admin-login-tag  { color: var(--orange); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-top: 4px; }
+
+    .admin-card {
+      background: #1a1a1a;
+      border: 1.5px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 36px 32px;
+      width: 100%; max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    }
+    .admin-card-header { text-align: center; margin-bottom: 28px; }
+    .admin-card-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--orange);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; margin: 0 auto 14px;
+    }
+    .admin-card-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #fff; letter-spacing: .5px; margin-bottom: 4px; }
+    .admin-card-title span { color: var(--orange); }
+    .admin-card-sub { font-size: 12px; color: #555; }
+
+    /* dark form fields */
+    .admin-card label { color: #666; }
+    .admin-card .form-control {
+      background: #111; border-color: #2a2a2a; color: #fff;
+    }
+    .admin-card .form-control::placeholder { color: #444; }
+    .admin-card .form-control:focus { border-color: var(--orange); background: #0a0a0a; }
+
+    .admin-security-note {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #111; border: 1px solid #2a2a2a; border-radius: 8px;
+      padding: 12px 14px; margin-bottom: 20px;
+      font-size: 11px; color: #555; line-height: 1.5;
+    }
+    .admin-security-note span { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    .admin-back-link {
+      display: block; text-align: center;
+      margin-top: 20px; font-size: 12px; color: #555;
+    }
+    .admin-back-link a { color: var(--orange); font-weight: 600; }
+    .admin-back-link a:hover { text-decoration: underline; }
+
+    .alert-dark-error {
+      background: #1a0000; border: 1.5px solid #3a0000;
+      color: #e74c3c; border-radius: 8px;
+      padding: 10px 14px; font-size: 12px; font-weight: 600;
+      margin-bottom: 16px; display: none;
+    }
+    .alert-dark-error.show { display: block; }
+
+    .admin-footer {
+      margin-top: 24px; font-size: 11px; color: #333; text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-login-page">
+
+  <div class="admin-login-brand">
+    <div class="admin-login-logo">
+      <img src="assets/logo.png" alt="Frank Electronics" onerror="this.style.display='none'"/>
+    </div>
+    <div class="admin-login-name">Frank Electronics</div>
+    <div class="admin-login-tag">Admin Portal</div>
+  </div>
+
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <div class="admin-card-icon">🔒</div>
+      <div class="admin-card-title">Admin <span>Access</span></div>
+      <p class="admin-card-sub">Restricted area — authorised personnel only.</p>
+    </div>
+
+    <div class="admin-security-note">
+      <span>🛡️</span>
+      This area is for store administrators only. All login attempts are logged and monitored.
+    </div>
+
+    <div class="alert-dark-error" id="adminAlert">⚠️ Incorrect admin credentials. Access denied.</div>
+
+    <div class="form-group">
+      <label for="adminEmail">Admin email</label>
+      <div class="input-wrap">
+        <input class="form-control has-icon" id="adminEmail" type="email"
+          placeholder="admin@frankelectronics.rw" oninput="clearAdminError()"
+          onkeydown="if(event.key==='Enter')doAdminLogin()"/>
+        <span class="input-icon">✉️</span>
+      </div>
+      <div class="field-error" id="adminEmail-error">Please enter a valid email.</div>
+    </div>
+
+    <div class="form-group">
+      <label for="adminPw">Admin password</label>
+      <div class="input-wrap">
+        <input class="form-control has-icon" id="adminPw" type="password"
+          placeholder="Enter admin password" oninput="clearAdminError()"
+          onkeydown="if(event.key==='Enter')doAdminLogin()"/>
+        <button class="input-icon" onclick="togglePw()" type="button">👁️</button>
+      </div>
+      <div class="field-error" id="adminPw-error">Password is required.</div>
+    </div>
+
+    <div class="form-group">
+      <label for="adminCode">Admin access code</label>
+      <div class="input-wrap">
+        <input class="form-control has-icon" id="adminCode" type="password"
+          placeholder="6-digit access code" maxlength="6" inputmode="numeric"
+          oninput="clearAdminError()" onkeydown="if(event.key==='Enter')doAdminLogin()"/>
+        <span class="input-icon">🔑</span>
+      </div>
+      <div class="field-error" id="adminCode-error">Access code is required.</div>
+      <div style="font-size:10px;color:#444;margin-top:5px">💡 Demo code: <strong style="color:var(--orange)">000000</strong></div>
+    </div>
+
+    <button class="btn btn-orange" onclick="doAdminLogin()" id="adminLoginBtn">Access admin panel →</button>
+
+    <div class="admin-back-link">
+      Not an admin? <a href="index.html">Go back to the shop</a>
+    </div>
+  </div>
+
+  <div class="admin-footer">© 2026 Frank Electronics · Admin Portal · All access logged</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── DEMO CREDENTIALS ──
+  // Email:    admin@frankelectronics.rw
+  // Password: admin123
+  // Code:     000000
+  // (Change these in your backend when going live)
+
+  function togglePw() {
+    const inp = document.getElementById('adminPw');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }
+
+  function clearAdminError() {
+    document.getElementById('adminAlert').classList.remove('show');
+    ['adminEmail','adminPw','adminCode'].forEach(id => {
+      document.getElementById(id).classList.remove('error');
+      document.getElementById(id+'-error').classList.remove('show');
+    });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function doAdminLogin() {
+    const email = document.getElementById('adminEmail').value.trim();
+    const pw    = document.getElementById('adminPw').value;
+    const code  = document.getElementById('adminCode').value.trim();
+    let valid   = true;
+
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      document.getElementById('adminEmail').classList.add('error');
+      document.getElementById('adminEmail-error').classList.add('show');
+      valid = false;
+    }
+    if (!pw) {
+      document.getElementById('adminPw').classList.add('error');
+      document.getElementById('adminPw-error').classList.add('show');
+      valid = false;
+    }
+    if (!code) {
+      document.getElementById('adminCode').classList.add('error');
+      document.getElementById('adminCode-error').classList.add('show');
+      valid = false;
+    }
+    if (!valid) return;
+
+    const btn = document.getElementById('adminLoginBtn');
+    btn.disabled = true; btn.textContent = 'Verifying...';
+
+    setTimeout(() => {
+      // Demo credentials check
+      const validEmail = email === 'admin@frankelectronics.rw' || email.includes('admin');
+      const validPw    = pw === 'admin123';
+      const validCode  = code === '000000';
+
+      if (validEmail && validPw && validCode) {
+        localStorage.setItem('fe_admin', JSON.stringify({ email, loggedIn: true, time: Date.now() }));
+        showToast('✓ Access granted. Welcome, Admin!');
+        setTimeout(() => window.location.href = 'admin.html', 1000);
+      } else {
+        document.getElementById('adminAlert').classList.add('show');
+        btn.disabled = false; btn.textContent = 'Access admin panel →';
+        // Clear code field
+        document.getElementById('adminCode').value = '';
+      }
+    }, 1200);
+  }
+
+  // Auto-redirect if already logged in as admin
+  const adminSession = JSON.parse(localStorage.getItem('fe_admin') || '{}');
+  if (adminSession.loggedIn && (Date.now() - adminSession.time) < 8 * 60 * 60 * 1000) {
+    window.location.href = 'admin.html';
+  }
+</script>
+</body>
+</html>

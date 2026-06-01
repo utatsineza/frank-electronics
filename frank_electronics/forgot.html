@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Forgot Password — Frank Electronics</title>
+  <link rel="stylesheet" href="auth.css"/>
+</head>
+<body>
+
+<div class="auth-topbar">
+  <a class="auth-brand" href="index.html">
+    <div class="auth-logo">
+      <img src="assets/logo.png" alt="Frank Electronics" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+      <span class="auth-logo-fallback" style="display:none">FE</span>
+    </div>
+    <div>
+      <div class="auth-brand-name">Frank Electronics</div>
+      <div class="auth-brand-tag">Your plug for smart electronics</div>
+    </div>
+  </a>
+  <a class="auth-topbar-link" href="login.html">← <span>Back to login</span></a>
+</div>
+
+<div class="auth-page">
+  <div class="auth-card" id="step1Card">
+
+    <div class="auth-header">
+      <div class="auth-header-icon">🔑</div>
+      <div class="auth-title">Forgot <span>Password?</span></div>
+      <p class="auth-subtitle">No worries! Enter your details below and we'll send you a reset code.</p>
+    </div>
+
+    <div class="alert alert-error" id="forgotAlert"></div>
+
+    <!-- SEND METHOD TABS -->
+    <div class="form-group">
+      <label>Reset via</label>
+      <div class="otp-method-tabs">
+        <button class="otp-tab active" onclick="setResetMethod('both', this)">📱 + ✉️ Both</button>
+        <button class="otp-tab" onclick="setResetMethod('sms', this)">📱 SMS</button>
+        <button class="otp-tab" onclick="setResetMethod('email', this)">✉️ Email</button>
+      </div>
+    </div>
+
+    <!-- EMAIL FIELD -->
+    <div class="form-group" id="emailGroup">
+      <label for="resetEmail">Email address</label>
+      <div class="input-wrap">
+        <input class="form-control has-icon" id="resetEmail" type="email" placeholder="jean@example.com" oninput="clearForgotError()"/>
+        <span class="input-icon">✉️</span>
+      </div>
+      <div class="field-error" id="email-error">Please enter a valid email address.</div>
+    </div>
+
+    <!-- PHONE FIELD -->
+    <div class="form-group" id="phoneGroup">
+      <label for="resetPhone">Phone number</label>
+      <div class="input-wrap">
+        <input class="form-control has-icon" id="resetPhone" type="tel" placeholder="+250 7XX XXX XXX" oninput="clearForgotError()"/>
+        <span class="input-icon">📱</span>
+      </div>
+      <div class="field-error" id="phone-error">Please enter a valid phone number.</div>
+    </div>
+
+    <button class="btn btn-orange" onclick="sendReset()" id="sendBtn">Send reset code →</button>
+
+    <div class="auth-bottom">
+      Remember your password? <a href="login.html">Sign in →</a>
+    </div>
+  </div>
+
+  <!-- SUCCESS STATE -->
+  <div class="auth-card" id="step2Card" style="display:none">
+    <div class="auth-header">
+      <div class="auth-header-icon" style="background:var(--green)">✅</div>
+      <div class="auth-title">Code <span>Sent!</span></div>
+      <p class="auth-subtitle" id="sentMsg">We sent a 6-digit reset code to your phone and email.</p>
+    </div>
+
+    <div style="background:var(--gray-bg);border:1.5px solid var(--gray-b);border-radius:10px;padding:20px;text-align:center;margin-bottom:24px">
+      <div style="font-size:36px;margin-bottom:8px" id="sentIcon">📱 + ✉️</div>
+      <div style="font-size:13px;font-weight:700;color:var(--black)" id="sentDest">Phone & Email</div>
+      <div style="font-size:11px;color:var(--gray-t);margin-top:4px">Check your messages</div>
+    </div>
+
+    <a href="otp.html?action=forgot&method=both" class="btn btn-orange" id="goOtpBtn">Enter the code →</a>
+
+    <div class="resend-row" style="margin-top:16px">
+      Didn't receive it?
+      <button class="resend-btn" onclick="resendReset()">Resend</button>
+    </div>
+
+    <div class="auth-bottom"><a href="login.html">← Back to login</a></div>
+  </div>
+</div>
+
+<div class="auth-footer">© 2026 Frank Electronics · <a href="contact.html">Support</a></div>
+<div class="toast" id="toast"></div>
+
+<script>
+let resetMethod = 'both';
+
+function setResetMethod(m, btn) {
+  resetMethod = m;
+  document.querySelectorAll('.otp-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const emailGrp = document.getElementById('emailGroup');
+  const phoneGrp = document.getElementById('phoneGroup');
+  if (m === 'email') { emailGrp.style.display='block'; phoneGrp.style.display='none'; }
+  else if (m === 'sms') { emailGrp.style.display='none'; phoneGrp.style.display='block'; }
+  else { emailGrp.style.display='block'; phoneGrp.style.display='block'; }
+}
+
+function clearForgotError() {
+  document.getElementById('forgotAlert').classList.remove('show');
+  ['email','phone'].forEach(f => {
+    document.getElementById('reset'+f.charAt(0).toUpperCase()+f.slice(1))?.classList.remove('error');
+    document.getElementById(f+'-error')?.classList.remove('show');
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function sendReset() {
+  const email = document.getElementById('resetEmail')?.value.trim();
+  const phone = document.getElementById('resetPhone')?.value.trim();
+  let valid   = true;
+
+  if ((resetMethod === 'email' || resetMethod === 'both') && (!email || !/\S+@\S+\.\S+/.test(email))) {
+    document.getElementById('resetEmail').classList.add('error');
+    document.getElementById('email-error').classList.add('show');
+    valid = false;
+  }
+  if ((resetMethod === 'sms' || resetMethod === 'both') && (!phone || phone.length < 10)) {
+    document.getElementById('resetPhone').classList.add('error');
+    document.getElementById('phone-error').classList.add('show');
+    valid = false;
+  }
+  if (!valid) return;
+
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true; btn.textContent = 'Sending...';
+
+  setTimeout(() => {
+    // Update step 2 UI
+    const icons = { both: '📱 + ✉️', sms: '📱', email: '✉️' };
+    const dests = {
+      both:  (phone || '+250 7XX') + ' & ' + (email || 'your email'),
+      sms:   phone || '+250 7XX XXX XXX',
+      email: email || 'your email',
+    };
+    document.getElementById('sentIcon').textContent = icons[resetMethod];
+    document.getElementById('sentDest').textContent = dests[resetMethod];
+    const msgs = {
+      both:  'We sent a 6-digit reset code to your phone and email.',
+      sms:   'We sent a 6-digit reset code via SMS to your phone.',
+      email: 'We sent a 6-digit reset code to your email address.',
+    };
+    document.getElementById('sentMsg').textContent = msgs[resetMethod];
+    document.getElementById('goOtpBtn').href = 'otp.html?action=forgot&method=' + resetMethod;
+
+    document.getElementById('step1Card').style.display = 'none';
+    document.getElementById('step2Card').style.display = 'block';
+  }, 1400);
+}
+
+function resendReset() {
+  showToast('New reset code sent!');
+}
+</script>
+</body>
+</html>

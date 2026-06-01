@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin Panel — Frank Electronics</title>
+  <link rel="stylesheet" href="auth.css"/>
+  <style>
+    body{background:#0f0f0f;color:#f0f0f0}
+    /* ── ADMIN LAYOUT ── */
+    .admin-wrap{display:flex;min-height:calc(100vh - 58px)}
+
+    /* SIDEBAR */
+    .admin-sidebar{width:220px;flex-shrink:0;background:#1a1a1a;border-right:1px solid #2a2a2a;padding:20px 0;position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto}
+    .admin-sidebar-logo{padding:0 18px 18px;border-bottom:1px solid #2a2a2a;margin-bottom:12px;text-align:center}
+    .admin-sidebar-logo img{width:52px;height:52px;object-fit:contain;border-radius:50%;background:#fff;border:2px solid var(--orange);padding:4px;margin:0 auto 8px}
+    .admin-sidebar-title{font-size:11px;color:var(--orange);font-weight:700;text-transform:uppercase;letter-spacing:1.5px}
+    .admin-sidebar-sub{font-size:10px;color:#555;margin-top:2px}
+    .admin-nav-section{font-size:9px;color:#444;text-transform:uppercase;letter-spacing:2px;font-weight:700;padding:14px 18px 6px}
+    .admin-nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;cursor:pointer;border-left:3px solid transparent;transition:all .15s;font-size:13px;color:#777}
+    .admin-nav-item:hover{background:#222;border-left-color:var(--orange);color:#fff}
+    .admin-nav-item.active{background:var(--orange);border-left-color:var(--orange);color:#fff;font-weight:700}
+    .admin-nav-icon{font-size:16px;width:20px;text-align:center}
+    .admin-nav-badge{margin-left:auto;background:#333;color:#888;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px}
+    .admin-nav-item.active .admin-nav-badge{background:rgba(255,255,255,.2);color:#fff}
+
+    /* MAIN */
+    .admin-main{flex:1;padding:24px;overflow-x:hidden;background:#0f0f0f}
+
+    /* TOPBAR */
+    .admin-topbar-inner{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+    .admin-page-title{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;letter-spacing:.5px}
+    .admin-page-title span{color:var(--orange)}
+    .admin-topbar-actions{display:flex;gap:10px;align-items:center}
+
+    /* STAT CARDS */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+    .stat-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:20px;border-top:3px solid var(--orange)}
+    .stat-card-val{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--orange);letter-spacing:1px}
+    .stat-card-lbl{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.8px;margin-top:4px}
+    .stat-card-change{font-size:11px;color:#2ecc71;margin-top:6px;font-weight:600}
+
+    /* TABLES */
+    .admin-card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden;margin-bottom:20px}
+    .admin-card-head{padding:16px 20px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between}
+    .admin-card-title{font-size:14px;font-weight:800;color:#fff}
+    .admin-card-sub{font-size:11px;color:#666;margin-top:2px}
+    .admin-table{width:100%;border-collapse:collapse}
+    .admin-table th{padding:12px 16px;text-align:left;font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1px;font-weight:700;border-bottom:1px solid #222;background:#141414}
+    .admin-table td{padding:13px 16px;font-size:13px;color:#ccc;border-bottom:1px solid #1e1e1e;vertical-align:middle}
+    .admin-table tr:last-child td{border-bottom:none}
+    .admin-table tr:hover td{background:#1e1e1e}
+    .tbl-em{font-size:28px;margin-right:8px}
+    .tbl-name{font-weight:700;color:#fff}
+    .tbl-cat{font-size:10px;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+    .tbl-price{font-weight:800;color:var(--orange)}
+    .tbl-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.3px;display:inline-block}
+    .badge-sale{background:#2a1a00;color:var(--orange);border:1px solid #3a2a00}
+    .badge-new{background:#002a0a;color:#2ecc71;border:1px solid #003a10}
+    .badge-hot{background:#2a0000;color:#e74c3c;border:1px solid #3a0000}
+    .tbl-actions{display:flex;gap:6px}
+    .tbl-btn{border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+    .tbl-btn-edit{background:rgba(255,98,0,.15);color:var(--orange);border:1.5px solid var(--orange)}
+    .tbl-btn-edit:hover{background:var(--orange);color:#fff}
+    .tbl-btn-del{background:rgba(231,76,60,.15);color:#e74c3c;border:1.5px solid #e74c3c}
+    .tbl-btn-del:hover{background:#e74c3c;color:#fff}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:fadeUp .25s ease}
+    @keyframes fadeUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .modal-title{font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fff;letter-spacing:.5px;margin-bottom:20px}
+    .modal-title span{color:var(--orange)}
+    .modal label{color:#888}
+    .modal .form-control{background:#111;border-color:#333;color:#fff}
+    .modal .form-control::placeholder{color:#444}
+    .modal .form-control:focus{border-color:var(--orange);background:#0a0a0a}
+    .modal select.form-control option{background:#1a1a1a}
+    .modal-footer{display:flex;gap:10px;margin-top:20px}
+    .modal-footer .btn{flex:1}
+
+    /* SEARCH & FILTER ROW */
+    .filter-row{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+    .admin-search{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:7px;padding:8px 14px;color:#fff;font-size:13px;font-family:inherit;width:220px}
+    .admin-search::placeholder{color:#555}
+    .admin-search:focus{outline:none;border-color:var(--orange)}
+    .filter-select{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:7px;padding:8px 12px;color:#ccc;font-size:12px;font-family:inherit;cursor:pointer}
+    .filter-select:focus{outline:none;border-color:var(--orange)}
+
+    /* ORDER STATUS */
+    .os-delivered{background:#002a0a;color:#2ecc71;border:1px solid #003a10;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;display:inline-block}
+    .os-transit{background:#2a1a00;color:#f39c12;border:1px solid #3a2500;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;display:inline-block}
+    .os-pending{background:#222;color:#777;border:1px solid #2a2a2a;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;display:inline-block}
+
+    /* EMPTY STATE */
+    .empty-state{text-align:center;padding:48px;color:#444}
+    .empty-state-icon{font-size:48px;margin-bottom:12px;opacity:.4}
+
+    @media(max-width:900px){.stats-grid{grid-template-columns:1fr 1fr}.admin-sidebar{display:none}}
+    @media(max-width:640px){.stats-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<script>
+  // Block access if not logged in as admin
+  (function(){
+    const a = JSON.parse(localStorage.getItem('fe_admin') || '{}');
+    const u = JSON.parse(localStorage.getItem('fe_user') || '{}');
+    const ADMIN_EMAILS = ['admin@frankelectronics.rw','frank@frankelectronics.rw','manager@frankelectronics.rw'];
+    const emailLower   = (u.email || '').toLowerCase();
+    const userIsAdmin  = ADMIN_EMAILS.includes(emailLower);
+    if (userIsAdmin) {
+      // Always grant/refresh admin session for admin-email users
+      localStorage.setItem('fe_admin', JSON.stringify({ email: u.email, loggedIn: true, time: Date.now() }));
+    } else if (!a.loggedIn || (Date.now() - a.time) > 8 * 60 * 60 * 1000) {
+      window.location.replace('login.html');
+    }
+  })();
+</script>
+
+<!-- TOP BAR -->
+<div class="auth-topbar">
+  <a class="auth-brand" href="index.html">
+    <div class="auth-logo">
+      <img src="assets/logo.png" alt="Frank Electronics" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+      <span class="auth-logo-fallback" style="display:none">FE</span>
+    </div>
+    <div>
+      <div class="auth-brand-name">Frank Electronics</div>
+      <div class="auth-brand-tag">Admin Panel</div>
+    </div>
+  </a>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span style="font-size:12px;color:#555">Logged in as <strong style="color:var(--orange)">Admin</strong></span>
+    <a href="index.html" class="btn btn-outline btn-sm" style="width:auto;color:var(--orange);border-color:var(--orange)">View shop →</a>
+    <button class="btn btn-sm" style="background:#e74c3c;color:#fff;border:none;width:auto" onclick="adminLogout()">Sign out</button>
+  </div>
+</div>
+
+<div class="admin-wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-logo">
+      <img src="assets/logo.png" alt="logo" onerror="this.style.display='none'"/>
+      <div class="admin-sidebar-title">Admin Panel</div>
+      <div class="admin-sidebar-sub">Frank Electronics</div>
+    </div>
+
+    <div class="admin-nav-section">Main</div>
+    <div class="admin-nav-item active" onclick="showSection('dashboard',this)">
+      <span class="admin-nav-icon">📊</span> Dashboard
+    </div>
+
+    <div class="admin-nav-section">Catalogue</div>
+    <div class="admin-nav-item" onclick="showSection('products',this)">
+      <span class="admin-nav-icon">📦</span> Products
+      <span class="admin-nav-badge" id="prodCount">12</span>
+    </div>
+    <div class="admin-nav-item" onclick="showSection('categories',this)">
+      <span class="admin-nav-icon">🏷️</span> Categories
+    </div>
+
+    <div class="admin-nav-section">Sales</div>
+    <div class="admin-nav-item" onclick="showSection('orders',this)">
+      <span class="admin-nav-icon">🛒</span> Orders
+      <span class="admin-nav-badge" id="orderCount">3</span>
+    </div>
+    <div class="admin-nav-item" onclick="showSection('customers',this)">
+      <span class="admin-nav-icon">👥</span> Customers
+    </div>
+
+    <div class="admin-nav-section">Settings</div>
+    <div class="admin-nav-item" onclick="showSection('settings',this)">
+      <span class="admin-nav-icon">⚙️</span> Site settings
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div id="sec-dashboard">
+      <div class="admin-topbar-inner">
+        <div>
+          <div class="admin-page-title">Dashboard <span>Overview</span></div>
+          <div style="font-size:12px;color:#555;margin-top:2px">Welcome back, Admin 👋</div>
+        </div>
+        <div class="admin-topbar-actions">
+          <button class="btn btn-orange btn-sm" style="width:auto" onclick="showSection('products',null);openProductModal()">+ Add product</button>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-val" id="statProducts">12</div>
+          <div class="stat-card-lbl">Total products</div>
+          <div class="stat-card-change">↑ 2 this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-val">3</div>
+          <div class="stat-card-lbl">Orders today</div>
+          <div class="stat-card-change">↑ 50% vs yesterday</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-val">12K+</div>
+          <div class="stat-card-lbl">Total customers</div>
+          <div class="stat-card-change">↑ 120 this month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-val">48h</div>
+          <div class="stat-card-lbl">Avg delivery</div>
+          <div class="stat-card-change">✓ On target</div>
+        </div>
+      </div>
+
+      <!-- RECENT ORDERS -->
+      <div class="admin-card">
+        <div class="admin-card-head">
+          <div>
+            <div class="admin-card-title">Recent Orders</div>
+            <div class="admin-card-sub">Latest customer purchases</div>
+          </div>
+          <button class="tbl-btn tbl-btn-edit" onclick="showSection('orders',null)">View all →</button>
+        </div>
+        <table class="admin-table">
+          <thead><tr><th>Order ref</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th></tr></thead>
+          <tbody id="dashOrders"></tbody>
+        </table>
+      </div>
+
+      <!-- TOP PRODUCTS -->
+      <div class="admin-card">
+        <div class="admin-card-head">
+          <div>
+            <div class="admin-card-title">Top Products</div>
+            <div class="admin-card-sub">Best selling items</div>
+          </div>
+          <button class="tbl-btn tbl-btn-edit" onclick="showSection('products',null)">Manage →</button>
+        </div>
+        <table class="admin-table">
+          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Badge</th></tr></thead>
+          <tbody id="dashProducts"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ PRODUCTS ═══ -->
+    <div id="sec-products" style="display:none">
+      <div class="admin-topbar-inner">
+        <div>
+          <div class="admin-page-title">Manage <span>Products</span></div>
+          <div style="font-size:12px;color:#555;margin-top:2px" id="prodSubtitle">12 products in catalogue</div>
+        </div>
+        <button class="btn btn-orange btn-sm" style="width:auto" onclick="openProductModal()">+ Add product</button>
+      </div>
+
+      <div class="filter-row">
+        <input class="admin-search" id="prodSearch" type="text" placeholder="Search products..." oninput="renderProductTable()"/>
+        <select class="filter-select" id="prodCatFilter" onchange="renderProductTable()">
+          <option value="">All categories</option>
+          <option value="phones">Phones</option>
+          <option value="laptops">Laptops</option>
+          <option value="audio">Audio</option>
+          <option value="tv">TVs</option>
+          <option value="accessories">Accessories</option>
+        </select>
+        <select class="filter-select" id="prodBadgeFilter" onchange="renderProductTable()">
+          <option value="">All badges</option>
+          <option value="sale">Sale</option>
+          <option value="new">New</option>
+          <option value="hot">Hot</option>
+        </select>
+      </div>
+
+      <div class="admin-card">
+        <table class="admin-table">
+          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Old price</th><th>Badge</th><th>Rating</th><th>Actions</th></tr></thead>
+          <tbody id="productTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ CATEGORIES ═══ -->
+    <div id="sec-categories" style="display:none">
+      <div class="admin-page-title" style="margin-bottom:20px">Manage <span style="color:var(--orange)">Categories</span></div>
+      <div class="admin-card">
+        <div class="admin-card-head">
+          <div class="admin-card-title">Product Categories</div>
+          <button class="tbl-btn tbl-btn-edit" onclick="showToast('Category editor coming soon!')">+ Add category</button>
+        </div>
+        <table class="admin-table">
+          <thead><tr><th>Icon</th><th>Category</th><th>Products</th><th>Actions</th></tr></thead>
+          <tbody id="catTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ ORDERS ═══ -->
+    <div id="sec-orders" style="display:none">
+      <div class="admin-page-title" style="margin-bottom:20px">Manage <span style="color:var(--orange)">Orders</span></div>
+      <div class="admin-card">
+        <div class="admin-card-head">
+          <div class="admin-card-title">All Orders</div>
+          <select class="filter-select" onchange="renderOrders(this.value)">
+            <option value="">All statuses</option>
+            <option value="delivered">Delivered</option>
+            <option value="transit">In transit</option>
+            <option value="pending">Pending</option>
+          </select>
+        </div>
+        <table class="admin-table">
+          <thead><tr><th>Ref</th><th>Customer</th><th>Items</th><th>Total</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="ordersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ CUSTOMERS ═══ -->
+    <div id="sec-customers" style="display:none">
+      <div class="admin-page-title" style="margin-bottom:20px">Manage <span style="color:var(--orange)">Customers</span></div>
+      <div class="admin-card">
+        <div class="admin-card-head"><div class="admin-card-title">Registered customers</div></div>
+        <div id="customersBody" style="padding:16px 20px"></div>
+      </div>
+    </div>
+
+    <!-- ═══ SETTINGS ═══ -->
+    <div id="sec-settings" style="display:none">
+      <div class="admin-page-title" style="margin-bottom:20px">Site <span style="color:var(--orange)">Settings</span></div>
+      <div class="admin-card" style="padding:28px">
+        <div class="admin-card-title" style="margin-bottom:20px">Store Information</div>
+        <div class="form-group"><label style="color:#888">Store name</label><input class="form-control" style="background:#111;border-color:#333;color:#fff" value="Frank Electronics"/></div>
+        <div class="form-group"><label style="color:#888">Tagline</label><input class="form-control" style="background:#111;border-color:#333;color:#fff" value="Your plug for smart electronics"/></div>
+        <div class="form-group"><label style="color:#888">Phone</label><input class="form-control" style="background:#111;border-color:#333;color:#fff" value="+250 788 000 000"/></div>
+        <div class="form-group"><label style="color:#888">Email</label><input class="form-control" style="background:#111;border-color:#333;color:#fff" value="info@frankelectronics.rw"/></div>
+        <div class="form-group"><label style="color:#888">Address</label><input class="form-control" style="background:#111;border-color:#333;color:#fff" value="KG 7 Ave, Kiyovu, Kigali"/></div>
+        <div class="form-group"><label style="color:#888">Active discount code</label><input class="form-control" style="background:#111;border-color:#333;color:#fff" value="FRANK30"/></div>
+        <button class="btn btn-orange" style="width:auto;padding:10px 24px" onclick="showToast('✓ Settings saved!')">Save settings</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ADD / EDIT PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Add <span>Product</span></div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Product name *</label>
+        <input class="form-control" id="mName" type="text" placeholder="e.g. Samsung Galaxy S25"/>
+      </div>
+      <div class="form-group">
+        <label>Category *</label>
+        <select class="form-control" id="mCat">
+          <option value="">Select category</option>
+          <option value="phones">Phones & tablets</option>
+          <option value="laptops">Laptops</option>
+          <option value="audio">Audio</option>
+          <option value="tv">TVs & displays</option>
+          <option value="accessories">Accessories</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea class="form-control" id="mDesc" rows="2" placeholder="Short product description..."></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Price (RWF) *</label>
+        <input class="form-control" id="mPrice" type="number" placeholder="e.g. 1500000"/>
+      </div>
+      <div class="form-group">
+        <label>Old price (RWF) — optional</label>
+        <input class="form-control" id="mOld" type="number" placeholder="e.g. 1800000"/>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Emoji icon</label>
+        <input class="form-control" id="mEm" type="text" placeholder="e.g. 📱" maxlength="4"/>
+      </div>
+      <div class="form-group">
+        <label>Badge</label>
+        <select class="form-control" id="mBadge">
+          <option value="new">New</option>
+          <option value="sale">Sale</option>
+          <option value="hot">Hot</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Rating (0–5)</label>
+        <input class="form-control" id="mRating" type="number" step="0.1" min="0" max="5" placeholder="e.g. 4.8"/>
+      </div>
+      <div class="form-group">
+        <label>Number of reviews</label>
+        <input class="form-control" id="mRev" type="number" placeholder="e.g. 120"/>
+      </div>
+    </div>
+
+    <div class="alert alert-error" id="modalAlert" style="background:#1a0000;border-color:#3a0000;color:#e74c3c"></div>
+
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeProductModal()" style="color:#888;border-color:#333">Cancel</button>
+      <button class="btn btn-orange" onclick="saveProduct()" id="saveProductBtn">Save product</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DEFAULT PRODUCTS (same as app.js) ──
+const DEFAULT_PRODUCTS = [
+  {id:1,  name:"Samsung Galaxy S24 Ultra",   cat:"phones",      em:"📱", price:2200000, old:2500000,  badge:"sale", rating:4.8, rev:234, desc:"Flagship Android with 200MP camera and S-Pen."},
+  {id:2,  name:"MacBook Air M3",             cat:"laptops",     em:"💻", price:3100000, old:null,     badge:"new",  rating:4.9, rev:89,  desc:"Apple M3 chip, all-day battery, ultra-thin."},
+  {id:3,  name:"AirPods Pro 2nd Gen",        cat:"audio",       em:"🎵", price:380000,  old:450000,   badge:"sale", rating:4.7, rev:412, desc:"ANC, Adaptive Audio, 30hrs battery."},
+  {id:4,  name:'Samsung 65" QLED TV',        cat:"tv",          em:"📺", price:1850000, old:null,     badge:"hot",  rating:4.6, rev:67,  desc:"Quantum Dot, Smart TV, Netflix & YouTube."},
+  {id:5,  name:'iPad Pro 12.9"',             cat:"phones",      em:"📲", price:1650000, old:1800000,  badge:"sale", rating:4.8, rev:155, desc:"M2 chip, Liquid Retina XDR display."},
+  {id:6,  name:"Logitech MX Master 3",       cat:"accessories", em:"🖱️", price:145000,  old:null,     badge:"new",  rating:4.7, rev:320, desc:"Advanced wireless mouse, 70-day battery."},
+  {id:7,  name:"Sony WH-1000XM5",            cat:"audio",       em:"🎧", price:420000,  old:520000,   badge:"sale", rating:4.9, rev:530, desc:"Industry-leading noise cancellation."},
+  {id:8,  name:"Dell XPS 15",                cat:"laptops",     em:"💻", price:2800000, old:3100000,  badge:"sale", rating:4.7, rev:112, desc:"OLED display, RTX 4060, Core i7."},
+  {id:9,  name:"iPhone 15 Pro",              cat:"phones",      em:"📱", price:1850000, old:null,     badge:"hot",  rating:4.9, rev:780, desc:"Titanium, A17 Pro, 48MP 5× zoom."},
+  {id:10, name:"Xiaomi 65\" Smart TV",       cat:"tv",          em:"📺", price:980000,  old:1200000,  badge:"sale", rating:4.5, rev:89,  desc:"4K UHD, Android TV, Dolby Vision."},
+  {id:11, name:"JBL Charge 5",               cat:"audio",       em:"🔊", price:195000,  old:240000,   badge:"sale", rating:4.6, rev:204, desc:"IP67 waterproof, 20hr playtime."},
+  {id:12, name:"Samsung T7 SSD 1TB",         cat:"accessories", em:"💾", price:125000,  old:null,     badge:"new",  rating:4.8, rev:167, desc:"1050MB/s, USB-C, password protection."},
+];
+
+const ORDERS = [
+  {ref:'FE-384712',customer:'Jean Mugisha',    phone:'+250 788 111',items:'iPhone 15 Pro, AirPods Pro',total:2230000,date:'22 May 2026',status:'delivered'},
+  {ref:'FE-291048',customer:'Marie Uwase',     phone:'+250 788 222',items:'MacBook Air M3',            total:3100000,date:'10 May 2026',status:'delivered'},
+  {ref:'FE-503821',customer:'Eric Nkurunziza', phone:'+250 788 333',items:'Sony WH-1000XM5',           total:420000, date:'28 May 2026',status:'transit'},
+];
+
+const CATS = [
+  {icon:'📱',name:'Phones & tablets',key:'phones'},
+  {icon:'💻',name:'Laptops',key:'laptops'},
+  {icon:'🎧',name:'Audio',key:'audio'},
+  {icon:'📺',name:'TVs & displays',key:'tv'},
+  {icon:'🔌',name:'Accessories',key:'accessories'},
+];
+
+// Load or init products
+let products = JSON.parse(localStorage.getItem('fe_products') || 'null') || DEFAULT_PRODUCTS;
+let editingId = null;
+
+function saveProducts() {
+  // Save to shared localStorage — syncs to ALL user-facing pages on next load
+  const json = JSON.stringify(products);
+  localStorage.setItem('fe_products', json);
+  // Also trigger a timestamp so pages can detect changes
+  localStorage.setItem('fe_products_updated', Date.now().toString());
+  const badge = document.getElementById('prodCount');
+  const stat  = document.getElementById('statProducts');
+  const sub   = document.getElementById('prodSubtitle');
+  if (badge) badge.textContent = products.length;
+  if (stat)  stat.textContent  = products.length;
+  if (sub)   sub.textContent   = products.length + ' products in catalogue';
+}
+
+// ── SECTIONS ──
+function showSection(sec, navEl) {
+  document.querySelectorAll('[id^="sec-"]').forEach(s => s.style.display='none');
+  document.getElementById('sec-'+sec).style.display='block';
+  if (navEl) {
+    document.querySelectorAll('.admin-nav-item').forEach(n => n.classList.remove('active'));
+    navEl.classList.add('active');
+  }
+  if (sec==='products')   renderProductTable();
+  if (sec==='dashboard')  renderDashboard();
+  if (sec==='orders')     renderOrders('');
+  if (sec==='categories') renderCategories();
+  if (sec==='customers')  renderCustomers();
+}
+
+// ── DASHBOARD ──
+function renderDashboard() {
+  // orders
+  document.getElementById('dashOrders').innerHTML = ORDERS.slice(0,3).map(o=>`
+    <tr>
+      <td><strong style="color:var(--orange)">${o.ref}</strong></td>
+      <td>${o.customer}</td>
+      <td style="color:#888;font-size:12px">${o.items}</td>
+      <td class="tbl-price">RWF ${o.total.toLocaleString()}</td>
+      <td><span class="os-${o.status}">${o.status==='delivered'?'Delivered':o.status==='transit'?'In transit':'Pending'}</span></td>
+    </tr>`).join('');
+  // products
+  document.getElementById('dashProducts').innerHTML = products.slice(0,5).map(p=>`
+    <tr>
+      <td><span class="tbl-em">${p.em}</span><span class="tbl-name">${p.name}</span></td>
+      <td><span style="font-size:11px;color:var(--orange);text-transform:uppercase;letter-spacing:.5px">${p.cat}</span></td>
+      <td class="tbl-price">RWF ${p.price.toLocaleString()}</td>
+      <td><span class="tbl-badge badge-${p.badge}">${p.badge}</span></td>
+    </tr>`).join('');
+}
+
+// ── PRODUCT TABLE ──
+function renderProductTable() {
+  const q    = (document.getElementById('prodSearch')?.value||'').toLowerCase();
+  const cat  = document.getElementById('prodCatFilter')?.value||'';
+  const bdg  = document.getElementById('prodBadgeFilter')?.value||'';
+  let list   = products.filter(p =>
+    (!q   || p.name.toLowerCase().includes(q)) &&
+    (!cat || p.cat===cat) &&
+    (!bdg || p.badge===bdg)
+  );
+  const tbody = document.getElementById('productTableBody');
+  if (!list.length) {
+    tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📦</div>No products found</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(p=>`
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:26px">${p.em}</span>
+          <div><div class="tbl-name">${p.name}</div><div class="tbl-cat">${p.cat}</div></div>
+        </div>
+      </td>
+      <td><span style="font-size:11px;color:var(--orange);text-transform:uppercase;letter-spacing:.5px">${p.cat}</span></td>
+      <td class="tbl-price">RWF ${p.price.toLocaleString()}</td>
+      <td style="color:#555;font-size:12px">${p.old?'RWF '+p.old.toLocaleString():'—'}</td>
+      <td><span class="tbl-badge badge-${p.badge}">${p.badge}</span></td>
+      <td style="color:#f1c40f">★ ${p.rating} <span style="color:#555">(${p.rev})</span></td>
+      <td>
+        <div class="tbl-actions" style="display:flex;gap:6px">
+          <button class="tbl-btn tbl-btn-edit" onclick="event.stopPropagation();openEditModal(${p.id})">✏️ Edit</button>
+          <button class="tbl-btn tbl-btn-del"  onclick="event.stopPropagation();deleteProduct(${p.id})">🗑️ Del</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+// ── CATEGORIES ──
+function renderCategories() {
+  document.getElementById('catTableBody').innerHTML = CATS.map(c=>`
+    <tr>
+      <td style="font-size:24px">${c.icon}</td>
+      <td class="tbl-name">${c.name}</td>
+      <td style="color:var(--orange);font-weight:700">${products.filter(p=>p.cat===c.key).length}</td>
+      <td><div class="tbl-actions">
+        <button class="tbl-btn tbl-btn-edit" onclick="showToast('Edit coming soon!')">Edit</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+// ── ORDERS ──
+function renderOrders(filter) {
+  const list = filter ? ORDERS.filter(o=>o.status===filter) : ORDERS;
+  document.getElementById('ordersTableBody').innerHTML = list.map(o=>`
+    <tr>
+      <td><strong style="color:var(--orange)">${o.ref}</strong></td>
+      <td><div style="font-weight:700;color:#fff">${o.customer}</div><div style="font-size:11px;color:#555">${o.phone}</div></td>
+      <td style="font-size:12px;color:#888;max-width:160px">${o.items}</td>
+      <td class="tbl-price">RWF ${o.total.toLocaleString()}</td>
+      <td style="font-size:12px;color:#666">${o.date}</td>
+      <td><span class="os-${o.status}">${o.status==='delivered'?'Delivered':o.status==='transit'?'In transit':'Pending'}</span></td>
+      <td>
+        <select class="filter-select" style="font-size:11px;padding:4px 8px" onchange="updateOrderStatus('${o.ref}',this.value)">
+          <option ${o.status==='pending'?'selected':''} value="pending">Pending</option>
+          <option ${o.status==='transit'?'selected':''} value="transit">In transit</option>
+          <option ${o.status==='delivered'?'selected':''} value="delivered">Delivered</option>
+        </select>
+      </td>
+    </tr>`).join('');
+}
+
+function updateOrderStatus(ref, status) {
+  const o = ORDERS.find(o=>o.ref===ref);
+  if (o) { o.status=status; showToast('Order '+ref+' updated to '+status); renderOrders(''); }
+}
+
+// ── CUSTOMERS ──
+function renderCustomers() {
+  const u = JSON.parse(localStorage.getItem('fe_user')||'{}');
+  const el = document.getElementById('customersBody');
+  if (!u.email) { el.innerHTML='<p style="color:#555;font-size:13px">No registered customers yet.</p>'; return; }
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #222">
+      <div style="width:44px;height:44px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0">
+        ${(u.avatar||u.name?.[0]||'?')}
+      </div>
+      <div style="flex:1">
+        <div style="font-weight:700;color:#fff">${u.name||'Unknown'}</div>
+        <div style="font-size:12px;color:#666">${u.email||''} · ${u.phone||'No phone'}</div>
+        <div style="font-size:11px;color:#555;margin-top:2px">${u.province||''} ${u.district?'· '+u.district:''}</div>
+      </div>
+      <span style="font-size:10px;background:#002a0a;color:#2ecc71;border:1px solid #003a10;padding:3px 10px;border-radius:20px;font-weight:700">Active</span>
+    </div>
+    <p style="font-size:12px;color:#555;margin-top:14px">More customers will appear here as they register on the website.</p>`;
+}
+
+// ── ADD / EDIT PRODUCT MODAL ──
+function openProductModal() {
+  editingId = null;
+  document.getElementById('modalTitle').innerHTML = 'Add <span>Product</span>';
+  ['mName','mDesc','mPrice','mOld','mEm','mRating','mRev'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('mCat').value   = '';
+  document.getElementById('mBadge').value = 'new';
+  document.getElementById('modalAlert').classList.remove('show');
+  document.getElementById('productModal').classList.add('open');
+  document.getElementById('mName').focus();
+}
+
+function openEditModal(id) {
+  const p = products.find(p=>p.id===id);
+  if (!p) return;
+  editingId = id;
+  document.getElementById('modalTitle').innerHTML = 'Edit <span>Product</span>';
+  document.getElementById('mName').value   = p.name;
+  document.getElementById('mCat').value    = p.cat;
+  document.getElementById('mDesc').value   = p.desc||'';
+  document.getElementById('mPrice').value  = p.price;
+  document.getElementById('mOld').value    = p.old||'';
+  document.getElementById('mEm').value     = p.em;
+  document.getElementById('mBadge').value  = p.badge;
+  document.getElementById('mRating').value = p.rating;
+  document.getElementById('mRev').value    = p.rev;
+  document.getElementById('modalAlert').classList.remove('show');
+  document.getElementById('productModal').classList.add('open');
+}
+
+function closeProductModal() { document.getElementById('productModal').classList.remove('open'); }
+function closeModalOutside(e) { if(e.target.id==='productModal') closeProductModal(); }
+
+function saveProduct() {
+  const name   = document.getElementById('mName').value.trim();
+  const cat    = document.getElementById('mCat').value;
+  const desc   = document.getElementById('mDesc').value.trim();
+  const price  = parseInt(document.getElementById('mPrice').value);
+  const old    = parseInt(document.getElementById('mOld').value)||null;
+  const em     = document.getElementById('mEm').value.trim()||'📦';
+  const badge  = document.getElementById('mBadge').value;
+  const rating = parseFloat(document.getElementById('mRating').value)||4.5;
+  const rev    = parseInt(document.getElementById('mRev').value)||0;
+  const alertEl= document.getElementById('modalAlert');
+
+  if (!name)  { alertEl.textContent='⚠️ Product name is required.';  alertEl.classList.add('show'); return; }
+  if (!cat)   { alertEl.textContent='⚠️ Please select a category.';  alertEl.classList.add('show'); return; }
+  if (!price) { alertEl.textContent='⚠️ Price is required.';         alertEl.classList.add('show'); return; }
+
+  if (editingId) {
+    const idx = products.findIndex(p=>p.id===editingId);
+    if (idx>-1) products[idx] = {...products[idx], name, cat, desc, price, old, em, badge, rating, rev};
+    showToast('✓ Product updated: '+name.split(' ').slice(0,3).join(' '));
+  } else {
+    const newId = Math.max(...products.map(p=>p.id), 0) + 1;
+    products.push({id:newId, name, cat, desc, price, old, em, badge, rating, rev});
+    showToast('✓ Product added: '+name.split(' ').slice(0,3).join(' '));
+  }
+
+  saveProducts();
+  closeProductModal();
+  renderProductTable();
+  renderDashboard();
+}
+
+function deleteProduct(id) {
+  const p = products.find(p=>p.id===id);
+  if (!p) return;
+  if (!confirm('Delete "'+p.name+'"? This cannot be undone.')) return;
+  products = products.filter(p=>p.id!==id);
+  saveProducts();
+  renderProductTable();
+  renderDashboard();
+  showToast('Product deleted.');
+}
+
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function adminLogout() {
+  localStorage.removeItem('fe_admin'); window.location.href='login.html';
+}
+
+// ── INIT ──
+saveProducts();
+renderDashboard();
+</script>
+</body>
+</html>
