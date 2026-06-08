@@ -14,15 +14,15 @@ function injectNav(activePage) {
   const initial = displayName ? displayName[0].toUpperCase() : '?';
 
   const authSection = isLoggedIn
-    ? `<a href="${base}profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+    ? `<a href="${base}profile" style="display:flex;align-items:center;gap:8px;text-decoration:none">
         <div style="width:34px;height:34px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0;border:2px solid rgba(255,255,255,.15)">${initial}</div>
         <span style="font-size:12px;color:#ccc;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500">${displayName.split(' ')[0]}</span>
       </a>`
-    : `<a href="${base}login.html" style="background:var(--orange);color:#fff;padding:8px 18px;font-size:13px;font-weight:700;border-radius:6px;text-decoration:none;white-space:nowrap">Sign in →</a>`;
+    : `<a href="${base}login" style="background:var(--orange);color:#fff;padding:8px 18px;font-size:13px;font-weight:700;border-radius:6px;text-decoration:none;white-space:nowrap">Sign in →</a>`;
 
   document.getElementById('nav-placeholder').innerHTML = `
   <nav class="nav">
-    <a class="nav-brand" href="${base}index.html" style="text-decoration:none">
+    <a class="nav-brand" href="${base}index" style="text-decoration:none">
       <div class="logo-circle">
         <img src="${base}assets/logo.png" alt="Frank Electronics" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
         <span class="logo-fallback" style="display:none">FE</span>
@@ -34,7 +34,7 @@ function injectNav(activePage) {
     </a>
 
     <ul class="nav-links">
-      <li><a href="${base}index.html"    class="${activePage==='home'?'active':''}">Home</a></li>
+      <li><a href="${base}"    class="${activePage==='home'?'active':''}">Home</a></li>
 
       <!-- SHOP BY CATEGORY DROPDOWN -->
       <li class="nav-dropdown" style="position:relative">
@@ -48,20 +48,20 @@ function injectNav(activePage) {
           style="display:none;position:absolute;top:100%;left:0;background:#fff;border:1.5px solid #eee;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.15);min-width:200px;z-index:50;padding:8px 0;margin-top:8px"
           onmouseenter="document.getElementById('catDropdown').style.display='block'"
           onmouseleave="hideCatDropdown()">
-          <a href="${base}products.html" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none;transition:background .15s" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">⚡</span> All products</a>
-          <a href="${base}products.html?cat=phones"      style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">📱</span> Phones & Tablets</a>
-          <a href="${base}products.html?cat=laptops"     style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">💻</span> Laptops</a>
-          <a href="${base}products.html?cat=audio"       style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">🎧</span> Audio</a>
-          <a href="${base}products.html?cat=tv"          style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">📺</span> TVs & Displays</a>
-          <a href="${base}products.html?cat=accessories" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">🔌</span> Accessories</a>
+          <a href="${base}products" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none;transition:background .15s" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">⚡</span> All products</a>
+          <a href="${base}products?cat=phones"      style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">📱</span> Phones & Tablets</a>
+          <a href="${base}products?cat=laptops"     style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">💻</span> Laptops</a>
+          <a href="${base}products?cat=audio"       style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">🎧</span> Audio</a>
+          <a href="${base}products?cat=tv"          style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">📺</span> TVs & Displays</a>
+          <a href="${base}products?cat=accessories" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">🔌</span> Accessories</a>
           <div style="height:1px;background:#f0f0f0;margin:6px 0"></div>
-          <a href="${base}deals.html" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:var(--orange);font-weight:700;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">🔥</span> Deals & Offers</a>
+          <a href="${base}deals" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:var(--orange);font-weight:700;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">🔥</span> Deals & Offers</a>
         </div>
       </li>
 
-      <li><a href="${base}deals.html"   class="${activePage==='deals'?'active':''}">Deals</a></li>
-      <li><a href="${base}about.html"   class="${activePage==='about'?'active':''}">About</a></li>
-      <li><a href="${base}contact.html" class="${activePage==='contact'?'active':''}">Contact</a></li>
+      <li><a href="${base}deals"   class="${activePage==='deals'?'active':''}">Deals</a></li>
+      <li><a href="${base}about"   class="${activePage==='about'?'active':''}">About</a></li>
+      <li><a href="${base}contact" class="${activePage==='contact'?'active':''}">Contact</a></li>
     </ul>
 
     <div class="nav-right">
@@ -121,7 +121,7 @@ function injectCart() {
           <span class="cart-total-lbl">Total</span>
           <span class="cart-total-val" id="cartTotal">RWF 0</span>
         </div>
-        <a href="${base}checkout.html" class="btn btn-orange btn-block">Proceed to checkout →</a>
+        <a href="${base}checkout" class="btn btn-orange btn-block">Proceed to checkout →</a>
       </div>
     </div>
   </div>
@@ -153,28 +153,28 @@ function injectFooter() {
     <div class="footer-col">
       <div class="ft-col-title">Shop</div>
       <ul>
-        <li><a href="${base}products.html">New arrivals</a></li>
-        <li><a href="${base}products.html">Best sellers</a></li>
-        <li><a href="${base}deals.html">Deals & offers</a></li>
-        <li><a href="${base}products.html">All brands</a></li>
+        <li><a href="${base}products">New arrivals</a></li>
+        <li><a href="${base}products">Best sellers</a></li>
+        <li><a href="${base}deals">Deals & offers</a></li>
+        <li><a href="${base}products">All brands</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <div class="ft-col-title">Support</div>
       <ul>
-        <li><a href="${base}contact.html">Track order</a></li>
-        <li><a href="${base}contact.html">Returns</a></li>
-        <li><a href="${base}contact.html">Warranty</a></li>
-        <li><a href="${base}contact.html">Contact us</a></li>
+        <li><a href="${base}contact">Track order</a></li>
+        <li><a href="${base}contact">Returns</a></li>
+        <li><a href="${base}contact">Warranty</a></li>
+        <li><a href="${base}contact">Contact us</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <div class="ft-col-title">Company</div>
       <ul>
-        <li><a href="${base}about.html">About Frank</a></li>
-        <li><a href="${base}about.html">Store location</a></li>
-        <li><a href="${base}contact.html">Privacy policy</a></li>
-        <li><a href="${base}contact.html">Terms of service</a></li>
+        <li><a href="${base}about">About Frank</a></li>
+        <li><a href="${base}about">Store location</a></li>
+        <li><a href="${base}contact">Privacy policy</a></li>
+        <li><a href="${base}contact">Terms of service</a></li>
       </ul>
     </div>
   </footer>
