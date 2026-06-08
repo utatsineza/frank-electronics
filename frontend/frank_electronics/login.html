@@ -303,7 +303,7 @@ function getNext() { return new URLSearchParams(window.location.search).get('nex
 const ADMIN_EMAILS = ['admin@frankelectronics.rw','frank@frankelectronics.rw','manager@frankelectronics.rw'];
 function isAdmin(email) { return ADMIN_EMAILS.includes((email||'').toLowerCase()); }
 
-function doLogin() {
+async function doLogin() {
   const email = document.getElementById('lemail').value.trim();
   const pw    = document.getElementById('lpw').value;
   let ok = true;
@@ -316,22 +316,23 @@ function doLogin() {
     document.getElementById('lpw-err').classList.add('show'); ok = false;
   }
   if (!ok) return;
+
   const btn = document.getElementById('loginBtn');
   btn.disabled = true; btn.textContent = 'Signing in...';
-  setTimeout(() => {
-    // Accept: admin123 for admin, frank123 for anyone, or matching saved password
-    const saved = JSON.parse(localStorage.getItem('fe_user') || '{}');
-    const validPw = pw === 'frank123' || pw === 'admin123' || (saved.email === email && pw.length >= 4);
-    if (validPw) {
-      const name = saved.name || email.split('@')[0];
-      localStorage.setItem('fe_user', JSON.stringify({ ...saved, email, name, avatar: name[0].toUpperCase() }));
-      localStorage.setItem('fe_login_next', getNext());
-      window.location.href = 'otp.html?action=login&method=email';
+
+  try {
+    const data = await Auth.login(email, pw);
+    // Redirect admin to admin panel, others to homepage
+    if (data.user.is_staff) {
+      window.location.href = 'admin.html';
     } else {
-      document.getElementById('loginAlert').classList.add('show');
-      btn.disabled = false; btn.textContent = 'Sign in →';
+      const next = getNext();
+      window.location.href = next || 'index.html';
     }
-  }, 1000);
+  } catch(err) {
+    document.getElementById('loginAlert').classList.add('show');
+    btn.disabled = false; btn.textContent = 'Sign in →';
+  }
 }
 
 // ── GOOGLE ──
@@ -470,5 +471,6 @@ function confirmFacebook() {
   setTimeout(() => window.location.href = 'otp.html?action=login&method=email', 900);
 }
 </script>
+<script src="backend_api.js"></script>
 </body>
 </html>
