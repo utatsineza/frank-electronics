@@ -1,4 +1,4 @@
-# Frank Electronics — Netlify Redirects
+# Frank Electronics — Render Redirects
 
 # Explicit page routes (must come first)
 /products          /products.html     200
