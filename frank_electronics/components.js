@@ -22,7 +22,7 @@ function injectNav(activePage) {
 
   document.getElementById('nav-placeholder').innerHTML = `
   <nav class="nav">
-    <a class="nav-brand" href="${base}index" style="text-decoration:none">
+    <a class="nav-brand" href="${base}" style="text-decoration:none">
       <div class="logo-circle">
         <img src="${base}assets/logo.png" alt="Frank Electronics" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
         <span class="logo-fallback" style="display:none">FE</span>
@@ -38,7 +38,7 @@ function injectNav(activePage) {
 
       <!-- SHOP BY CATEGORY DROPDOWN -->
       <li class="nav-dropdown" style="position:relative">
-        <a href="${base}products.html" class="${activePage==='products'?'active':''}"
+        <a href="${base}products" class="${activePage==='products'?'active':''}"
            style="display:flex;align-items:center;gap:4px"
            onmouseenter="document.getElementById('catDropdown').style.display='block'"
            onmouseleave="hideCatDropdown()">
@@ -76,7 +76,7 @@ function injectNav(activePage) {
           onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color='#aaa'">🔍</button>
       </div>
 
-      <button class="nav-icon" title="Wishlist" onclick="window.location.href='${base}wishlist.html'">♡</button>
+      <button class="nav-icon" title="Wishlist" onclick="window.location.href='${base}wishlist'">♡</button>
       <button class="nav-icon cart-btn" onclick="openCart()" title="Cart">
         🛒 <span class="nav-badge" id="cartBadge">0</span>
       </button>
@@ -93,7 +93,7 @@ function injectNav(activePage) {
   }
   function doNavSearch() {
     const q = document.getElementById('searchInput')?.value.trim();
-    if (q) window.location.href = '${base}products.html?q=' + encodeURIComponent(q);
+    if (q) window.location.href = '${base}products?q=' + encodeURIComponent(q);
   }
   <\/script>`;
 }
@@ -155,8 +155,8 @@ function injectFooter() {
       <ul>
         <li><a href="${base}products">New arrivals</a></li>
         <li><a href="${base}products">Best sellers</a></li>
-        <li><a href="${base}deals">Deals & offers</a></li>
-        <li><a href="${base}products">All brands</a></li>
+        <li><a href="${base}ddeals">Deals & offers</a></li>
+        <li><a href="${base}pproducts">All brands</a></li>
       </ul>
     </div>
     <div class="footer-col">
