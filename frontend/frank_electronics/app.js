@@ -14,7 +14,7 @@ function isAdmin(email) {
   return ADMIN_EMAILS.some(a => a.toLowerCase() === (email||'').toLowerCase());
 }
 
-// ── DEFAULT PRODUCTS ──────────────────────────────
+// ── DEFAULT PRODUCTS (fallback if API fails) ──────
 const DEFAULT_PRODUCTS = [
   {id:1,  name:"Samsung Galaxy S24 Ultra",   cat:"phones",      em:"📱", price:2200000, old:2500000,  badge:"sale", rating:4.8, rev:234, desc:"Flagship Android with 200MP camera, S-Pen, 5G."},
   {id:2,  name:"MacBook Air M3",             cat:"laptops",     em:"💻", price:3100000, old:null,     badge:"new",  rating:4.9, rev:89,  desc:"Apple M3 chip, all-day battery, ultra-thin design."},
@@ -30,19 +30,35 @@ const DEFAULT_PRODUCTS = [
   {id:12, name:"Samsung T7 SSD 1TB",         cat:"accessories", em:"💾", price:125000,  old:null,     badge:"new",  rating:4.8, rev:167, desc:"1050MB/s, USB-C, AES 256-bit encryption."},
 ];
 
-// ── PRODUCTS — always read from localStorage (admin changes sync here) ──
-function getProducts() {
-  const stored = localStorage.getItem('fe_products');
-  if (stored) {
-    try { return JSON.parse(stored); } catch(e) {}
-  }
-  // First time: seed localStorage with defaults
-  localStorage.setItem('fe_products', JSON.stringify(DEFAULT_PRODUCTS));
-  return DEFAULT_PRODUCTS;
-}
+// ── PRODUCTS — load from API, fallback to defaults ──
+let PRODUCTS = DEFAULT_PRODUCTS;
 
-// Live reference — updated whenever admin makes changes
-let PRODUCTS = getProducts();
+async function loadProductsFromAPI() {
+  try {
+    const data = await Products.list();
+    if (data.results && data.results.length > 0) {
+      PRODUCTS = data.results.map(p => ({
+        id:     p.id,
+        name:   p.name,
+        cat:    p.category_name?.toLowerCase() || 'accessories',
+        em:     p.emoji || '📦',
+        price:  parseFloat(p.price),
+        old:    p.old_price ? parseFloat(p.old_price) : null,
+        badge:  p.badge || 'new',
+        rating: parseFloat(p.rating) || 0,
+        rev:    p.reviews || 0,
+        desc:   p.description || '',
+      }));
+      localStorage.setItem('fe_products', JSON.stringify(PRODUCTS));
+    } else {
+      const stored = localStorage.getItem('fe_products');
+      if (stored) PRODUCTS = JSON.parse(stored);
+    }
+  } catch(e) {
+    const stored = localStorage.getItem('fe_products');
+    if (stored) { try { PRODUCTS = JSON.parse(stored); } catch(e) {} }
+  }
+}
 
 // ── CART ──────────────────────────────────────────
 let cart  = JSON.parse(localStorage.getItem('fe_cart')  || '[]');
@@ -114,10 +130,9 @@ function isLoggedIn() {
 }
 
 // ── INIT ──────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   updateCartUI();
-  // Reload products in case admin changed them
-  PRODUCTS = getProducts();
+  await loadProductsFromAPI();
 
   // Live search: press Enter → products page
   const si = document.getElementById('searchInput');
@@ -128,4 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Trigger re-render if page has renderProducts function
+  if (typeof renderProducts === 'function') renderProducts();
 });
