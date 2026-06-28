@@ -14,12 +14,12 @@
     .sort-sel{background:var(--white);border:1px solid var(--gray-b);border-radius:6px;padding:7px 12px;font-size:12px;color:#555}
     .sort-sel:focus{outline:none;border-color:var(--orange)}
     .no-results{text-align:center;padding:60px 0;color:var(--gray-m);font-size:14px}
-    .no-results-icon{font-size:48px;opacity:.3;margin-bottom:12px}  </style>
+    .no-results-icon{font-size:48px;opacity:.3;margin-bottom:12px}
+  </style>
 </head>
 <body>
 
 <div id="nav-placeholder"></div>
-
 
 <div class="body-wrap">
   <!-- SIDEBAR -->
@@ -111,6 +111,7 @@
 <div id="footer-placeholder"></div>
 <div id="cart-placeholder"></div>
 
+<script src="backend_api.js"></script>
 <script src="app.js"></script>
 <script src="components.js"></script>
 <script>
@@ -122,7 +123,6 @@
   let currentSort = 'featured';
   let minRating   = 0;
 
-  // Check for URL query param
   const _urlParams = new URLSearchParams(window.location.search);
   const urlQ   = _urlParams.get('q');
   const urlCat = _urlParams.get('cat');
@@ -130,10 +130,8 @@
   if (urlQ && document.getElementById('searchInput')) {
     document.getElementById('searchInput').value = urlQ;
   }
-  // Pre-select category from URL
   if (urlCat) {
     currentCat = urlCat;
-    // Highlight correct sidebar item
     document.querySelectorAll('.sb-item').forEach(el => {
       if (el.dataset && el.dataset.cat === urlCat) {
         el.classList.add('active');
@@ -144,9 +142,6 @@
   }
 
   function applyFilters() {
-    // Always reload from admin-synced localStorage
-    const _s = localStorage.getItem('fe_products');
-    if (_s) { try { PRODUCTS = JSON.parse(_s); } catch(e) {} }
     let list = [...PRODUCTS];
     if (currentCat !== 'all') list = list.filter(p => p.cat === currentCat);
     const maxPrice = parseInt(document.getElementById('priceRange').value);
@@ -167,11 +162,11 @@
     if (!list.length) { grid.innerHTML = ''; none.style.display = 'block'; return; }
     none.style.display = 'none';
     grid.innerHTML = list.map(p => `
-      <div class="pcard" onclick="window.location.href='product.html?id='+p.id" style="cursor:pointer">
+      <div class="pcard" onclick="window.location.href='product.html?id=${p.id}'" style="cursor:pointer">
         <div class="pcard-img">
           <span style="font-size:50px">${p.em}</span>
           <span class="pbadge pbadge-${p.badge}">${p.badge==='sale'?'Sale':p.badge==='new'?'New':'Hot'}</span>
-          <button class="wish-btn ${liked.has(p.id)?'liked':''}" onclick="toggleLike(${p.id},this)">♡</button>
+          <button class="wish-btn ${liked.has(p.id)?'liked':''}" onclick="event.stopPropagation();toggleLike(${p.id},this)">♡</button>
         </div>
         <div class="pcard-body">
           <div class="pcat">${p.cat}</div>
@@ -179,7 +174,7 @@
           <div class="prating"><span class="pstars">${stars(p.rating)}</span><span class="prev">${p.rating} (${p.rev})</span></div>
           <div class="pfoot">
             <div><div class="pprice">${fmt(p.price)}</div>${p.old?`<div class="pold">${fmt(p.old)}</div>`:''}</div>
-            <button class="padd-btn" onclick="addToCart('${p.name}',${p.price},'${p.em}',${p.id})">+</button>
+            <button class="padd-btn" onclick="event.stopPropagation();addToCart('${p.name}',${p.price},'${p.em}',${p.id})">+</button>
           </div>
         </div>
       </div>`).join('');
@@ -197,8 +192,12 @@
     minRating = r; applyFilters();
   }
 
+  // Wait for API products to load then render
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => applyFilters(), 500);
+  });
+
   applyFilters();
 </script>
-<script src="backend_api.js"></script>
 </body>
 </html>

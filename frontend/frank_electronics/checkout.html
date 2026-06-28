@@ -87,7 +87,6 @@
 <!-- CHECKOUT FORM -->
 <div id="checkoutView">
   <div class="checkout-wrap">
-    <!-- LEFT: FORM -->
     <div>
       <h2 class="section-title">Delivery Details</h2>
       <div class="form-row">
@@ -195,7 +194,6 @@
 
   let discount = 0;
 
-  // Prefill user info
   const _u = JSON.parse(localStorage.getItem('fe_user') || '{}');
   if (_u.name) {
     const parts = _u.name.split(' ');
@@ -258,13 +256,40 @@
     if (!fname || !phone) { showToast('Please fill in your name and phone number.'); return; }
     if (!cart.length)     { showToast('Your cart is empty.'); return; }
 
+    let payMethod = 'cash';
+    document.querySelectorAll('.pay-opt').forEach(opt => {
+      if (opt.classList.contains('selected')) {
+        const name = opt.querySelector('.pay-opt-name').textContent;
+        if (name.includes('MTN'))         payMethod = 'momo';
+        else if (name.includes('Visa'))   payMethod = 'card';
+        else if (name.includes('Cash'))   payMethod = 'cash';
+        else if (name.includes('Airtel')) payMethod = 'momo';
+      }
+    });
+
     const btn = document.getElementById('placeOrderBtn');
     btn.disabled = true; btn.textContent = 'Placing order...';
 
     try {
-      // Generate order reference locally
-      const ref = 'FE-' + Math.floor(100000 + Math.random() * 900000);
-      document.getElementById('orderRef').textContent = ref;
+      const itemsWithId = cart.filter(i => i.id);
+
+      if (Auth.isLoggedIn() && itemsWithId.length > 0) {
+        await CartAPI.clear();
+        for (const item of itemsWithId) {
+          await CartAPI.addItem(item.id, item.qty);
+        }
+        const order = await OrdersAPI.place({
+          payment_method:   payMethod,
+          shipping_name:    fname + ' ' + lname,
+          shipping_phone:   phone,
+          shipping_address: `${street}, ${district}, ${province}`,
+          notes:            notes,
+        });
+        document.getElementById('orderRef').textContent = 'FE-' + String(order.id).padStart(6, '0');
+      } else {
+        document.getElementById('orderRef').textContent = 'FE-' + Math.floor(100000 + Math.random() * 900000);
+      }
+
       document.getElementById('checkoutView').style.display = 'none';
       document.getElementById('confirmView').style.display  = 'block';
       cart = []; localStorage.setItem('fe_cart', '[]');
