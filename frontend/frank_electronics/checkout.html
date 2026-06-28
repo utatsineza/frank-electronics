@@ -68,7 +68,6 @@
 </head>
 <body>
 <script>
-  // Block checkout if not logged in
   (function(){
     const u = JSON.parse(localStorage.getItem('fe_user') || '{}');
     if (!u.email) { window.location.href = 'login.html?next=checkout'; }
@@ -90,7 +89,6 @@
   <div class="checkout-wrap">
     <!-- LEFT: FORM -->
     <div>
-      <!-- DELIVERY -->
       <h2 class="section-title">Delivery Details</h2>
       <div class="form-row">
         <div class="form-group"><label>First name</label><input class="form-control" id="cf-fname" type="text" placeholder="Jean"/></div>
@@ -101,7 +99,7 @@
       <div class="form-row">
         <div class="form-group">
           <label>Province</label>
-          <select class="form-control">
+          <select class="form-control" id="cf-province">
             <option>Kigali City</option>
             <option>Northern Province</option>
             <option>Southern Province</option>
@@ -109,14 +107,13 @@
             <option>Western Province</option>
           </select>
         </div>
-        <div class="form-group"><label>District</label><input class="form-control" type="text" placeholder="Gasabo"/></div>
+        <div class="form-group"><label>District</label><input class="form-control" id="cf-district" type="text" placeholder="Gasabo"/></div>
       </div>
-      <div class="form-group"><label>Street / Sector / Landmark</label><input class="form-control" type="text" placeholder="KG 7 Ave, Kiyovu"/></div>
-      <div class="form-group"><label>Delivery notes (optional)</label><input class="form-control" type="text" placeholder="e.g. Call before delivery"/></div>
+      <div class="form-group"><label>Street / Sector / Landmark</label><input class="form-control" id="cf-street" type="text" placeholder="KG 7 Ave, Kiyovu"/></div>
+      <div class="form-group"><label>Delivery notes (optional)</label><input class="form-control" id="cf-notes" type="text" placeholder="e.g. Call before delivery"/></div>
 
       <div style="height:24px"></div>
 
-      <!-- PAYMENT -->
       <h2 class="section-title">Payment Method</h2>
       <div class="payment-methods">
         <label class="pay-opt selected" onclick="selectPay(this)">
@@ -141,7 +138,7 @@
         </label>
       </div>
 
-      <button class="btn btn-orange btn-lg btn-block" onclick="placeOrder()">Place order →</button>
+      <button class="btn btn-orange btn-lg btn-block" id="placeOrderBtn" onclick="placeOrder()">Place order →</button>
       <p style="font-size:11px;color:var(--gray-m);text-align:center;margin-top:10px">🔒 Secure checkout · Your data is safe with us</p>
     </div>
 
@@ -188,6 +185,7 @@
 <div id="footer-placeholder"></div>
 <div id="cart-placeholder"></div>
 
+<script src="backend_api.js"></script>
 <script src="app.js"></script>
 <script src="components.js"></script>
 <script>
@@ -197,6 +195,16 @@
 
   let discount = 0;
 
+  // Prefill user info
+  const _u = JSON.parse(localStorage.getItem('fe_user') || '{}');
+  if (_u.name) {
+    const parts = _u.name.split(' ');
+    document.getElementById('cf-fname').value = parts[0] || '';
+    document.getElementById('cf-lname').value = parts.slice(1).join(' ') || '';
+  }
+  if (_u.email) document.getElementById('cf-email').value = _u.email;
+  if (_u.phone) document.getElementById('cf-phone').value = _u.phone;
+
   function renderCheckoutItems() {
     const items = document.getElementById('co-items');
     const empty = document.getElementById('co-empty');
@@ -205,7 +213,7 @@
     document.getElementById('co-sub').textContent = count + ' item' + (count!==1?'s':'');
     document.getElementById('co-subtotal').textContent = fmt(sub);
     items.querySelectorAll('.order-item').forEach(e => e.remove());
-    if (!cart.length) { if(empty) empty.style.display='block'; } 
+    if (!cart.length) { if(empty) empty.style.display='block'; }
     else {
       if(empty) empty.style.display='none';
       cart.forEach(item => {
@@ -238,20 +246,64 @@
     el.classList.add('selected');
   }
 
-  function placeOrder() {
-    const fname = document.getElementById('cf-fname').value.trim();
-    const phone = document.getElementById('cf-phone').value.trim();
+  async function placeOrder() {
+    const fname    = document.getElementById('cf-fname').value.trim();
+    const lname    = document.getElementById('cf-lname').value.trim();
+    const phone    = document.getElementById('cf-phone').value.trim();
+    const email    = document.getElementById('cf-email').value.trim();
+    const province = document.getElementById('cf-province').value;
+    const district = document.getElementById('cf-district').value.trim();
+    const street   = document.getElementById('cf-street').value.trim();
+    const notes    = document.getElementById('cf-notes').value.trim();
+
     if (!fname || !phone) { showToast('Please fill in your name and phone number.'); return; }
-    const ref = 'FE-' + Math.floor(100000 + Math.random() * 900000);
-    document.getElementById('orderRef').textContent = ref;
-    document.getElementById('checkoutView').style.display = 'none';
-    document.getElementById('confirmView').style.display = 'block';
-    cart = []; localStorage.setItem('fe_cart', '[]');
-    updateCartUI();
+    if (!cart.length)     { showToast('Your cart is empty.'); return; }
+
+    // Get selected payment method
+    let payMethod = 'cash';
+    document.querySelectorAll('.pay-opt').forEach(opt => {
+      if (opt.classList.contains('selected')) {
+        const name = opt.querySelector('.pay-opt-name').textContent;
+        if (name.includes('MTN'))    payMethod = 'momo';
+        else if (name.includes('Visa'))  payMethod = 'card';
+        else if (name.includes('Cash'))  payMethod = 'cash';
+        else if (name.includes('Airtel')) payMethod = 'momo';
+      }
+    });
+
+    const btn = document.getElementById('placeOrderBtn');
+    btn.disabled = true; btn.textContent = 'Placing order...';
+
+    try {
+      // Sync cart to backend
+      await CartAPI.clear();
+      for (const item of cart) {
+        if (item.id) await CartAPI.addItem(item.id, item.qty);
+      }
+
+      // Place the order
+      const order = await OrdersAPI.place({
+        payment_method:   payMethod,
+        shipping_name:    fname + ' ' + lname,
+        shipping_phone:   phone,
+        shipping_address: `${street}, ${district}, ${province}`,
+        notes:            notes,
+      });
+
+      // Show confirmation
+      document.getElementById('orderRef').textContent = 'FE-' + String(order.id).padStart(6, '0');
+      document.getElementById('checkoutView').style.display = 'none';
+      document.getElementById('confirmView').style.display  = 'block';
+      cart = []; localStorage.setItem('fe_cart', '[]');
+      updateCartUI();
+
+    } catch(err) {
+      showToast('Failed to place order. Please try again.');
+      btn.disabled = false; btn.textContent = 'Place order →';
+    }
   }
 
   renderCheckoutItems();
 </script>
-<script src="backend_api.js"></script>
 </body>
 </html>
