@@ -138,6 +138,7 @@
 <div class="auth-footer">© 2026 Frank Electronics · <a href="contact.html">Support</a> · <a href="#">Privacy</a></div>
 <div class="toast" id="toast"></div>
 
+<script src="backend_api.js"></script>
 <script>
 let otpMethod = 'both';
 
@@ -181,13 +182,11 @@ function mark(f) {
   document.getElementById(f)?.classList.add('error');
   document.getElementById(f+'-error')?.classList.add('show');
 }
-
 function socialReg(provider) {
-  // Redirect to login page social modal (same flow)
   window.location.href = 'login.html';
 }
 
-function doRegister() {
+async function doRegister() {
   const fname    = document.getElementById('fname').value.trim();
   const lname    = document.getElementById('lname').value.trim();
   const email    = document.getElementById('email').value.trim();
@@ -199,32 +198,42 @@ function doRegister() {
   const terms    = document.getElementById('terms').checked;
   let valid = true;
 
-  if (!fname)                         { mark('fname'); valid=false; }
-  if (!lname)                         { mark('lname'); valid=false; }
-  if (!email||!/\S+@\S+\.\S+/.test(email)) { mark('email'); valid=false; }
-  if (!phone||phone.length<10)        { mark('phone'); valid=false; }
-  if (!pw||pw.length<8)               { mark('password'); valid=false; }
-  if (pw!==conf)                      { mark('confirm'); valid=false; }
-  if (!terms)                         { mark('terms'); valid=false; }
+  if (!fname)                              { mark('fname'); valid=false; }
+  if (!lname)                              { mark('lname'); valid=false; }
+  if (!email||!/\S+@\S+\.\S+/.test(email)){ mark('email'); valid=false; }
+  if (!phone||phone.length<10)             { mark('phone'); valid=false; }
+  if (!pw||pw.length<8)                    { mark('password'); valid=false; }
+  if (pw!==conf)                           { mark('confirm'); valid=false; }
+  if (!terms)                              { mark('terms'); valid=false; }
   if (!valid) return;
 
   const btn = document.getElementById('regBtn');
   btn.disabled=true; btn.textContent='Creating account...';
 
-  // ── Save ALL registration data so profile shows correct user ──
-  const user = {
-    name: fname + ' ' + lname,
-    fname, lname, email, phone, province, district,
-    avatar: fname[0].toUpperCase(),
-    joined: new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'})
-  };
-  localStorage.setItem('fe_user', JSON.stringify(user));
+  try {
+    const name = fname + ' ' + lname;
+    const data = await Auth.register(email, name, phone, pw);
 
-  setTimeout(() => {
-    window.location.href = 'otp.html?action=register&method=' + otpMethod;
-  }, 1200);
+    const user = {
+      ...data.user,
+      fname, lname, province, district,
+      avatar: fname[0].toUpperCase(),
+      joined: new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'})
+    };
+    localStorage.setItem('fe_user', JSON.stringify(user));
+
+    showToast('Account created successfully!');
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 1000);
+
+  } catch(err) {
+    const alert = document.getElementById('regAlert');
+    alert.textContent = err.email?.[0] || err.detail || 'Registration failed. Please try again.';
+    alert.classList.add('show');
+    btn.disabled=false; btn.textContent='Create my account →';
+  }
 }
 </script>
-<script src="backend_api.js"></script>
 </body>
 </html>
