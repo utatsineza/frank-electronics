@@ -71,9 +71,9 @@ function saveLiked() { localStorage.setItem('fe_liked', JSON.stringify([...liked
 function fmt(p) { return 'RWF ' + p.toLocaleString(); }
 function stars(r) { return '★'.repeat(Math.floor(r)) + '☆'.repeat(5 - Math.floor(r)); }
 
-function addToCart(name, price, em) {
+function addToCart(name, price, em, id) {
   const ex = cart.find(i => i.name === name);
-  if (ex) ex.qty++; else cart.push({ name, price, em, qty: 1 });
+  if (ex) ex.qty++; else cart.push({ id, name, price, em, qty: 1 });
   saveCart(); updateCartUI();
   showToast('✓ Added: ' + name.split(' ').slice(0, 3).join(' '));
 }

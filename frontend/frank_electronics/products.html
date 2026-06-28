@@ -179,7 +179,7 @@
           <div class="prating"><span class="pstars">${stars(p.rating)}</span><span class="prev">${p.rating} (${p.rev})</span></div>
           <div class="pfoot">
             <div><div class="pprice">${fmt(p.price)}</div>${p.old?`<div class="pold">${fmt(p.old)}</div>`:''}</div>
-            <button class="padd-btn" onclick="addToCart('${p.name}',${p.price},'${p.em}')">+</button>
+            <button class="padd-btn" onclick="addToCart('${p.name}',${p.price},'${p.em}',${p.id})">+</button>
           </div>
         </div>
       </div>`).join('');
