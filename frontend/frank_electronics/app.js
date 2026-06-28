@@ -36,8 +36,9 @@ let PRODUCTS = DEFAULT_PRODUCTS;
 async function loadProductsFromAPI() {
   try {
     const data = await Products.list();
-    if (data.results && data.results.length > 0) {
-      PRODUCTS = data.results.map(p => ({
+    const items = data.results || data;
+    if (items && items.length > 0) {
+      PRODUCTS = items.map(p => ({
         id:     p.id,
         name:   p.name,
         cat:    p.category_name?.toLowerCase() || 'accessories',
