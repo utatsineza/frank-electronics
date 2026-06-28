@@ -15,7 +15,6 @@
     .form-control::placeholder{color:var(--gray-m)}
     .form-control:focus{outline:none;border-color:var(--orange);background:var(--white)}
     select.form-control{cursor:pointer}
-
     .payment-methods{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
     .pay-opt{background:var(--white);border:1.5px solid var(--gray-b);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color .2s}
     .pay-opt:hover,.pay-opt.selected{border-color:var(--orange);background:#fff8f5}
@@ -23,7 +22,6 @@
     .pay-opt-icon{font-size:24px;width:32px;text-align:center}
     .pay-opt-name{font-size:13px;font-weight:700;color:var(--black)}
     .pay-opt-sub{font-size:11px;color:var(--gray-t)}
-
     .order-card{background:var(--white);border:1.5px solid var(--gray-b);border-radius:14px;overflow:hidden;position:sticky;top:80px}
     .order-head{background:var(--black);padding:18px 20px}
     .order-head-title{font-size:15px;font-weight:800;color:var(--white)}
@@ -46,7 +44,6 @@
     .coupon-input:focus{outline:none;border-color:var(--orange)}
     .coupon-apply{background:var(--black);border:none;border-radius:8px;padding:10px 16px;color:var(--white);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
     .coupon-apply:hover{background:var(--orange)}
-
     .step-bar{display:flex;align-items:center;gap:0;padding:16px 28px;border-bottom:1px solid var(--gray-b);background:var(--white)}
     .step{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray-m);font-weight:500}
     .step.done{color:var(--orange)}
@@ -55,14 +52,12 @@
     .step.done .step-num{background:var(--orange);color:var(--white)}
     .step.active .step-num{background:var(--black);color:var(--white)}
     .step-line{flex:1;height:1px;background:var(--gray-b);margin:0 10px}
-
     .confirm-screen{display:none;text-align:center;padding:60px 28px;max-width:520px;margin:0 auto}
     .confirm-icon{font-size:72px;margin-bottom:20px}
     .confirm-title{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--black);margin-bottom:10px}
     .confirm-title span{color:var(--orange)}
     .confirm-sub{font-size:14px;color:var(--gray-t);line-height:1.7;margin-bottom:24px}
     .confirm-ref{background:var(--gray-bg);border:1.5px dashed var(--orange);border-radius:8px;padding:12px 20px;font-size:18px;font-weight:800;color:var(--orange);letter-spacing:2px;margin-bottom:24px;display:inline-block}
-
     @media(max-width:768px){.checkout-wrap{grid-template-columns:1fr;padding:20px 16px}.form-row{grid-template-columns:1fr}.order-card{position:static}}
   </style>
 </head>
@@ -84,7 +79,6 @@
   <div class="step"><span class="step-num">3</span> Confirm</div>
 </div>
 
-<!-- CHECKOUT FORM -->
 <div id="checkoutView">
   <div class="checkout-wrap">
     <div>
@@ -110,9 +104,7 @@
       </div>
       <div class="form-group"><label>Street / Sector / Landmark</label><input class="form-control" id="cf-street" type="text" placeholder="KG 7 Ave, Kiyovu"/></div>
       <div class="form-group"><label>Delivery notes (optional)</label><input class="form-control" id="cf-notes" type="text" placeholder="e.g. Call before delivery"/></div>
-
       <div style="height:24px"></div>
-
       <h2 class="section-title">Payment Method</h2>
       <div class="payment-methods">
         <label class="pay-opt selected" onclick="selectPay(this)">
@@ -136,12 +128,10 @@
           <div><div class="pay-opt-name">Airtel Money</div><div class="pay-opt-sub">Pay with your Airtel account</div></div>
         </label>
       </div>
-
       <button class="btn btn-orange btn-lg btn-block" id="placeOrderBtn" onclick="placeOrder()">Place order →</button>
       <p style="font-size:11px;color:var(--gray-m);text-align:center;margin-top:10px">🔒 Secure checkout · Your data is safe with us</p>
     </div>
 
-    <!-- RIGHT: ORDER SUMMARY -->
     <div>
       <div class="order-card">
         <div class="order-head">
@@ -169,7 +159,6 @@
   </div>
 </div>
 
-<!-- CONFIRMATION -->
 <div class="confirm-screen" id="confirmView">
   <div class="confirm-icon">🎉</div>
   <div class="confirm-title">Order <span>Confirmed!</span></div>
@@ -272,12 +261,15 @@
 
     try {
       const itemsWithId = cart.filter(i => i.id);
+      console.log('User logged in:', Auth.isLoggedIn());
+      console.log('Items with id:', itemsWithId);
 
       if (Auth.isLoggedIn() && itemsWithId.length > 0) {
         await CartAPI.clear();
         for (const item of itemsWithId) {
           await CartAPI.addItem(item.id, item.qty);
         }
+        console.log('Cart synced, placing order...');
         const order = await OrdersAPI.place({
           payment_method:   payMethod,
           shipping_name:    fname + ' ' + lname,
@@ -285,8 +277,10 @@
           shipping_address: `${street}, ${district}, ${province}`,
           notes:            notes,
         });
+        console.log('Order placed:', order);
         document.getElementById('orderRef').textContent = 'FE-' + String(order.id).padStart(6, '0');
       } else {
+        console.log('Fallback — isLoggedIn:', Auth.isLoggedIn(), 'itemsWithId:', itemsWithId);
         document.getElementById('orderRef').textContent = 'FE-' + Math.floor(100000 + Math.random() * 900000);
       }
 
@@ -296,6 +290,7 @@
       updateCartUI();
 
     } catch(err) {
+      console.error('Order error:', err);
       showToast('Failed to place order. Please try again.');
       btn.disabled = false; btn.textContent = 'Place order →';
     }
