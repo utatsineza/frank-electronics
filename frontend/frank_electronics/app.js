@@ -63,6 +63,9 @@ async function loadProductsFromAPI() {
 
 // ── CART ──────────────────────────────────────────
 let cart  = JSON.parse(localStorage.getItem('fe_cart')  || '[]');
+// Clear cart items that have no database id (old localStorage items)
+cart = cart.filter(i => i.id);
+localStorage.setItem('fe_cart', JSON.stringify(cart));
 let liked = new Set(JSON.parse(localStorage.getItem('fe_liked') || '[]'));
 
 function saveCart()  { localStorage.setItem('fe_cart',  JSON.stringify(cart)); }
