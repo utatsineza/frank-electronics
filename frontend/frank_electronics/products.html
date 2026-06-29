@@ -22,7 +22,6 @@
 <div id="nav-placeholder"></div>
 
 <div class="body-wrap">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sb-logo-area">
       <div class="sb-logo-mini">
@@ -36,12 +35,12 @@
 
     <div class="sb-section">
       <div class="sb-title">Categories</div>
-      <div class="sb-item active" onclick="filterCat(this,'all')"><span class="sb-icon">⚡</span><span class="sb-label">All products</span><span class="sb-count" id="cnt-all">12</span></div>
-      <div class="sb-item" onclick="filterCat(this,'phones')"><span class="sb-icon">📱</span><span class="sb-label">Phones & tablets</span><span class="sb-count">3</span></div>
-      <div class="sb-item" onclick="filterCat(this,'laptops')"><span class="sb-icon">💻</span><span class="sb-label">Laptops</span><span class="sb-count">2</span></div>
-      <div class="sb-item" onclick="filterCat(this,'audio')"><span class="sb-icon">🎧</span><span class="sb-label">Audio</span><span class="sb-count">3</span></div>
-      <div class="sb-item" onclick="filterCat(this,'tv')"><span class="sb-icon">📺</span><span class="sb-label">TVs & displays</span><span class="sb-count">2</span></div>
-      <div class="sb-item" onclick="filterCat(this,'accessories')"><span class="sb-icon">🔌</span><span class="sb-label">Accessories</span><span class="sb-count">2</span></div>
+      <div class="sb-item active" onclick="filterCat(this,'all')"><span class="sb-icon">⚡</span><span class="sb-label">All products</span><span class="sb-count" id="cnt-all">0</span></div>
+      <div class="sb-item" onclick="filterCat(this,'phones')"><span class="sb-icon">📱</span><span class="sb-label">Phones & tablets</span></div>
+      <div class="sb-item" onclick="filterCat(this,'laptops')"><span class="sb-icon">💻</span><span class="sb-label">Laptops</span></div>
+      <div class="sb-item" onclick="filterCat(this,'audio')"><span class="sb-icon">🎧</span><span class="sb-label">Audio</span></div>
+      <div class="sb-item" onclick="filterCat(this,'tv')"><span class="sb-icon">📺</span><span class="sb-label">TVs & displays</span></div>
+      <div class="sb-item" onclick="filterCat(this,'accessories')"><span class="sb-icon">🔌</span><span class="sb-label">Accessories</span></div>
     </div>
 
     <div class="sb-divider"></div>
@@ -83,12 +82,11 @@
     </div>
   </aside>
 
-  <!-- MAIN -->
   <main class="main">
     <div class="main-top">
       <div>
         <div class="main-title">All Products</div>
-        <div class="result-count" id="resultCount">Showing 12 products</div>
+        <div class="result-count" id="resultCount">Loading products...</div>
       </div>
       <div class="controls">
         <select class="sort-sel" onchange="currentSort=this.value;applyFilters()">
@@ -159,6 +157,7 @@
     const grid = document.getElementById('pgrid');
     const none = document.getElementById('noResults');
     document.getElementById('resultCount').textContent = 'Showing ' + list.length + ' product' + (list.length !== 1 ? 's' : '');
+    document.getElementById('cnt-all').textContent = PRODUCTS.length;
     if (!list.length) { grid.innerHTML = ''; none.style.display = 'block'; return; }
     none.style.display = 'none';
     grid.innerHTML = list.map(p => `
@@ -187,15 +186,10 @@
   }
 
   function setRating(r, el) {
-    document.querySelectorAll('.sb-rating-row').forEach(i => i.style.fontWeight = '');
+    document.querySelectorAll('.sb-rating-row').forEach(i => { i.style.fontWeight=''; i.style.color=''; });
     el.style.fontWeight = '700'; el.style.color = 'var(--orange)';
     minRating = r; applyFilters();
   }
-
-  // Wait for API products to load then render
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => applyFilters(), 500);
-  });
 
   applyFilters();
 </script>
