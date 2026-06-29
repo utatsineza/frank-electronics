@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateCartUI();
   await loadProductsFromAPI();
 
-  // Live search: press Enter → products page
+  // Live search
   const si = document.getElementById('searchInput');
   if (si) {
     si.addEventListener('keydown', e => {
@@ -145,6 +145,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Trigger re-render if page has renderProducts function
+  // Re-render after API loads
   if (typeof renderProducts === 'function') renderProducts();
+  if (typeof applyFilters === 'function') applyFilters();
 });
