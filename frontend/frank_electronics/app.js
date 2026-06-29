@@ -148,4 +148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Re-render after API loads
   if (typeof renderProducts === 'function') renderProducts();
   if (typeof applyFilters === 'function') applyFilters();
+
+  // Dispatch event so pages know API is ready
+  window.dispatchEvent(new Event('productsLoaded'));
 });

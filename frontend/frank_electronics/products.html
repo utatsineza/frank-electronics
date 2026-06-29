@@ -193,7 +193,8 @@
     minRating = r; applyFilters();
   }
 
-  // Don't call applyFilters() here — app.js will call it after API loads
+  // Render when API products are ready
+  window.addEventListener('productsLoaded', () => applyFilters());
 </script>
 </body>
 </html>
