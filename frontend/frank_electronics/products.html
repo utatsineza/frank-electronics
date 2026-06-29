@@ -98,7 +98,9 @@
         </select>
       </div>
     </div>
-    <div class="pgrid" id="pgrid"></div>
+    <div class="pgrid" id="pgrid">
+      <div style="text-align:center;padding:60px;color:var(--gray-m);grid-column:1/-1">Loading products...</div>
+    </div>
     <div class="no-results" id="noResults" style="display:none">
       <div class="no-results-icon">🔍</div>
       No products found.<br/>Try adjusting your filters.
@@ -191,7 +193,7 @@
     minRating = r; applyFilters();
   }
 
-  applyFilters();
+  // Don't call applyFilters() here — app.js will call it after API loads
 </script>
 </body>
 </html>
