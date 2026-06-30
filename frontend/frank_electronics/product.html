@@ -449,15 +449,13 @@ function addProductToCart() {
 }
 
 function buyNow() {
-  if (!currentProduct) return;
   const u = JSON.parse(localStorage.getItem('fe_user') || '{}');
   if (!u.email) {
     showToast('Please sign in to checkout');
     setTimeout(() => window.location.href = 'login.html?next=checkout', 1200);
     return;
   }
-  addToCart(currentProduct.name, currentProduct.price, currentProduct.em, currentProduct.id);
-  setTimeout(() => window.location.href = 'checkout.html', 400);
+  window.location.href = 'checkout.html';
 }
 
 function toggleProductWish() {
