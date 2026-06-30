@@ -15,6 +15,7 @@
 /reset-password    /reset-password.html 200
 /profile           /profile.html      200
 /admin             /admin.html        200
+/new-password    /new-password.html    200
 
 # Fallback — unknown routes go to homepage
 /*                 /index.html        200
