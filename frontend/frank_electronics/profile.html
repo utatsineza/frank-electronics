@@ -70,7 +70,7 @@
       <div class="form-group">
         <label>Email address</label>
         <div class="input-wrap">
-          <input class="form-control has-icon" id="pEmail" type="email" placeholder="Email"/>
+          <input class="form-control has-icon" id="pEmail" type="email" placeholder="Email" disabled/>
           <span class="input-icon" style="color:var(--green)">✓</span>
         </div>
       </div>
@@ -169,33 +169,54 @@
 <div class="auth-footer">© 2026 Frank Electronics · <a href="/contact">Support</a> · <a href="#">Privacy</a></div>
 <div class="toast" id="toast"></div>
 
+<script src="backend_api.js"></script>
 <script>
-// ── LOAD REAL USER FROM localStorage ──
-const user = JSON.parse(localStorage.getItem('fe_user') || '{}');
+// ── LOAD REAL USER ──
+let user = JSON.parse(localStorage.getItem('fe_user') || '{}');
 
-// Populate sidebar
-const fullName = user.name || ((user.fname||'') + ' ' + (user.lname||'')).trim() || 'Guest User';
-const initials = fullName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2) || '?';
-document.getElementById('profileName').textContent  = fullName;
-document.getElementById('profileEmail').textContent = user.email || 'Not set';
-document.getElementById('avatarLetter').textContent = user.avatar || initials;
-if (user.joined) document.getElementById('profileJoined').textContent = 'Member since ' + user.joined;
+// Block page if not logged in
+if (!Auth.isLoggedIn()) {
+  window.location.href = '/login?next=profile';
+}
 
-// Populate form fields with REAL data
-const nameParts = fullName.split(' ');
-document.getElementById('pFname').value    = user.fname || nameParts[0] || '';
-document.getElementById('pLname').value    = user.lname || nameParts.slice(1).join(' ') || '';
-document.getElementById('pEmail').value    = user.email    || '';
-document.getElementById('pPhone').value    = user.phone    || '';
-document.getElementById('pDistrict').value = user.district || '';
+function populateProfile(u) {
+  const fullName = u.name || ((u.fname||'') + ' ' + (u.lname||'')).trim() || 'Guest User';
+  const initials = fullName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2) || '?';
+  document.getElementById('profileName').textContent  = fullName;
+  document.getElementById('profileEmail').textContent = u.email || 'Not set';
+  document.getElementById('avatarLetter').textContent = u.avatar || initials;
+  if (u.joined) document.getElementById('profileJoined').textContent = 'Member since ' + u.joined;
 
-// Set province dropdown
-if (user.province) {
-  const sel = document.getElementById('pProvince');
-  for (let opt of sel.options) {
-    if (opt.value === user.province || opt.text === user.province) { opt.selected = true; break; }
+  const nameParts = fullName.split(' ');
+  document.getElementById('pFname').value    = u.fname || nameParts[0] || '';
+  document.getElementById('pLname').value    = u.lname || nameParts.slice(1).join(' ') || '';
+  document.getElementById('pEmail').value    = u.email    || '';
+  document.getElementById('pPhone').value    = u.phone    || '';
+  document.getElementById('pDistrict').value = u.district || '';
+
+  if (u.province) {
+    const sel = document.getElementById('pProvince');
+    for (let opt of sel.options) {
+      if (opt.value === u.province || opt.text === u.province) { opt.selected = true; break; }
+    }
   }
 }
+
+populateProfile(user);
+
+async function loadRealProfile() {
+  try {
+    const data = await Auth.getProfile();
+    user = { ...user, ...data };
+    localStorage.setItem('fe_user', JSON.stringify(user));
+    populateProfile(user);
+  } catch(e) {
+    if (e.code === 'token_not_valid') {
+      window.location.href = '/login';
+    }
+  }
+}
+loadRealProfile();
 
 // ── TABS ──
 function showTab(tab, navEl) {
@@ -209,25 +230,48 @@ function showTab(tab, navEl) {
   if (tab==='address')  renderAddress();
 }
 
-// ── ORDERS ──
-function renderOrders() {
-  const orders = JSON.parse(localStorage.getItem('fe_orders') || '[]');
+// ── ORDERS (real API) ──
+async function renderOrders() {
   const el = document.getElementById('ordersList');
-  const demo = [
-    {ref:'FE-384712',date:'22 May 2026',items:'iPhone 15 Pro, AirPods Pro',total:2230000,status:'delivered'},
-    {ref:'FE-291048',date:'10 May 2026',items:'MacBook Air M3',total:3100000,status:'delivered'},
-    {ref:'FE-503821',date:'28 May 2026',items:'Sony WH-1000XM5',total:420000,status:'transit'},
-  ];
-  const all = [...orders, ...demo];
-  el.innerHTML = all.map(o=>`
-    <div class="order-row">
-      <div><div class="order-ref">${o.ref}</div><div class="order-date">${o.date}</div></div>
-      <div class="order-items-preview">${o.items}</div>
-      <div style="text-align:right">
-        <div class="order-total">RWF ${o.total.toLocaleString()}</div>
-        <span class="order-status status-${o.status}">${o.status==='delivered'?'✓ Delivered':o.status==='transit'?'🚚 In transit':'⏳ Pending'}</span>
-      </div>
-    </div>`).join('');
+  el.innerHTML = '<p style="font-size:13px;color:var(--gray-t)">Loading orders...</p>';
+
+  try {
+    const data = await OrdersAPI.list();
+    const orders = data.results || data;
+
+    if (!orders.length) {
+      el.innerHTML = '<p style="font-size:13px;color:var(--gray-t)">No orders yet. <a href="/products" style="color:var(--orange)">Start shopping →</a></p>';
+      return;
+    }
+
+    const statusMap = {
+      pending:    {icon:'⏳', label:'Pending'},
+      confirmed:  {icon:'✓',  label:'Confirmed'},
+      processing: {icon:'⚙️', label:'Processing'},
+      shipped:    {icon:'🚚', label:'Shipped'},
+      delivered:  {icon:'✓',  label:'Delivered'},
+      cancelled:  {icon:'✕',  label:'Cancelled'},
+    };
+
+    el.innerHTML = orders.map(o => {
+      const itemsText = (o.items || []).map(i => i.name).join(', ') || 'No items';
+      const st = statusMap[o.status] || statusMap.pending;
+      const date = new Date(o.created_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+
+      return `
+      <div class="order-row">
+        <div><div class="order-ref">FE-${String(o.id).padStart(6,'0')}</div><div class="order-date">${date}</div></div>
+        <div class="order-items-preview">${itemsText}</div>
+        <div style="text-align:right">
+          <div class="order-total">RWF ${parseFloat(o.total).toLocaleString()}</div>
+          <span class="order-status status-${o.status}">${st.icon} ${st.label}</span>
+        </div>
+      </div>`;
+    }).join('');
+
+  } catch(e) {
+    el.innerHTML = '<p style="font-size:13px;color:var(--gray-t)">Could not load orders.</p>';
+  }
 }
 
 // ── WISHLIST PREVIEW ──
@@ -285,20 +329,26 @@ function renderNotif() {
     </div>`).join('');
 }
 
-// ── SAVE PROFILE ──
-function saveProfile() {
+// ── SAVE PROFILE (real API) ──
+async function saveProfile() {
   const fname    = document.getElementById('pFname').value.trim();
   const lname    = document.getElementById('pLname').value.trim();
-  const email    = document.getElementById('pEmail').value.trim();
   const phone    = document.getElementById('pPhone').value.trim();
   const province = document.getElementById('pProvince').value;
   const district = document.getElementById('pDistrict').value.trim();
-  const updated  = { ...user, fname, lname, name: fname+' '+lname, email, phone, province, district, avatar: fname[0]?.toUpperCase()||'?' };
-  localStorage.setItem('fe_user', JSON.stringify(updated));
-  document.getElementById('profileName').textContent  = updated.name;
-  document.getElementById('profileEmail').textContent = email;
-  document.getElementById('avatarLetter').textContent = updated.avatar;
-  showToast('✓ Profile saved successfully!');
+  const name     = fname + ' ' + lname;
+
+  try {
+    const data = await Auth.updateProfile({ name, phone });
+    const updated = { ...user, ...data, fname, lname, province, district, avatar: fname[0]?.toUpperCase()||'?' };
+    user = updated;
+    localStorage.setItem('fe_user', JSON.stringify(updated));
+    document.getElementById('profileName').textContent  = updated.name;
+    document.getElementById('avatarLetter').textContent = updated.avatar;
+    showToast('✓ Profile saved successfully!');
+  } catch(e) {
+    showToast('Failed to save profile. Please try again.');
+  }
 }
 
 function showToast(msg) {
@@ -316,12 +366,13 @@ function confirmDelete() {
 function doLogout() {
   localStorage.removeItem('fe_user');
   localStorage.removeItem('fe_verified');
+  localStorage.removeItem('fe_access_token');
+  localStorage.removeItem('fe_refresh_token');
   showToast('Signed out. See you soon!');
   setTimeout(()=>window.location.href='/login',1200);
 }
 
 showTab('personal', document.querySelector('.profile-nav-item'));
 </script>
-<script src="backend_api.js"></script>
 </body>
 </html>
