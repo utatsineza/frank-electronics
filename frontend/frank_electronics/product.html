@@ -208,7 +208,6 @@
   </div>
 </div>
 
-<!-- Not found -->
 <div class="pd-wrap pd-not-found" id="pdNotFound" style="display:none">
   <h2>Product not found</h2>
   <p>This product may have been removed by the admin.</p>
@@ -218,16 +217,14 @@
 <div id="footer-placeholder"></div>
 <div id="cart-placeholder"></div>
 
-<!-- Load shared scripts FIRST -->
+<script src="backend_api.js"></script>
 <script src="app.js"></script>
 <script src="components.js"></script>
 <script>
-// ── INJECT SHARED COMPONENTS ──
 injectNav('products');
 injectCart();
 injectFooter();
 
-// ── ALL PRODUCT DATA ──
 const ALL_PRODUCTS = [
   {id:1,  name:"Samsung Galaxy S24 Ultra",cat:"phones",em:"📱",price:2200000,old:2500000,badge:"sale",rating:4.8,rev:234,
    desc:"The Samsung Galaxy S24 Ultra is the ultimate Android flagship. Featuring a 200MP AI camera system, built-in titanium S-Pen, and a massive 5000mAh battery, it's engineered for productivity and creativity.",
@@ -238,43 +235,43 @@ const ALL_PRODUCTS = [
    specs:{Brand:"Apple",Model:"MacBook Air M3",Display:"15.3\" Liquid Retina",Processor:"Apple M3 8-core CPU",RAM:"8GB / 16GB / 24GB",Storage:"256GB – 2TB SSD",Battery:"Up to 18 hours","OS":"macOS Sonoma"},
    variants:["8GB RAM","16GB RAM","24GB RAM"],colors:["Midnight","Starlight","Space Gray"]},
   {id:3,  name:"AirPods Pro 2nd Gen",cat:"audio",em:"🎵",price:380000,old:450000,badge:"sale",rating:4.7,rev:412,
-   desc:"AirPods Pro 2nd generation deliver up to 2× more Active Noise Cancellation. The H2 chip enables richer sound with Personalized Spatial Audio.",
+   desc:"AirPods Pro 2nd generation deliver up to 2× more Active Noise Cancellation.",
    specs:{Brand:"Apple",Model:"AirPods Pro (2nd Gen)",ANC:"Yes — 2× better","Battery (buds)":"6 hours","Battery (case)":"30 hours total",Charging:"USB-C / MagSafe",Resistance:"IPX4",Connectivity:"Bluetooth 5.3"},
    variants:[],colors:["White"]},
   {id:4,  name:'Samsung 65" QLED TV',cat:"tv",em:"📺",price:1850000,old:null,badge:"hot",rating:4.6,rev:67,
-   desc:"Samsung QLED TV uses Quantum Dot technology for over a billion shades of colour. Smart TV with Netflix, YouTube, Prime Video and more built in.",
+   desc:"Samsung QLED TV uses Quantum Dot technology for over a billion shades of colour.",
    specs:{Brand:"Samsung",Size:"65 inches",Resolution:"4K UHD 3840×2160",Technology:"QLED Quantum Dot",HDR:"HDR10+",Refresh:"120Hz",Audio:"40W Dolby Atmos"},
    variants:["55\"","65\"","75\""],colors:["Black"]},
   {id:5,  name:'iPad Pro 12.9"',cat:"phones",em:"📲",price:1650000,old:1800000,badge:"sale",rating:4.8,rev:155,
-   desc:"iPad Pro with M2 chip and Liquid Retina XDR display with 120Hz ProMotion. Compatible with Apple Pencil 2 and Magic Keyboard.",
+   desc:"iPad Pro with M2 chip and Liquid Retina XDR display with 120Hz ProMotion.",
    specs:{Brand:"Apple",Model:"iPad Pro 12.9-inch",Display:"12.9\" Liquid Retina XDR",Processor:"Apple M2",Storage:"128GB to 2TB",Battery:"Up to 10 hours"},
    variants:["128GB","256GB","512GB","1TB"],colors:["Space Gray","Silver"]},
   {id:6,  name:"Logitech MX Master 3",cat:"accessories",em:"🖱️",price:145000,old:null,badge:"new",rating:4.7,rev:320,
-   desc:"MagSpeed electromagnetic scroll wheel, 70-day battery, works across 3 computers with Easy-Switch technology.",
+   desc:"MagSpeed electromagnetic scroll wheel, 70-day battery, works across 3 computers.",
    specs:{Brand:"Logitech",Model:"MX Master 3S",Sensor:"Darkfield 8000 DPI",Battery:"70 days",Charging:"USB-C",Connectivity:"Bluetooth + USB"},
    variants:[],colors:["Graphite","Pale Gray","Rose"]},
   {id:7,  name:"Sony WH-1000XM5",cat:"audio",em:"🎧",price:420000,old:520000,badge:"sale",rating:4.9,rev:530,
-   desc:"Industry-leading noise cancellation with 8 microphones and 2 processors. 30 hours battery, 3 min quick charge = 3 hours playback.",
+   desc:"Industry-leading noise cancellation with 8 microphones and 2 processors.",
    specs:{Brand:"Sony",Model:"WH-1000XM5",ANC:"8 mics + 2 processors",Battery:"30 hours","Quick Charge":"3 min = 3 hours",Charging:"USB-C",Weight:"250g"},
    variants:[],colors:["Black","Platinum Silver"]},
   {id:8,  name:"Dell XPS 15",cat:"laptops",em:"💻",price:2800000,old:3100000,badge:"sale",rating:4.7,rev:112,
-   desc:"OLED display with Intel Core i7 and NVIDIA RTX 4060. Built for creative professionals needing desktop-class performance.",
+   desc:"OLED display with Intel Core i7 and NVIDIA RTX 4060.",
    specs:{Brand:"Dell",Model:"XPS 15 9530",Display:"15.6\" OLED 3.5K 120Hz",Processor:"Intel Core i7-13700H",RAM:"16GB / 32GB",GPU:"NVIDIA RTX 4060 8GB"},
    variants:["16GB RAM","32GB RAM"],colors:["Platinum","Black"]},
   {id:9,  name:"iPhone 15 Pro",cat:"phones",em:"📱",price:1850000,old:null,badge:"hot",rating:4.9,rev:780,
-   desc:"Titanium design with Action Button and USB 3. A17 Pro chip delivers console-quality gaming and 48MP camera with 5× optical zoom.",
+   desc:"Titanium design with Action Button and USB 3. A17 Pro chip.",
    specs:{Brand:"Apple",Model:"iPhone 15 Pro",Display:"6.1\" Super Retina XDR 120Hz",Processor:"A17 Pro",Storage:"128GB – 1TB",Camera:"48MP Main + 12MP UW + 12MP 5× Tele",Battery:"Up to 23 hrs"},
    variants:["128GB","256GB","512GB","1TB"],colors:["Black Titanium","White Titanium","Blue Titanium","Natural Titanium"]},
   {id:10, name:'Xiaomi 65" Smart TV',cat:"tv",em:"📺",price:980000,old:1200000,badge:"sale",rating:4.5,rev:89,
-   desc:"4K UHD with Dolby Vision and Dolby Atmos. Android TV with instant access to Netflix, YouTube, Google Play.",
+   desc:"4K UHD with Dolby Vision and Dolby Atmos. Android TV.",
    specs:{Brand:"Xiaomi",Size:"65 inches",Resolution:"4K UHD",HDR:"Dolby Vision",Audio:"Dolby Atmos 30W",SmartTV:"Android TV"},
    variants:["55\"","65\""],colors:["Black"]},
   {id:11, name:"JBL Charge 5",cat:"audio",em:"🔊",price:195000,old:240000,badge:"sale",rating:4.6,rev:204,
-   desc:"IP67 waterproof, 20hr playtime. Powerful JBL sound with separate tweeter and woofer. Built-in power bank.",
+   desc:"IP67 waterproof, 20hr playtime. Powerful JBL sound with built-in power bank.",
    specs:{Brand:"JBL",Model:"Charge 5",Output:"40W",Battery:"7500mAh / 20 hours",Charging:"USB-C",Waterproof:"IP67",Connectivity:"Bluetooth 5.1"},
    variants:[],colors:["Black","Blue","Red","Teal","White"]},
   {id:12, name:"Samsung T7 SSD 1TB",cat:"accessories",em:"💾",price:125000,old:null,badge:"new",rating:4.8,rev:167,
-   desc:"NVMe speeds up to 1,050MB/s. AES 256-bit hardware encryption, compact shock-resistant design.",
+   desc:"NVMe speeds up to 1,050MB/s. AES 256-bit hardware encryption.",
    specs:{Brand:"Samsung",Capacity:"1TB",Interface:"USB 3.2 Gen 2",Read:"1,050 MB/s",Write:"1,000 MB/s",Encryption:"AES 256-bit",Weight:"58g"},
    variants:["500GB","1TB","2TB"],colors:["Beige","Black","Blue"]},
 ];
@@ -286,8 +283,6 @@ const REVIEWS_DATA = {
   9:[{name:"Henriette U.",rating:5,date:"25 May 2026",title:"Titanium feels premium",body:"Noticeably lighter. Camera zoom is outstanding.",verified:true},{name:"Jean-Claude N.",rating:4,date:"15 May 2026",title:"Great upgrade",body:"Coming from iPhone 12 this is a huge leap.",verified:false}],
 };
 
-// ── LOAD PRODUCT ──
-// Get fresh products from localStorage (admin-synced), fallback to embedded list
 function getFreshProducts() {
   try {
     const stored = localStorage.getItem('fe_products');
@@ -303,7 +298,6 @@ const urlParams  = new URLSearchParams(window.location.search);
 const productId  = parseInt(urlParams.get('id'));
 const freshProds = getFreshProducts();
 
-// Find product — first in localStorage (admin-managed), then in embedded list
 let product = freshProds.find(p => p.id === productId);
 if (!product) product = ALL_PRODUCTS.find(p => p.id === productId);
 
@@ -327,16 +321,12 @@ function populatePage(p) {
   document.getElementById('reviewBigNum').textContent = p.rating;
   document.getElementById('reviewBigCount').textContent = (p.rev||0) + ' reviews';
   document.getElementById('pdDesc').textContent = p.desc || 'No description available.';
-
-  // Stars
   document.getElementById('pdStars').textContent = '★'.repeat(Math.floor(p.rating)) + '☆'.repeat(5 - Math.floor(p.rating));
 
-  // Badge
   const badgeEl = document.getElementById('pdBadge');
   badgeEl.textContent = p.badge ? (p.badge.charAt(0).toUpperCase() + p.badge.slice(1)) : '';
   badgeEl.className = 'pd-badge-large pd-badge-' + (p.badge||'new');
 
-  // Old price
   if (p.old) {
     document.getElementById('pdOldPrice').textContent = fmt(p.old);
     const pct = Math.round((1 - p.price/p.old)*100);
@@ -347,11 +337,9 @@ function populatePage(p) {
     document.getElementById('pdSaving').style.display = 'none';
   }
 
-  // Thumbnails
   document.getElementById('pdThumbnails').innerHTML = [p.em,p.em,p.em,p.em].map((em,i) =>
     `<div class="pd-thumb ${i===0?'active':''}" onclick="selectThumb(this)">${em}</div>`).join('');
 
-  // Variants
   if (p.variants && p.variants.length) {
     document.getElementById('pdVariants').innerHTML = p.variants.map((v,i) =>
       `<button class="pd-variant-btn ${i===0?'active':''}" onclick="selectVariant(this)">${v}</button>`).join('');
@@ -360,7 +348,6 @@ function populatePage(p) {
     document.getElementById('pdVariantsWrap').style.display = 'none';
   }
 
-  // Colors
   if (p.colors && p.colors.length) {
     document.getElementById('pdColors').innerHTML = p.colors.map((c,i) =>
       `<button class="pd-variant-btn ${i===0?'active':''}" onclick="selectVariant(this)">${c}</button>`).join('');
@@ -369,13 +356,11 @@ function populatePage(p) {
     document.getElementById('pdColorsWrap').style.display = 'none';
   }
 
-  // Specs
   const specs = p.specs || {};
   document.getElementById('pdSpecTable').innerHTML = Object.entries(specs).length
     ? Object.entries(specs).map(([k,v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')
     : '<tr><td colspan="2" style="color:#aaa;text-align:center;padding:20px">No specifications available</td></tr>';
 
-  // Highlights
   document.getElementById('pdHighlights').innerHTML = [
     {icon:'⚡',title:'Top performance',desc:'Industry-leading speed and efficiency'},
     {icon:'✅',title:'100% Genuine',desc:'Authorised product with full warranty'},
@@ -385,7 +370,6 @@ function populatePage(p) {
     <div style="font-size:13px;font-weight:700;color:var(--black);margin-bottom:4px">${h.title}</div>
     <div style="font-size:12px;color:var(--gray-t)">${h.desc}</div></div>`).join('');
 
-  // Reviews
   const reviews = REVIEWS_DATA[p.id] || [{name:"Frank E.",rating:5,date:"1 May 2026",title:"Excellent product",body:"Very happy with this purchase. Great quality and fast delivery.",verified:true}];
   document.getElementById('reviewBars').innerHTML = [5,4,3,2,1].map(n => {
     const count = reviews.filter(r=>r.rating===n).length;
@@ -406,7 +390,6 @@ function populatePage(p) {
       ${r.verified?'<div class="pd-verified">✓ Verified purchase</div>':''}
     </div>`).join('');
 
-  // Related
   const allProds = getFreshProducts();
   const related  = allProds.filter(x => x.cat===p.cat && x.id!==p.id).slice(0,4);
   const showList = related.length ? related : allProds.filter(x=>x.id!==p.id).slice(0,4);
@@ -423,20 +406,18 @@ function populatePage(p) {
           <div class="prating"><span class="pstars">${'★'.repeat(Math.floor(x.rating))}</span><span class="prev"> ${x.rating}</span></div>
           <div class="pfoot">
             <div><div class="pprice">${fmt(x.price)}</div>${x.old?`<div class="pold">${fmt(x.old)}</div>`:''}</div>
-            <button class="padd-btn" onclick="event.preventDefault();event.stopPropagation();addToCart('${x.name}',${x.price},'${x.em}')">+</button>
+            <button class="padd-btn" onclick="event.preventDefault();event.stopPropagation();addToCart('${x.name}',${x.price},'${x.em}',${x.id})">+</button>
           </div>
         </div>
       </div>
     </a>`).join('');
 
-  // Wishlist state
   if (liked && liked.has(p.id)) {
     document.getElementById('pdWishBtn').classList.add('liked');
     document.getElementById('pdWishBtn').textContent = '♥';
   }
 }
 
-// ── ACTIONS ──
 let qty = 1;
 let currentProduct = product;
 
@@ -458,7 +439,7 @@ function selectVariant(el) {
 function addProductToCart() {
   if (!currentProduct) return;
   for (let i = 0; i < qty; i++) {
-    addToCart(currentProduct.name, currentProduct.price, currentProduct.em);
+    addToCart(currentProduct.name, currentProduct.price, currentProduct.em, currentProduct.id);
   }
   const btn = document.getElementById('pdAddBtn');
   const orig = btn.textContent;
@@ -475,7 +456,7 @@ function buyNow() {
     setTimeout(() => window.location.href = 'login.html?next=checkout', 1200);
     return;
   }
-  addToCart(currentProduct.name, currentProduct.price, currentProduct.em);
+  addToCart(currentProduct.name, currentProduct.price, currentProduct.em, currentProduct.id);
   setTimeout(() => window.location.href = 'checkout.html', 400);
 }
 
@@ -507,6 +488,5 @@ function copyLink() {
   navigator.clipboard.writeText(window.location.href).then(() => showToast('Link copied!'));
 }
 </script>
-<script src="backend_api.js"></script>
 </body>
 </html>
