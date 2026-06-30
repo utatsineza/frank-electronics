@@ -28,20 +28,10 @@
     <div class="auth-header">
       <div class="auth-header-icon">🔑</div>
       <div class="auth-title">Forgot <span>Password?</span></div>
-      <p class="auth-subtitle">No worries! Enter your details below and we'll send you a reset code.</p>
+      <p class="auth-subtitle">No worries! Enter your email below and we'll send you a reset code.</p>
     </div>
 
     <div class="alert alert-error" id="forgotAlert"></div>
-
-    <!-- SEND METHOD TABS -->
-    <div class="form-group">
-      <label>Reset via</label>
-      <div class="otp-method-tabs">
-        <button class="otp-tab active" onclick="setResetMethod('both', this)">📱 + ✉️ Both</button>
-        <button class="otp-tab" onclick="setResetMethod('sms', this)">📱 SMS</button>
-        <button class="otp-tab" onclick="setResetMethod('email', this)">✉️ Email</button>
-      </div>
-    </div>
 
     <!-- EMAIL FIELD -->
     <div class="form-group" id="emailGroup">
@@ -51,16 +41,6 @@
         <span class="input-icon">✉️</span>
       </div>
       <div class="field-error" id="email-error">Please enter a valid email address.</div>
-    </div>
-
-    <!-- PHONE FIELD -->
-    <div class="form-group" id="phoneGroup">
-      <label for="resetPhone">Phone number</label>
-      <div class="input-wrap">
-        <input class="form-control has-icon" id="resetPhone" type="tel" placeholder="+250 7XX XXX XXX" oninput="clearForgotError()"/>
-        <span class="input-icon">📱</span>
-      </div>
-      <div class="field-error" id="phone-error">Please enter a valid phone number.</div>
     </div>
 
     <button class="btn btn-orange" onclick="sendReset()" id="sendBtn">Send reset code →</button>
@@ -75,16 +55,16 @@
     <div class="auth-header">
       <div class="auth-header-icon" style="background:var(--green)">✅</div>
       <div class="auth-title">Code <span>Sent!</span></div>
-      <p class="auth-subtitle" id="sentMsg">We sent a 6-digit reset code to your phone and email.</p>
+      <p class="auth-subtitle" id="sentMsg">We sent a 6-digit reset code to your email.</p>
     </div>
 
     <div style="background:var(--gray-bg);border:1.5px solid var(--gray-b);border-radius:10px;padding:20px;text-align:center;margin-bottom:24px">
-      <div style="font-size:36px;margin-bottom:8px" id="sentIcon">📱 + ✉️</div>
-      <div style="font-size:13px;font-weight:700;color:var(--black)" id="sentDest">Phone & Email</div>
-      <div style="font-size:11px;color:var(--gray-t);margin-top:4px">Check your messages</div>
+      <div style="font-size:36px;margin-bottom:8px" id="sentIcon">✉️</div>
+      <div style="font-size:13px;font-weight:700;color:var(--black)" id="sentDest">your email</div>
+      <div style="font-size:11px;color:var(--gray-t);margin-top:4px">Check your inbox</div>
     </div>
 
-    <a href="/otp?action=forgot&method=both" class="btn btn-orange" id="goOtpBtn">Enter the code →</a>
+    <a href="/reset-password" class="btn btn-orange" id="goOtpBtn">Enter the code →</a>
 
     <div class="resend-row" style="margin-top:16px">
       Didn't receive it?
@@ -98,26 +78,12 @@
 <div class="auth-footer">© 2026 Frank Electronics · <a href="/contact">Support</a></div>
 <div class="toast" id="toast"></div>
 
+<script src="backend_api.js"></script>
 <script>
-let resetMethod = 'both';
-
-function setResetMethod(m, btn) {
-  resetMethod = m;
-  document.querySelectorAll('.otp-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  const emailGrp = document.getElementById('emailGroup');
-  const phoneGrp = document.getElementById('phoneGroup');
-  if (m === 'email') { emailGrp.style.display='block'; phoneGrp.style.display='none'; }
-  else if (m === 'sms') { emailGrp.style.display='none'; phoneGrp.style.display='block'; }
-  else { emailGrp.style.display='block'; phoneGrp.style.display='block'; }
-}
-
 function clearForgotError() {
   document.getElementById('forgotAlert').classList.remove('show');
-  ['email','phone'].forEach(f => {
-    document.getElementById('reset'+f.charAt(0).toUpperCase()+f.slice(1))?.classList.remove('error');
-    document.getElementById(f+'-error')?.classList.remove('show');
-  });
+  document.getElementById('resetEmail')?.classList.remove('error');
+  document.getElementById('email-error')?.classList.remove('show');
 }
 
 function showToast(msg) {
@@ -126,53 +92,49 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-function sendReset() {
+async function sendReset() {
   const email = document.getElementById('resetEmail')?.value.trim();
-  const phone = document.getElementById('resetPhone')?.value.trim();
-  let valid   = true;
 
-  if ((resetMethod === 'email' || resetMethod === 'both') && (!email || !/\S+@\S+\.\S+/.test(email))) {
+  if (!email || !/\S+@\S+\.\S+/.test(email)) {
     document.getElementById('resetEmail').classList.add('error');
     document.getElementById('email-error').classList.add('show');
-    valid = false;
+    return;
   }
-  if ((resetMethod === 'sms' || resetMethod === 'both') && (!phone || phone.length < 10)) {
-    document.getElementById('resetPhone').classList.add('error');
-    document.getElementById('phone-error').classList.add('show');
-    valid = false;
-  }
-  if (!valid) return;
 
   const btn = document.getElementById('sendBtn');
   btn.disabled = true; btn.textContent = 'Sending...';
 
-  setTimeout(() => {
-    // Update step 2 UI
-    const icons = { both: '📱 + ✉️', sms: '📱', email: '✉️' };
-    const dests = {
-      both:  (phone || '+250 7XX') + ' & ' + (email || 'your email'),
-      sms:   phone || '+250 7XX XXX XXX',
-      email: email || 'your email',
-    };
-    document.getElementById('sentIcon').textContent = icons[resetMethod];
-    document.getElementById('sentDest').textContent = dests[resetMethod];
-    const msgs = {
-      both:  'We sent a 6-digit reset code to your phone and email.',
-      sms:   'We sent a 6-digit reset code via SMS to your phone.',
-      email: 'We sent a 6-digit reset code to your email address.',
-    };
-    document.getElementById('sentMsg').textContent = msgs[resetMethod];
-    document.getElementById('goOtpBtn').href = '/otp?action=forgot&method=' + resetMethod;
+  try {
+    await apiCall('/api/auth/forgot-password/', 'POST', { email });
+
+    sessionStorage.setItem('fe_reset_email', email);
+
+    document.getElementById('sentIcon').textContent = '✉️';
+    document.getElementById('sentDest').textContent = email;
+    document.getElementById('sentMsg').textContent = 'We sent a 6-digit reset code to your email address.';
+    document.getElementById('goOtpBtn').href = '/reset-password';
 
     document.getElementById('step1Card').style.display = 'none';
     document.getElementById('step2Card').style.display = 'block';
-  }, 1400);
+
+  } catch(err) {
+    document.getElementById('forgotAlert').textContent = 'Something went wrong. Please try again.';
+    document.getElementById('forgotAlert').classList.add('show');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Send reset code →';
+  }
 }
 
-function resendReset() {
-  showToast('New reset code sent!');
+async function resendReset() {
+  const email = sessionStorage.getItem('fe_reset_email');
+  if (!email) return;
+  try {
+    await apiCall('/api/auth/forgot-password/', 'POST', { email });
+    showToast('New reset code sent!');
+  } catch(err) {
+    showToast('Failed to resend. Try again.');
+  }
 }
 </script>
-<script src="backend_api.js"></script>
 </body>
 </html>
