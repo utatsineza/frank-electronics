@@ -110,6 +110,7 @@ CORS_ALLOWED_ORIGINS = [
 
 # Email (for OTP)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@frankelectronics.rw'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
