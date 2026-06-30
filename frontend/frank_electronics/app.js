@@ -63,7 +63,6 @@ async function loadProductsFromAPI() {
 
 // ── CART ──────────────────────────────────────────
 let cart  = JSON.parse(localStorage.getItem('fe_cart')  || '[]');
-// Clear cart items that have no database id (old localStorage items)
 cart = cart.filter(i => i.id);
 localStorage.setItem('fe_cart', JSON.stringify(cart));
 let liked = new Set(JSON.parse(localStorage.getItem('fe_liked') || '[]'));
@@ -83,6 +82,12 @@ function addToCart(name, price, em, id) {
 
 function removeFromCart(idx) { cart.splice(idx, 1); saveCart(); updateCartUI(); }
 
+function changeCartQty(idx, delta) {
+  cart[idx].qty += delta;
+  if (cart[idx].qty <= 0) cart.splice(idx, 1);
+  saveCart(); updateCartUI();
+}
+
 function updateCartUI() {
   const count = cart.reduce((s, i) => s + i.qty, 0);
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
@@ -100,7 +105,18 @@ function updateCartUI() {
   cart.forEach((item, idx) => {
     const d = document.createElement('div');
     d.className = 'cart-item';
-    d.innerHTML = `<div class="ci-em">${item.em}</div><div class="ci-info"><div class="ci-name">${item.name}${item.qty > 1 ? ' ×' + item.qty : ''}</div><div class="ci-price">${fmt(item.price * item.qty)}</div></div><button class="ci-rm" onclick="removeFromCart(${idx})">✕</button>`;
+    d.innerHTML = `
+      <div class="ci-em">${item.em}</div>
+      <div class="ci-info">
+        <div class="ci-name">${item.name}</div>
+        <div class="ci-price">${fmt(item.price * item.qty)}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <button onclick="changeCartQty(${idx},-1)" style="width:26px;height:26px;border:1.5px solid #eee;border-radius:6px;background:#f5f5f5;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">−</button>
+        <span style="font-size:13px;font-weight:700;min-width:16px;text-align:center">${item.qty}</span>
+        <button onclick="changeCartQty(${idx},1)" style="width:26px;height:26px;border:1.5px solid #eee;border-radius:6px;background:#f5f5f5;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">+</button>
+        <button onclick="removeFromCart(${idx})" style="width:26px;height:26px;border:none;background:none;cursor:pointer;font-size:14px;color:#ccc;margin-left:2px">✕</button>
+      </div>`;
     body.appendChild(d);
   });
 }
@@ -138,7 +154,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateCartUI();
   await loadProductsFromAPI();
 
-  // Live search
   const si = document.getElementById('searchInput');
   if (si) {
     si.addEventListener('keydown', e => {
@@ -148,10 +163,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Re-render after API loads
   if (typeof renderProducts === 'function') renderProducts();
   if (typeof applyFilters === 'function') applyFilters();
 
-  // Dispatch event so pages know API is ready
   window.dispatchEvent(new Event('productsLoaded'));
 });
