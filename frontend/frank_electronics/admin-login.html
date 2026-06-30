@@ -154,7 +154,7 @@
     <button class="btn btn-orange" onclick="doAdminLogin()" id="adminLoginBtn">Access admin panel →</button>
 
     <div class="admin-back-link">
-      Not an admin? <a href="index.html">Go back to the shop</a>
+      Not an admin? <a href="/">Go back to the shop</a>
     </div>
   </div>
 
@@ -224,7 +224,7 @@
       if (validEmail && validPw && validCode) {
         localStorage.setItem('fe_admin', JSON.stringify({ email, loggedIn: true, time: Date.now() }));
         showToast('✓ Access granted. Welcome, Admin!');
-        setTimeout(() => window.location.href = 'admin.html', 1000);
+        setTimeout(() => window.location.href = '/admin', 1000);
       } else {
         document.getElementById('adminAlert').classList.add('show');
         btn.disabled = false; btn.textContent = 'Access admin panel →';
@@ -237,7 +237,7 @@
   // Auto-redirect if already logged in as admin
   const adminSession = JSON.parse(localStorage.getItem('fe_admin') || '{}');
   if (adminSession.loggedIn && (Date.now() - adminSession.time) < 8 * 60 * 60 * 1000) {
-    window.location.href = 'admin.html';
+    window.location.href = '/admin';
   }
 </script>
 <script src="backend_api.js"></script>

@@ -9,7 +9,7 @@
 <body>
 
 <div class="auth-topbar">
-  <a class="auth-brand" href="index.html">
+  <a class="auth-brand" href="/">
     <div class="auth-logo">
       <img src="assets/logo.png" alt="Frank Electronics" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
       <span class="auth-logo-fallback" style="display:none">FE</span>
@@ -19,7 +19,7 @@
       <div class="auth-brand-tag">Your plug for smart electronics</div>
     </div>
   </a>
-  <a class="auth-topbar-link" href="login.html">← <span>Back to login</span></a>
+  <a class="auth-topbar-link" href="/login">← <span>Back to login</span></a>
 </div>
 
 <div class="auth-page">
@@ -66,7 +66,7 @@
     <button class="btn btn-orange" onclick="sendReset()" id="sendBtn">Send reset code →</button>
 
     <div class="auth-bottom">
-      Remember your password? <a href="login.html">Sign in →</a>
+      Remember your password? <a href="/login">Sign in →</a>
     </div>
   </div>
 
@@ -84,18 +84,18 @@
       <div style="font-size:11px;color:var(--gray-t);margin-top:4px">Check your messages</div>
     </div>
 
-    <a href="otp.html?action=forgot&method=both" class="btn btn-orange" id="goOtpBtn">Enter the code →</a>
+    <a href="/otp?action=forgot&method=both" class="btn btn-orange" id="goOtpBtn">Enter the code →</a>
 
     <div class="resend-row" style="margin-top:16px">
       Didn't receive it?
       <button class="resend-btn" onclick="resendReset()">Resend</button>
     </div>
 
-    <div class="auth-bottom"><a href="login.html">← Back to login</a></div>
+    <div class="auth-bottom"><a href="/login">← Back to login</a></div>
   </div>
 </div>
 
-<div class="auth-footer">© 2026 Frank Electronics · <a href="contact.html">Support</a></div>
+<div class="auth-footer">© 2026 Frank Electronics · <a href="/contact">Support</a></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -162,7 +162,7 @@ function sendReset() {
       email: 'We sent a 6-digit reset code to your email address.',
     };
     document.getElementById('sentMsg').textContent = msgs[resetMethod];
-    document.getElementById('goOtpBtn').href = 'otp.html?action=forgot&method=' + resetMethod;
+    document.getElementById('goOtpBtn').href = '/otp?action=forgot&method=' + resetMethod;
 
     document.getElementById('step1Card').style.display = 'none';
     document.getElementById('step2Card').style.display = 'block';

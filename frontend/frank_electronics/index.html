@@ -84,8 +84,8 @@
     </div>
     <p class="hero-sub">Premium gadgets, top brands, unbeatable prices — delivered fast across Rwanda and beyond.</p>
     <div class="hero-btns">
-      <a href="products.html" class="btn btn-orange">Shop now →</a>
-      <a href="deals.html"    class="btn btn-black">View deals</a>
+      <a href="/products" class="btn btn-orange">Shop now →</a>
+      <a href="/deals"    class="btn btn-black">View deals</a>
     </div>
     <div class="hero-stats">
       <div><div class="stat-n">500+</div><div class="stat-l">Products</div></div>
@@ -95,13 +95,13 @@
     </div>
   </div>
   <div class="hero-cards">
-    <div class="hcard" onclick="window.location.href='products.html'">
+    <div class="hcard" onclick="window.location.href='/products'">
       <div class="hcard-tag">🔥 Best seller</div>
       <span class="hcard-em">📱</span>
       <div class="hcard-name">iPhone 15 Pro</div>
       <span class="hcard-price">RWF 1,850,000</span>
     </div>
-    <div class="hcard" onclick="window.location.href='products.html'">
+    <div class="hcard" onclick="window.location.href='/products'">
       <div class="hcard-tag">⚡ Flash deal</div>
       <span class="hcard-em">🎧</span>
       <div class="hcard-name">Sony WH-1000XM5</div>
@@ -163,7 +163,7 @@
         <option value="price-desc">Price ↓</option>
         <option value="rating">Best rated</option>
       </select>
-      <a href="products.html" class="btn btn-outline btn-sm">View all →</a>
+      <a href="/products" class="btn btn-outline btn-sm">View all →</a>
     </div>
   </div>
   <div class="pgrid" id="pgrid"></div>
@@ -175,7 +175,7 @@
       <div class="promo-title">Up to 30% off<br>Accessories</div>
       <div class="promo-code">Use code<span>FRANK30</span> at checkout</div>
     </div>
-    <a href="deals.html" class="btn btn-orange btn-lg">Grab the deal →</a>
+    <a href="/deals" class="btn btn-orange btn-lg">Grab the deal →</a>
   </div>
 </div>
 
@@ -209,7 +209,7 @@
       return;
     }
     grid.innerHTML = list.map(p => `
-      <div class="pcard" onclick="window.location.href='product.html?id=${p.id}'" style="cursor:pointer">
+      <div class="pcard" onclick="window.location.href='/product?id=${p.id}'" style="cursor:pointer">
         <div class="pcard-img">
           <span style="font-size:50px">${p.em}</span>
           <span class="pbadge pbadge-${p.badge}">${p.badge==='sale'?'Sale':p.badge==='new'?'New':'Hot'}</span>

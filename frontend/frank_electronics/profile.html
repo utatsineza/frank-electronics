@@ -14,7 +14,7 @@
 <body>
 
 <div class="auth-topbar">
-  <a class="auth-brand" href="index.html">
+  <a class="auth-brand" href="/">
     <div class="auth-logo">
       <img src="assets/logo.png" alt="Frank Electronics" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
       <span class="auth-logo-fallback" style="display:none">FE</span>
@@ -24,7 +24,7 @@
       <div class="auth-brand-tag">Your plug for smart electronics</div>
     </div>
   </a>
-  <a class="auth-topbar-link" href="index.html">← <span>Back to shop</span></a>
+  <a class="auth-topbar-link" href="/">← <span>Back to shop</span></a>
 </div>
 
 <div class="profile-page-wrap">
@@ -112,7 +112,7 @@
       <div class="profile-section-title">My <span>Wishlist</span></div>
       <p style="font-size:13px;color:var(--gray-t);margin-bottom:16px">Items you've saved while browsing.</p>
       <div id="wishPreview"></div>
-      <a href="wishlist.html" class="btn btn-orange" style="width:auto;padding:10px 22px;margin-top:14px;display:inline-flex">View full wishlist →</a>
+      <a href="/wishlist" class="btn btn-orange" style="width:auto;padding:10px 22px;margin-top:14px;display:inline-flex">View full wishlist →</a>
     </div>
 
     <!-- ADDRESS -->
@@ -130,7 +130,7 @@
           <div style="font-size:13px;font-weight:700;color:var(--black)">🔑 Password</div>
           <div style="font-size:12px;color:var(--gray-t);margin-top:3px">Last changed recently</div>
         </div>
-        <a href="reset-password.html" class="btn btn-outline btn-sm" style="width:auto">Change</a>
+        <a href="/reset-password" class="btn btn-outline btn-sm" style="width:auto">Change</a>
       </div>
       <div style="border:1.5px solid var(--gray-b);border-radius:10px;padding:18px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
         <div>
@@ -166,7 +166,7 @@
   </div>
 </div>
 
-<div class="auth-footer">© 2026 Frank Electronics · <a href="contact.html">Support</a> · <a href="#">Privacy</a></div>
+<div class="auth-footer">© 2026 Frank Electronics · <a href="/contact">Support</a> · <a href="#">Privacy</a></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -310,14 +310,14 @@ function changeAvatar() { showToast('Photo upload coming soon!'); }
 function confirmDelete() {
   if (confirm('Delete your account? This cannot be undone.')) {
     localStorage.clear();
-    window.location.href='index.html';
+    window.location.href='/';
   }
 }
 function doLogout() {
   localStorage.removeItem('fe_user');
   localStorage.removeItem('fe_verified');
   showToast('Signed out. See you soon!');
-  setTimeout(()=>window.location.href='login.html',1200);
+  setTimeout(()=>window.location.href='/login',1200);
 }
 
 showTab('personal', document.querySelector('.profile-nav-item'));

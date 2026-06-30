@@ -9,7 +9,7 @@
 <body>
 
 <div class="auth-topbar">
-  <a class="auth-brand" href="index.html">
+  <a class="auth-brand" href="/">
     <div class="auth-logo">
       <img src="assets/logo.png" alt="Frank Electronics" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
       <span class="auth-logo-fallback" style="display:none">FE</span>
@@ -19,7 +19,7 @@
       <div class="auth-brand-tag">Your plug for smart electronics</div>
     </div>
   </a>
-  <a class="auth-topbar-link" href="login.html">Already have an account? <span>Sign in →</span></a>
+  <a class="auth-topbar-link" href="/login">Already have an account? <span>Sign in →</span></a>
 </div>
 
 <div class="auth-page">
@@ -131,11 +131,11 @@
     </div>
 
     <button class="btn btn-orange" onclick="doRegister()" id="regBtn">Create my account →</button>
-    <div class="auth-bottom">Already have an account? <a href="login.html">Sign in →</a></div>
+    <div class="auth-bottom">Already have an account? <a href="/login">Sign in →</a></div>
   </div>
 </div>
 
-<div class="auth-footer">© 2026 Frank Electronics · <a href="contact.html">Support</a> · <a href="#">Privacy</a></div>
+<div class="auth-footer">© 2026 Frank Electronics · <a href="/contact">Support</a> · <a href="#">Privacy</a></div>
 <div class="toast" id="toast"></div>
 
 <script src="backend_api.js"></script>
@@ -183,7 +183,7 @@ function mark(f) {
   document.getElementById(f+'-error')?.classList.add('show');
 }
 function socialReg(provider) {
-  window.location.href = 'login.html';
+  window.location.href = '/login';
 }
 
 async function doRegister() {
@@ -224,7 +224,7 @@ async function doRegister() {
 
     showToast('Account created successfully!');
     setTimeout(() => {
-      window.location.href = 'index.html';
+      window.location.href = '/';
     }, 1000);
 
   } catch(err) {

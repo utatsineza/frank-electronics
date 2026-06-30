@@ -90,7 +90,7 @@
 <body>
 
 <div class="auth-topbar">
-  <a class="auth-brand" href="index.html">
+  <a class="auth-brand" href="/">
     <div class="auth-logo">
       <img src="assets/logo.png" alt="FE" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
       <span class="auth-logo-fallback" style="display:none">FE</span>
@@ -100,7 +100,7 @@
       <div class="auth-brand-tag">Your plug for smart electronics</div>
     </div>
   </a>
-  <a class="auth-topbar-link" href="register.html">New here? <span>Create account →</span></a>
+  <a class="auth-topbar-link" href="/register">New here? <span>Create account →</span></a>
 </div>
 
 <div class="auth-page">
@@ -143,7 +143,7 @@
     <div class="form-group">
       <label for="lpw">
         Password
-        <a href="forgot.html" style="float:right;font-size:11px;color:var(--orange);font-weight:600;text-transform:none;letter-spacing:0">Forgot password?</a>
+        <a href="/forgot" style="float:right;font-size:11px;color:var(--orange);font-weight:600;text-transform:none;letter-spacing:0">Forgot password?</a>
       </label>
       <div class="input-wrap">
         <input class="form-control has-icon" id="lpw" type="password" placeholder="Your password"
@@ -159,7 +159,7 @@
     </div>
 
     <button class="btn btn-orange" onclick="doLogin()" id="loginBtn">Sign in →</button>
-    <div class="auth-bottom">Don't have an account? <a href="register.html">Create one free →</a></div>
+    <div class="auth-bottom">Don't have an account? <a href="/register">Create one free →</a></div>
   </div>
 </div>
 
@@ -233,7 +233,7 @@
     </div>
 
     <div class="g-footer" id="gFooterEmail" style="display:none">
-      <button class="g-link" onclick="window.location.href='register.html'">Create account</button>
+      <button class="g-link" onclick="window.location.href='/register'">Create account</button>
       <div class="g-btns">
         <button class="g-btn g-btn-secondary" onclick="goToPickerOrClose()">Cancel</button>
         <button class="g-btn g-btn-primary" onclick="submitEmail()">Next</button>
@@ -272,12 +272,12 @@
       <div class="fb-err" id="fbErr">Please fill in your email and password.</div>
       <button class="fb-btn" onclick="confirmFacebook()">Log in</button>
       <div class="fb-sep"></div>
-      <button class="fb-new" onclick="window.location.href='register.html'">Create new account</button>
+      <button class="fb-new" onclick="window.location.href='/register'">Create new account</button>
     </div>
   </div>
 </div>
 
-<div class="auth-footer">© 2026 Frank Electronics · <a href="contact.html">Support</a> · <a href="#">Privacy</a></div>
+<div class="auth-footer">© 2026 Frank Electronics · <a href="/contact">Support</a> · <a href="#">Privacy</a></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -324,10 +324,10 @@ async function doLogin() {
     const data = await Auth.login(email, pw);
     // Redirect admin to admin panel, others to homepage
     if (data.user.is_staff) {
-      window.location.href = 'admin.html';
+      window.location.href = '/admin';
     } else {
       const next = getNext();
-      window.location.href = next || 'index.html';
+      window.location.href = next || '/';
     }
   } catch(err) {
     document.getElementById('loginAlert').classList.add('show');
@@ -444,7 +444,7 @@ function finishSocialLogin(name, email, joined) {
   localStorage.setItem('fe_login_next', getNext());
   closeGoogle();
   showToast('Signing in as ' + name + '...');
-  setTimeout(() => window.location.href = 'otp.html?action=login&method=email', 900);
+  setTimeout(() => window.location.href = '/otp?action=login&method=email', 900);
 }
 
 // ── FACEBOOK ──
@@ -468,7 +468,7 @@ function confirmFacebook() {
   localStorage.setItem('fe_login_next', getNext());
   closeFacebook();
   showToast('Signing in with Facebook...');
-  setTimeout(() => window.location.href = 'otp.html?action=login&method=email', 900);
+  setTimeout(() => window.location.href = '/otp?action=login&method=email', 900);
 }
 </script>
 <script src="backend_api.js"></script>

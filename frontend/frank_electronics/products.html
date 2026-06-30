@@ -163,7 +163,7 @@
     if (!list.length) { grid.innerHTML = ''; none.style.display = 'block'; return; }
     none.style.display = 'none';
     grid.innerHTML = list.map(p => `
-      <div class="pcard" onclick="window.location.href='product.html?id=${p.id}'" style="cursor:pointer">
+      <div class="pcard" onclick="window.location.href='/product?id=${p.id}'" style="cursor:pointer">
         <div class="pcard-img">
           <span style="font-size:50px">${p.em}</span>
           <span class="pbadge pbadge-${p.badge}">${p.badge==='sale'?'Sale':p.badge==='new'?'New':'Hot'}</span>

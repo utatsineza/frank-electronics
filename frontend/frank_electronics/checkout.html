@@ -65,7 +65,7 @@
 <script>
   (function(){
     const u = JSON.parse(localStorage.getItem('fe_user') || '{}');
-    if (!u.email) { window.location.href = 'login.html?next=checkout'; }
+    if (!u.email) { window.location.href = '/login?next=checkout'; }
   })();
 </script>
 
@@ -139,7 +139,7 @@
           <div class="order-head-sub" id="co-sub">0 items</div>
         </div>
         <div class="order-items" id="co-items">
-          <div class="order-empty" id="co-empty">Your cart is empty.<br/><a href="products.html" style="color:var(--orange)">Shop now →</a></div>
+          <div class="order-empty" id="co-empty">Your cart is empty.<br/><a href="/products" style="color:var(--orange)">Shop now →</a></div>
         </div>
         <div class="order-summary">
           <div class="coupon-row">
@@ -165,8 +165,8 @@
   <p class="confirm-sub">Thank you for shopping with Frank Electronics. Your order has been placed and will be delivered within 48 hours. We'll send you a confirmation via SMS.</p>
   <div class="confirm-ref" id="orderRef">FE-000000</div>
   <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-    <a href="index.html" class="btn btn-black">← Back to home</a>
-    <a href="products.html" class="btn btn-orange">Keep shopping →</a>
+    <a href="/" class="btn btn-black">← Back to home</a>
+    <a href="/products" class="btn btn-orange">Keep shopping →</a>
   </div>
 </div>
 

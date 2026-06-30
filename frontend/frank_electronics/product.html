@@ -101,9 +101,9 @@
 
 <div class="pd-wrap" id="pdWrap" style="display:none">
   <div class="pd-breadcrumb">
-    <a href="index.html">Home</a>
+    <a href="/">Home</a>
     <span class="pd-breadcrumb-sep">›</span>
-    <a href="products.html">Products</a>
+    <a href="/products">Products</a>
     <span class="pd-breadcrumb-sep">›</span>
     <span id="pdBreadcrumbName" style="color:var(--black)"></span>
   </div>
@@ -202,7 +202,7 @@
   <div style="margin-bottom:40px">
     <div class="section-header">
       <div class="section-title">Related Products</div>
-      <a href="products.html" class="section-link">View all →</a>
+      <a href="/products" class="section-link">View all →</a>
     </div>
     <div class="pd-related-grid" id="relatedGrid"></div>
   </div>
@@ -211,7 +211,7 @@
 <div class="pd-wrap pd-not-found" id="pdNotFound" style="display:none">
   <h2>Product not found</h2>
   <p>This product may have been removed by the admin.</p>
-  <a href="products.html" class="btn btn-orange" style="width:auto;padding:10px 22px">← Back to products</a>
+  <a href="/products" class="btn btn-orange" style="width:auto;padding:10px 22px">← Back to products</a>
 </div>
 
 <div id="footer-placeholder"></div>
@@ -394,7 +394,7 @@ function populatePage(p) {
   const related  = allProds.filter(x => x.cat===p.cat && x.id!==p.id).slice(0,4);
   const showList = related.length ? related : allProds.filter(x=>x.id!==p.id).slice(0,4);
   document.getElementById('relatedGrid').innerHTML = showList.map(x => `
-    <a href="product.html?id=${x.id}" style="text-decoration:none">
+    <a href="/product?id=${x.id}" style="text-decoration:none">
       <div class="pcard">
         <div class="pcard-img">
           <span style="font-size:44px">${x.em}</span>
@@ -452,10 +452,10 @@ function buyNow() {
   const u = JSON.parse(localStorage.getItem('fe_user') || '{}');
   if (!u.email) {
     showToast('Please sign in to checkout');
-    setTimeout(() => window.location.href = 'login.html?next=checkout', 1200);
+    setTimeout(() => window.location.href = '/login?next=checkout', 1200);
     return;
   }
-  window.location.href = 'checkout.html';
+  window.location.href = '/checkout';
 }
 
 function toggleProductWish() {

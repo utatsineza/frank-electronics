@@ -58,7 +58,7 @@
       <div class="deal-banner-tag">⚡ Flash offer</div>
       <div class="deal-banner-title">Audio Week<br>Special</div>
       <div class="deal-banner-sub">All headphones & speakers on sale</div>
-      <a href="products.html" class="btn btn-orange" style="margin-top:14px">Shop audio →</a>
+      <a href="/products" class="btn btn-orange" style="margin-top:14px">Shop audio →</a>
     </div>
     <div class="deal-banner-pct">-30%</div>
   </div>
@@ -104,7 +104,7 @@
   document.getElementById('dealsGrid').innerHTML = deals.map(p => {
     const pct = Math.round((1 - p.price / p.old) * 100);
     return `
-    <div class="pcard" onclick="window.location.href='product.html?id='+p.id" style="cursor:pointer">
+    <div class="pcard" onclick="window.location.href='/product?id='+p.id" style="cursor:pointer">
       <div class="pcard-img">
         <span style="font-size:50px">${p.em}</span>
         <span class="pbadge pbadge-sale">-${pct}%</span>

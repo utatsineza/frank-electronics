@@ -18,7 +18,7 @@
 <body>
 
 <div class="auth-topbar">
-  <a class="auth-brand" href="index.html">
+  <a class="auth-brand" href="/">
     <div class="auth-logo">
       <img src="assets/logo.png" alt="Frank Electronics" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
       <span class="auth-logo-fallback" style="display:none">FE</span>
@@ -82,11 +82,11 @@
       </button>
     </div>
 
-    <div class="auth-bottom"><a href="login.html">← Back to login</a></div>
+    <div class="auth-bottom"><a href="/login">← Back to login</a></div>
   </div>
 </div>
 
-<div class="auth-footer">© 2026 Frank Electronics · <a href="contact.html">Support</a></div>
+<div class="auth-footer">© 2026 Frank Electronics · <a href="/contact">Support</a></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -266,14 +266,14 @@ function verifyOTP() {
         const _isAdmin = ADMIN_EMAILS.includes(_email);
 
         if (action === 'forgot') {
-          window.location.replace('reset-password.html');
+          window.location.replace('/reset-password');
         } else if (_isAdmin) {
           localStorage.setItem('fe_admin', JSON.stringify({ email: user.email, loggedIn: true, time: Date.now() }));
-          window.location.replace('admin.html');
+          window.location.replace('/admin');
         } else if (_next && _next !== '') {
-          window.location.replace(_next.replace('.html','') + '.html');
+          window.location.replace('/' + _next.replace('.html',''));
         } else {
-          window.location.replace('index.html'); // ← goes to HOME after login
+          window.location.replace('/'); // ← goes to HOME after login
         }
       }, 1200);
     } else {
