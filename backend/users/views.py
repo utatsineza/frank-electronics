@@ -90,6 +90,7 @@ class LogoutView(APIView):
 
 class ForgotPasswordView(APIView):
     permission_classes = [AllowAny]
+    serializer_class = ForgotPasswordSerializer
 
     def post(self, request):
         serializer = ForgotPasswordSerializer(data=request.data)
@@ -115,6 +116,7 @@ class ForgotPasswordView(APIView):
 
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny]
+    serializer_class = ResetPasswordSerializer
 
     def post(self, request):
         serializer = ResetPasswordSerializer(data=request.data)
