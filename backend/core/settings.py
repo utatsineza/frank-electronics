@@ -107,6 +107,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5500',
     'https://frank-electronics-t72l.onrender.com',
 ]
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Email (for OTP)
 EMAIL_BACKEND    = 'django.core.mail.backends.smtp.EmailBackend'
