@@ -1,11 +1,13 @@
+import os
 import random
+import sib_api_v3_sdk
+from sib_api_v3_sdk.rest import ApiException
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
 from datetime import timedelta
@@ -88,6 +90,29 @@ class LogoutView(APIView):
         return Response({'message': 'Logged out successfully'})
 
 
+def send_otp_email(email, otp):
+    try:
+        configuration = sib_api_v3_sdk.Configuration()
+        configuration.api_key['api-key'] = os.environ.get('BREVO_API_KEY', '')
+
+        api_instance = sib_api_v3_sdk.TransactionalEmailsApi(
+            sib_api_v3_sdk.ApiClient(configuration)
+        )
+
+        send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+            to=[{"email": email}],
+            sender={"name": "Frank Electronics", "email": settings.DEFAULT_FROM_EMAIL},
+            subject="Frank Electronics — Password Reset Code",
+            text_content=f"Your password reset code is: {otp}\n\nThis code expires in 10 minutes.\n\nIf you did not request this, ignore this email."
+        )
+
+        api_instance.send_transac_email(send_smtp_email)
+        return True
+    except ApiException as e:
+        print(f"Brevo API error: {e}")
+        return False
+
+
 class ForgotPasswordView(APIView):
     permission_classes = [AllowAny]
     serializer_class = ForgotPasswordSerializer
@@ -103,13 +128,7 @@ class ForgotPasswordView(APIView):
         otp = str(random.randint(100000, 999999))
         PasswordResetOTP.objects.create(email=email, otp=otp)
 
-        send_mail(
-            subject='Frank Electronics — Password Reset Code',
-            message=f'Your password reset code is: {otp}\n\nThis code expires in 10 minutes.',
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False,
-        )
+        send_otp_email(email, otp)
 
         return Response({'message': 'If this email exists, an OTP has been sent.'})
 
