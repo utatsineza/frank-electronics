@@ -64,6 +64,8 @@ function injectNav(activePage) {
       <li><a href="${base}contact" class="${activePage==='contact'?'active':''}">Contact</a></li>
     </ul>
 
+    <button class="nav-hamburger" onclick="toggleMobileMenu()" id="hamburgerBtn">☰</button>
+
     <div class="nav-right">
       <!-- SEARCH BAR -->
       <div style="position:relative;display:flex;align-items:center">
@@ -83,6 +85,34 @@ function injectNav(activePage) {
       ${authSection}
     </div>
   </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <input class="mobile-search" type="text" placeholder="Search electronics..."
+      onkeydown="if(event.key==='Enter'&&this.value.trim())window.location.href='${base}products?q='+encodeURIComponent(this.value.trim())"/>
+    <a href="${base}" class="${activePage==='home'?'active':''}">🏠 Home</a>
+    <a href="${base}products" class="${activePage==='products'?'active':''}">📱 Shop</a>
+    <a href="${base}deals" class="${activePage==='deals'?'active':''}">🔥 Deals</a>
+    <a href="${base}about" class="${activePage==='about'?'active':''}">ℹ️ About</a>
+    <a href="${base}contact" class="${activePage==='contact'?'active':''}">📞 Contact</a>
+  </div>
+
+  <script>
+  function toggleMobileMenu() {
+    const menu = document.getElementById('mobileMenu');
+    const btn  = document.getElementById('hamburgerBtn');
+    menu.classList.toggle('open');
+    btn.textContent = menu.classList.contains('open') ? '✕' : '☰';
+  }
+  // Close menu when clicking outside
+  document.addEventListener('click', function(e) {
+    const menu = document.getElementById('mobileMenu');
+    const btn  = document.getElementById('hamburgerBtn');
+    if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+      menu.classList.remove('open');
+      btn.textContent = '☰';
+    }
+  });
+  <\/script>
 
   <script>
   function hideCatDropdown() {
