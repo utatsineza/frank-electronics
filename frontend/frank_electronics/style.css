@@ -240,3 +240,8 @@ input,select,textarea{font-family:inherit}
   .pgrid{grid-template-columns:1fr}
   .brand-name{font-size:14px}
 }
+
+@media(max-width:900px){
+  .auth-name-label{display:none}
+  .nav-hamburger{display:flex;align-items:center;justify-content:center}
+}

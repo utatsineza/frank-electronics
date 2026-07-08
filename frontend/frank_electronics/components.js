@@ -16,7 +16,7 @@ function injectNav(activePage) {
   const authSection = isLoggedIn
     ? `<a href="${base}profile" style="display:flex;align-items:center;gap:8px;text-decoration:none">
         <div style="width:34px;height:34px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0;border:2px solid rgba(255,255,255,.15)">${initial}</div>
-        <span style="font-size:12px;color:#ccc;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500">${displayName.split(' ')[0]}</span>
+        <span class="auth-name-label" style="font-size:12px;color:#ccc;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500">${displayName.split(' ')[0]}</span>
       </a>`
     : `<a href="${base}login" style="background:var(--orange);color:#fff;padding:8px 18px;font-size:13px;font-weight:700;border-radius:6px;text-decoration:none;white-space:nowrap">Sign in →</a>`;
 
@@ -34,9 +34,7 @@ function injectNav(activePage) {
     </a>
 
     <ul class="nav-links">
-      <li><a href="${base}"    class="${activePage==='home'?'active':''}">Home</a></li>
-
-      <!-- SHOP BY CATEGORY DROPDOWN -->
+      <li><a href="${base}" class="${activePage==='home'?'active':''}">Home</a></li>
       <li class="nav-dropdown" style="position:relative">
         <a href="${base}products" class="${activePage==='products'?'active':''}"
            style="display:flex;align-items:center;gap:4px"
@@ -48,41 +46,37 @@ function injectNav(activePage) {
           style="display:none;position:absolute;top:100%;left:0;background:#fff;border:1.5px solid #eee;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.15);min-width:200px;z-index:50;padding:8px 0;margin-top:8px"
           onmouseenter="document.getElementById('catDropdown').style.display='block'"
           onmouseleave="hideCatDropdown()">
-          <a href="${base}products" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none;transition:background .15s" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">⚡</span> All products</a>
-          <a href="${base}products?cat=phones"      style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">📱</span> Phones & Tablets</a>
-          <a href="${base}products?cat=laptops"     style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">💻</span> Laptops</a>
-          <a href="${base}products?cat=audio"       style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">🎧</span> Audio</a>
-          <a href="${base}products?cat=tv"          style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">📺</span> TVs & Displays</a>
+          <a href="${base}products" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">⚡</span> All products</a>
+          <a href="${base}products?cat=phones" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">📱</span> Phones & Tablets</a>
+          <a href="${base}products?cat=laptops" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">💻</span> Laptops</a>
+          <a href="${base}products?cat=audio" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">🎧</span> Audio</a>
+          <a href="${base}products?cat=tv" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">📺</span> TVs & Displays</a>
           <a href="${base}products?cat=accessories" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:#1a1a1a;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">🔌</span> Accessories</a>
           <div style="height:1px;background:#f0f0f0;margin:6px 0"></div>
           <a href="${base}deals" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:var(--orange);font-weight:700;text-decoration:none" onmouseover="this.style.background='#fff8f5'" onmouseout="this.style.background=''"><span style="font-size:16px">🔥</span> Deals & Offers</a>
         </div>
       </li>
-
-      <li><a href="${base}deals"   class="${activePage==='deals'?'active':''}">Deals</a></li>
-      <li><a href="${base}about"   class="${activePage==='about'?'active':''}">About</a></li>
+      <li><a href="${base}deals" class="${activePage==='deals'?'active':''}">Deals</a></li>
+      <li><a href="${base}about" class="${activePage==='about'?'active':''}">About</a></li>
       <li><a href="${base}contact" class="${activePage==='contact'?'active':''}">Contact</a></li>
     </ul>
 
-    <button class="nav-hamburger" onclick="toggleMobileMenu()" id="hamburgerBtn">☰</button>
-
     <div class="nav-right">
-      <!-- SEARCH BAR -->
       <div style="position:relative;display:flex;align-items:center">
         <input class="nav-search" id="searchInput" type="text"
           placeholder="Search electronics..."
-          onkeydown="if(event.key==='Enter'&&this.value.trim())window.location.href='${base}products.html?q='+encodeURIComponent(this.value.trim())"
+          onkeydown="if(event.key==='Enter'&&this.value.trim())window.location.href='${base}products?q='+encodeURIComponent(this.value.trim())"
           style="padding-right:36px"/>
         <button onclick="doNavSearch()" title="Search"
           style="position:absolute;right:10px;background:none;border:none;cursor:pointer;color:#aaa;font-size:16px;line-height:1;padding:0;transition:color .2s"
           onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color='#aaa'">🔍</button>
       </div>
-
       <button class="nav-icon" title="Wishlist" onclick="window.location.href='${base}wishlist'">♡</button>
       <button class="nav-icon cart-btn" onclick="openCart()" title="Cart">
         🛒 <span class="nav-badge" id="cartBadge">0</span>
       </button>
       ${authSection}
+      <button class="nav-hamburger" onclick="toggleMobileMenu()" id="hamburgerBtn">☰</button>
     </div>
   </nav>
 
@@ -94,6 +88,13 @@ function injectNav(activePage) {
     <a href="${base}deals" class="${activePage==='deals'?'active':''}">🔥 Deals</a>
     <a href="${base}about" class="${activePage==='about'?'active':''}">ℹ️ About</a>
     <a href="${base}contact" class="${activePage==='contact'?'active':''}">📞 Contact</a>
+    <div style="height:1px;background:#2a2a2a;margin:4px 0"></div>
+    ${isLoggedIn
+      ? `<a href="${base}profile">👤 My Profile</a>
+         <a href="${base}orders">📦 My Orders</a>`
+      : `<a href="${base}login" style="color:var(--orange);font-weight:700">Sign in →</a>
+         <a href="${base}register">Create account</a>`
+    }
   </div>
 
   <script>
@@ -103,7 +104,6 @@ function injectNav(activePage) {
     menu.classList.toggle('open');
     btn.textContent = menu.classList.contains('open') ? '✕' : '☰';
   }
-  // Close menu when clicking outside
   document.addEventListener('click', function(e) {
     const menu = document.getElementById('mobileMenu');
     const btn  = document.getElementById('hamburgerBtn');
@@ -112,9 +112,6 @@ function injectNav(activePage) {
       btn.textContent = '☰';
     }
   });
-  <\/script>
-
-  <script>
   function hideCatDropdown() {
     setTimeout(() => {
       const d = document.getElementById('catDropdown');
@@ -185,8 +182,8 @@ function injectFooter() {
       <ul>
         <li><a href="${base}products">New arrivals</a></li>
         <li><a href="${base}products">Best sellers</a></li>
-        <li><a href="${base}ddeals">Deals & offers</a></li>
-        <li><a href="${base}pproducts">All brands</a></li>
+        <li><a href="${base}deals">Deals & offers</a></li>
+        <li><a href="${base}products">All brands</a></li>
       </ul>
     </div>
     <div class="footer-col">
