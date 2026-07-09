@@ -95,34 +95,7 @@ function injectNav(activePage) {
       : `<a href="${base}login" style="color:var(--orange);font-weight:700">Sign in →</a>
          <a href="${base}register">Create account</a>`
     }
-  </div>
-
-  <script>
-  function toggleMobileMenu() {
-    const menu = document.getElementById('mobileMenu');
-    const btn  = document.getElementById('hamburgerBtn');
-    menu.classList.toggle('open');
-    btn.textContent = menu.classList.contains('open') ? '✕' : '☰';
-  }
-  document.addEventListener('click', function(e) {
-    const menu = document.getElementById('mobileMenu');
-    const btn  = document.getElementById('hamburgerBtn');
-    if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
-      menu.classList.remove('open');
-      btn.textContent = '☰';
-    }
-  });
-  function hideCatDropdown() {
-    setTimeout(() => {
-      const d = document.getElementById('catDropdown');
-      if (d && !d.matches(':hover')) d.style.display = 'none';
-    }, 100);
-  }
-  function doNavSearch() {
-    const q = document.getElementById('searchInput')?.value.trim();
-    if (q) window.location.href = '${base}products?q=' + encodeURIComponent(q);
-  }
-  <\/script>`;
+  </div>`;
 }
 
 function injectCart() {
@@ -210,3 +183,33 @@ function injectFooter() {
     <span>💳 MTN MoMo · Visa · Mastercard · Cash on delivery</span>
   </div>`;
 }
+
+// ── GLOBAL NAV FUNCTIONS ──
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const btn  = document.getElementById('hamburgerBtn');
+  if (!menu || !btn) return;
+  menu.classList.toggle('open');
+  btn.textContent = menu.classList.contains('open') ? '✕' : '☰';
+}
+
+function hideCatDropdown() {
+  setTimeout(() => {
+    const d = document.getElementById('catDropdown');
+    if (d && !d.matches(':hover')) d.style.display = 'none';
+  }, 100);
+}
+
+function doNavSearch() {
+  const q = document.getElementById('searchInput')?.value.trim();
+  if (q) window.location.href = './products?q=' + encodeURIComponent(q);
+}
+
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('mobileMenu');
+  const btn  = document.getElementById('hamburgerBtn');
+  if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+    menu.classList.remove('open');
+    btn.textContent = '☰';
+  }
+});
