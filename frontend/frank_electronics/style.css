@@ -215,11 +215,13 @@ input,select,textarea{font-family:inherit}
   .mobile-menu{top:65px}
   .mobile-search-overlay{top:65px}
   .desktop-search{display:none}
+  .brand-tag{display:block}
+  .nav{overflow:visible}
 }
 
 @media(max-width:640px){
-  .nav{padding:0 12px;height:56px}
-  .brand-tag{display:none}
+  .nav{padding:0 12px;height:56px;overflow:hidden}
+  .brand-tag{display:block;font-size:8px;letter-spacing:1px}
   .mobile-menu{top:59px}
   .mobile-search-overlay{top:59px}
   .pgrid{grid-template-columns:repeat(2,1fr);gap:10px}
@@ -232,6 +234,10 @@ input,select,textarea{font-family:inherit}
   .cart-drawer{width:100%}
   .toast{width:90%;text-align:center;white-space:normal}
   .btn-lg{padding:12px 20px;font-size:14px}
+  .nav-right{gap:6px}
+  .nav-icon{font-size:16px;padding:4px}
+  .nav-brand{min-width:0;flex-shrink:1}
+  .brand-name{font-size:14px;white-space:nowrap}
 }
 
 @media(max-width:400px){
