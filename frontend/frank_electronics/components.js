@@ -62,7 +62,7 @@ function injectNav(activePage) {
     </ul>
 
     <div class="nav-right">
-      <div style="position:relative;display:flex;align-items:center">
+      <div class="desktop-search" style="position:relative;display:flex;align-items:center">
         <input class="nav-search" id="searchInput" type="text"
           placeholder="Search electronics..."
           onkeydown="if(event.key==='Enter'&&this.value.trim())window.location.href='${base}products?q='+encodeURIComponent(this.value.trim())"

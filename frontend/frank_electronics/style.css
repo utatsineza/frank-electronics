@@ -205,6 +205,7 @@ input,select,textarea{font-family:inherit}
   .sidebar{display:none}
   .nav-links{display:none}
   .nav-search{display:none}
+  .nav-search + button{display:none}
   .nav-hamburger{display:flex;align-items:center;justify-content:center}
   .nav-search-icon{display:flex;align-items:center;justify-content:center}
   .auth-name-label{display:none}
@@ -213,6 +214,7 @@ input,select,textarea{font-family:inherit}
   .footer{grid-template-columns:1fr 1fr;padding:28px 16px}
   .mobile-menu{top:65px}
   .mobile-search-overlay{top:65px}
+  .desktop-search{display:none}
 }
 
 @media(max-width:640px){
