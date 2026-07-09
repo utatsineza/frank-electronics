@@ -220,8 +220,17 @@ input,select,textarea{font-family:inherit}
 }
 
 @media(max-width:640px){
-  .nav{padding:0 12px;height:56px;overflow:hidden}
-  .brand-tag{display:block;font-size:8px;letter-spacing:1px}
+  .nav{padding:0 12px;height:auto;min-height:56px;flex-wrap:nowrap;overflow:hidden}
+  .nav-brand{flex-shrink:1;min-width:0;gap:8px}
+  .brand-name{font-size:13px;white-space:nowrap}
+  .brand-tag{display:block;font-size:7px;letter-spacing:1px;white-space:nowrap}
+  .logo-circle{width:36px;height:36px;flex-shrink:0}
+  .logo-circle img{width:30px;height:30px}
+  .nav-right{gap:4px;flex-shrink:0}
+  .nav-icon{font-size:16px;padding:3px}
+  .nav-search-icon{font-size:18px;padding:3px}
+  .nav-hamburger{font-size:22px;padding:3px}
+
   .mobile-menu{top:59px}
   .mobile-search-overlay{top:59px}
   .pgrid{grid-template-columns:repeat(2,1fr);gap:10px}
@@ -234,10 +243,6 @@ input,select,textarea{font-family:inherit}
   .cart-drawer{width:100%}
   .toast{width:90%;text-align:center;white-space:normal}
   .btn-lg{padding:12px 20px;font-size:14px}
-  .nav-right{gap:6px}
-  .nav-icon{font-size:16px;padding:4px}
-  .nav-brand{min-width:0;flex-shrink:1}
-  .brand-name{font-size:14px;white-space:nowrap}
 }
 
 @media(max-width:400px){

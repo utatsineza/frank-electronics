@@ -18,7 +18,7 @@ function injectNav(activePage) {
         <div style="width:34px;height:34px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0;border:2px solid rgba(255,255,255,.15)">${initial}</div>
         <span class="auth-name-label" style="font-size:12px;color:#ccc;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500">${displayName.split(' ')[0]}</span>
       </a>`
-    : `<a href="${base}login" style="background:var(--orange);color:#fff;padding:8px 18px;font-size:13px;font-weight:700;border-radius:6px;text-decoration:none;white-space:nowrap">Sign in →</a>`;
+    : `<a href="${base}login" class="nav-signin-btn" style="background:var(--orange);color:#fff;padding:7px 12px;font-size:12px;font-weight:700;border-radius:6px;text-decoration:none;white-space:nowrap">Sign in →</a>`;
 
   document.getElementById('nav-placeholder').innerHTML = `
   <nav class="nav">
