@@ -76,13 +76,17 @@ function injectNav(activePage) {
         🛒 <span class="nav-badge" id="cartBadge">0</span>
       </button>
       ${authSection}
+      <button class="nav-search-icon" onclick="toggleMobileSearch()" id="searchIconBtn" title="Search">🔍</button>
       <button class="nav-hamburger" onclick="toggleMobileMenu()" id="hamburgerBtn">☰</button>
     </div>
   </nav>
 
+  <div class="mobile-search-overlay" id="mobileSearchOverlay">
+    <input type="text" id="mobileSearchInput" placeholder="Search electronics..."
+      onkeydown="if(event.key==='Enter'&&this.value.trim()){window.location.href='${base}products?q='+encodeURIComponent(this.value.trim())}else if(event.key==='Escape'){toggleMobileSearch()}"/>
+  </div>
+
   <div class="mobile-menu" id="mobileMenu">
-    <input class="mobile-search" type="text" placeholder="Search electronics..."
-      onkeydown="if(event.key==='Enter'&&this.value.trim())window.location.href='${base}products?q='+encodeURIComponent(this.value.trim())"/>
     <a href="${base}" class="${activePage==='home'?'active':''}">🏠 Home</a>
     <a href="${base}products" class="${activePage==='products'?'active':''}">📱 Shop</a>
     <a href="${base}deals" class="${activePage==='deals'?'active':''}">🔥 Deals</a>
@@ -189,8 +193,31 @@ function toggleMobileMenu() {
   const menu = document.getElementById('mobileMenu');
   const btn  = document.getElementById('hamburgerBtn');
   if (!menu || !btn) return;
-  menu.classList.toggle('open');
-  btn.textContent = menu.classList.contains('open') ? '✕' : '☰';
+  const isOpen = menu.classList.toggle('open');
+  btn.textContent = isOpen ? '✕' : '☰';
+  // close search if open
+  if (isOpen) {
+    document.getElementById('mobileSearchOverlay')?.classList.remove('open');
+    const sBtn = document.getElementById('searchIconBtn');
+    if (sBtn) sBtn.textContent = '🔍';
+  }
+}
+
+function toggleMobileSearch() {
+  const overlay = document.getElementById('mobileSearchOverlay');
+  const btn     = document.getElementById('searchIconBtn');
+  if (!overlay) return;
+  const isOpen = overlay.classList.toggle('open');
+  if (isOpen) {
+    document.getElementById('mobileSearchInput')?.focus();
+    if (btn) btn.textContent = '✕';
+    // close hamburger menu if open
+    document.getElementById('mobileMenu')?.classList.remove('open');
+    const hBtn = document.getElementById('hamburgerBtn');
+    if (hBtn) hBtn.textContent = '☰';
+  } else {
+    if (btn) btn.textContent = '🔍';
+  }
 }
 
 function hideCatDropdown() {
@@ -206,10 +233,18 @@ function doNavSearch() {
 }
 
 document.addEventListener('click', function(e) {
+  // Close mobile menu
   const menu = document.getElementById('mobileMenu');
   const btn  = document.getElementById('hamburgerBtn');
   if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
     menu.classList.remove('open');
     btn.textContent = '☰';
+  }
+  // Close mobile search
+  const overlay = document.getElementById('mobileSearchOverlay');
+  const sBtn    = document.getElementById('searchIconBtn');
+  if (overlay && sBtn && !overlay.contains(e.target) && !sBtn.contains(e.target)) {
+    overlay.classList.remove('open');
+    sBtn.textContent = '🔍';
   }
 });

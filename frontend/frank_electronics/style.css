@@ -50,14 +50,19 @@ input,select,textarea{font-family:inherit}
 .nav-icon.cart-btn{color:var(--orange)}
 .nav-badge{position:absolute;top:-1px;right:-1px;background:var(--orange);color:var(--white);border-radius:8px;min-width:16px;height:16px;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 3px}
 
-/* ── MOBILE MENU ── */
-.nav-hamburger{display:none;background:none;border:none;color:var(--white);font-size:24px;padding:6px;cursor:pointer}
-.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:var(--black);z-index:99;padding:16px;border-bottom:3px solid var(--orange);flex-direction:column;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+/* ── MOBILE NAV ── */
+.nav-hamburger{display:none;background:none;border:none;color:var(--white);font-size:24px;padding:6px;cursor:pointer;line-height:1}
+.nav-search-icon{display:none;background:none;border:none;color:#aaa;font-size:20px;padding:6px;cursor:pointer;line-height:1}
+
+.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;background:var(--black);z-index:99;padding:12px 16px;border-bottom:3px solid var(--orange);flex-direction:column;gap:2px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .mobile-menu.open{display:flex}
 .mobile-menu a{color:#aaa;font-size:14px;font-weight:500;padding:12px 16px;border-radius:8px;transition:background .2s,color .2s;display:block}
 .mobile-menu a:hover,.mobile-menu a.active{background:var(--orange-l);color:var(--orange)}
-.mobile-search{background:var(--black-2);border:1px solid #333;border-radius:8px;padding:10px 16px;color:var(--white);font-size:13px;width:100%;margin-bottom:8px}
-.mobile-search:focus{outline:none;border-color:var(--orange)}
+
+.mobile-search-overlay{display:none;position:fixed;top:62px;left:0;right:0;background:var(--black);z-index:99;padding:12px 16px;border-bottom:3px solid var(--orange);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.mobile-search-overlay.open{display:block}
+.mobile-search-overlay input{width:100%;background:var(--black-2);border:1.5px solid var(--orange);border-radius:8px;padding:12px 16px;color:var(--white);font-size:14px;outline:none}
+.mobile-search-overlay input::placeholder{color:#666}
 
 /* ── BUTTONS ── */
 .btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:7px;padding:11px 22px;font-size:13px;font-weight:700;cursor:pointer;transition:background .2s,transform .1s;font-family:inherit;text-decoration:none}
@@ -190,58 +195,44 @@ input,select,textarea{font-family:inherit}
    RESPONSIVE
 ══════════════════════════════════════ */
 
-/* Large tablet */
 @media(max-width:1100px){
   .pgrid{grid-template-columns:repeat(2,1fr)}
   .footer{grid-template-columns:1fr 1fr}
   .nav-search{width:140px}
 }
 
-/* Tablet */
 @media(max-width:900px){
   .sidebar{display:none}
   .nav-links{display:none}
   .nav-search{display:none}
-  .nav-hamburger{display:block}
+  .nav-hamburger{display:flex;align-items:center;justify-content:center}
+  .nav-search-icon{display:flex;align-items:center;justify-content:center}
+  .auth-name-label{display:none}
   .nav{padding:0 16px}
   .pgrid{grid-template-columns:repeat(2,1fr)}
   .footer{grid-template-columns:1fr 1fr;padding:28px 16px}
+  .mobile-menu{top:65px}
+  .mobile-search-overlay{top:65px}
 }
 
-/* Mobile */
 @media(max-width:640px){
   .nav{padding:0 12px;height:56px}
   .brand-tag{display:none}
-  .nav-hamburger{display:block}
-
-  /* Products grid — 2 columns on mobile */
+  .mobile-menu{top:59px}
+  .mobile-search-overlay{top:59px}
   .pgrid{grid-template-columns:repeat(2,1fr);gap:10px}
   .pcard-img{height:100px;font-size:36px}
   .pcard-body{padding:10px}
   .pname{font-size:12px}
   .pprice{font-size:13px}
-
-  /* Footer */
   .footer{grid-template-columns:1fr;padding:24px 16px;gap:20px}
   .footer-bottom{padding:12px 16px;flex-direction:column;text-align:center}
-
-  /* Cart drawer full width on mobile */
   .cart-drawer{width:100%}
-
-  /* Toast */
   .toast{width:90%;text-align:center;white-space:normal}
-
-  /* Buttons */
   .btn-lg{padding:12px 20px;font-size:14px}
 }
 
-/* Small mobile */
 @media(max-width:400px){
   .pgrid{grid-template-columns:1fr}
   .brand-name{font-size:14px}
-}
-
-@media(max-width:900px){
-  .auth-name-label{display:none}
-  .nav-hamburger{display:flex;align-items:center;justify-content:center}
 }
