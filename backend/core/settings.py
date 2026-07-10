@@ -134,3 +134,11 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'Backend API for Frank Electronics e-commerce platform',
     'VERSION': '1.0.0',
 }
+
+# MTN MoMo
+MOMO_BASE_URL         = os.getenv('MOMO_BASE_URL', 'https://sandbox.momoapi.mtn.com')
+MOMO_SUBSCRIPTION_KEY = os.getenv('MOMO_SUBSCRIPTION_KEY', '')
+MOMO_API_USER         = os.getenv('MOMO_API_USER', '')
+MOMO_API_KEY          = os.getenv('MOMO_API_KEY', '')
+MOMO_ENVIRONMENT      = os.getenv('MOMO_ENVIRONMENT', 'sandbox')
+MOMO_CALLBACK_URL     = os.getenv('MOMO_CALLBACK_URL', '')
