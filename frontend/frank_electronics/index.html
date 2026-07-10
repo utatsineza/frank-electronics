@@ -51,8 +51,9 @@
 
     .how-to-buy{padding:48px 28px;text-align:center;background:var(--white);border-bottom:1px solid var(--gray-b)}
     .how-to-buy-steps{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;max-width:700px;margin:0 auto}
-    .htb-step{flex:1;min-width:160px;display:flex;flex-direction:column;align-items:center;gap:12px}
-    .htb-number{width:52px;height:52px;border-radius:50%;background:#1877f2;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0}
+    .htb-step{flex:1;min-width:160px;display:flex;flex-direction:column;align-items:center;gap:12px;text-decoration:none;cursor:pointer}
+    .htb-number{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0;transition:transform .2s,box-shadow .2s}
+    .htb-step:hover .htb-number{transform:scale(1.12);box-shadow:0 8px 24px rgba(0,0,0,.15)}
     .htb-title{font-size:15px;font-weight:700;color:var(--black)}
     .htb-desc{font-size:13px;color:var(--gray-t);line-height:1.5}
 
@@ -62,7 +63,7 @@
     .sort-sel:focus{outline:none;border-color:var(--orange)}
 
     @media(max-width:900px){.cats-row{grid-template-columns:repeat(3,1fr)}.hero{flex-direction:column}.hero-cards{width:100%;flex-direction:row}.hcard{flex:1}.features{grid-template-columns:1fr 1fr}}
-    @media(max-width:640px){.cats-row{grid-template-columns:repeat(2,1fr)}.how-to-buy-steps{gap:24px}}
+    @media(max-width:640px){.cats-row{grid-template-columns:repeat(2,1fr)}.how-to-buy-steps{gap:24px}.features{grid-template-columns:1fr 1fr}.promo{flex-direction:column;gap:16px;text-align:center}}
   </style>
 </head>
 <body>
@@ -124,21 +125,21 @@
   <div class="section-title" style="margin-bottom:8px">How to Buy</div>
   <p style="font-size:13px;color:var(--gray-t);margin-bottom:36px">Simple steps to get your electronics</p>
   <div class="how-to-buy-steps">
-    <div class="htb-step">
-      <div class="htb-number">1</div>
+    <a href="/products" class="htb-step">
+      <div class="htb-number" style="background:var(--orange)">1</div>
       <div class="htb-title">Browse</div>
       <div class="htb-desc">Find your phone or part on this page.</div>
-    </div>
-    <div class="htb-step">
-      <div class="htb-number">2</div>
+    </a>
+    <a href="https://wa.me/250781922737" target="_blank" class="htb-step">
+      <div class="htb-number" style="background:#25D366">2</div>
       <div class="htb-title">WhatsApp Us</div>
       <div class="htb-desc">Send us the product name.</div>
-    </div>
-    <div class="htb-step">
-      <div class="htb-number">3</div>
+    </a>
+    <a href="/contact" class="htb-step">
+      <div class="htb-number" style="background:var(--black)">3</div>
       <div class="htb-title">Pick Up or Deliver</div>
       <div class="htb-desc">Confirm and collect or get Kigali delivery.</div>
-    </div>
+    </a>
   </div>
 </section>
 
