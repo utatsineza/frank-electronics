@@ -5,7 +5,7 @@ from sib_api_v3_sdk.rest import ApiException
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.conf import settings
@@ -88,6 +88,12 @@ class LogoutView(APIView):
         except Exception:
             pass
         return Response({'message': 'Logged out successfully'})
+
+
+class UserListView(generics.ListAPIView):
+    serializer_class   = UserSerializer
+    permission_classes = [IsAdminUser]
+    queryset           = User.objects.all().order_by('-created_at')
 
 
 def send_otp_email(email, otp):
