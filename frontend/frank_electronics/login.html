@@ -6,16 +6,12 @@
   <title>Sign In — Frank Electronics</title>
   <link rel="stylesheet" href="auth.css"/>
   <style>
-    /* ─── GOOGLE MODAL ─── */
     .g-overlay{display:none;position:fixed;inset:0;background:rgba(60,64,67,.5);z-index:400;align-items:center;justify-content:center;padding:16px}
     .g-overlay.open{display:flex}
     .g-box{background:#fff;border-radius:28px;width:100%;max-width:450px;box-shadow:0 4px 24px rgba(0,0,0,.3);overflow:hidden;animation:gPop .22s ease;font-family:'Google Sans',Roboto,Arial,sans-serif;display:flex;flex-direction:column;max-height:90vh}
     @keyframes gPop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
-
     .g-topbar{display:flex;align-items:center;gap:8px;padding:20px 28px 0;font-size:14px;color:#5f6368;font-weight:500}
     .g-content{flex:1;padding:24px 28px 0;overflow-y:auto}
-
-    /* Account picker */
     .g-pick-title{font-size:24px;font-weight:400;color:#202124;margin-bottom:4px}
     .g-pick-sub{font-size:14px;color:#5f6368;margin-bottom:16px}
     .g-account{display:flex;align-items:center;gap:14px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .15s;border:1px solid transparent}
@@ -28,15 +24,11 @@
     .g-use-another:hover{background:#f8f9fa}
     .g-circle-icon{width:40px;height:40px;border-radius:50%;background:#f1f3f4;border:1px solid #dadce0;display:flex;align-items:center;justify-content:center;font-size:20px;color:#5f6368;flex-shrink:0}
     .g-use-another-text{font-size:14px;color:#202124}
-
-    /* Email screen */
     .g-screen{display:none}
     .g-screen.active{display:block}
     .g-screen-title{font-size:24px;font-weight:400;color:#202124;margin-bottom:6px}
     .g-screen-sub{font-size:14px;color:#202124;margin-bottom:24px}
     .g-screen-sub span{color:#1a73e8}
-
-    /* Input field (Google style) */
     .g-field{position:relative;margin-bottom:6px}
     .g-input{width:100%;border:1px solid #dadce0;border-radius:4px;padding:14px 14px 6px;font-size:16px;color:#202124;outline:none;font-family:inherit;background:#fff;transition:border-color .2s}
     .g-input:focus{border-color:#1a73e8;border-width:2px;padding:13px 13px 5px}
@@ -45,15 +37,11 @@
     .g-input.has-val ~ .g-label{top:-8px;font-size:12px;color:#1a73e8;background:#fff;padding:0 3px}
     .g-input:not(:focus).has-val ~ .g-label{color:#5f6368}
     .g-err{font-size:12px;color:#d93025;margin-top:4px;min-height:16px}
-
-    /* Email chip (shown on password screen) */
     .g-chip{display:inline-flex;align-items:center;gap:8px;background:#f1f3f4;border-radius:20px;padding:6px 14px;cursor:pointer;margin-bottom:20px;transition:background .15s}
     .g-chip:hover{background:#e8eaed}
     .g-chip-avatar{width:26px;height:26px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff}
     .g-chip-email{font-size:13px;color:#202124;font-weight:500}
     .g-chip-arrow{font-size:12px;color:#5f6368}
-
-    /* Footer */
     .g-footer{display:flex;justify-content:space-between;align-items:center;padding:20px 28px;margin-top:auto}
     .g-link{font-size:14px;color:#1a73e8;cursor:pointer;background:none;border:none;font-family:inherit;padding:0}
     .g-link:hover{text-decoration:underline}
@@ -67,8 +55,6 @@
     .g-bottom a{color:#5f6368;text-decoration:none}
     .g-bottom a:hover{text-decoration:underline}
     .g-bottom-links{display:flex;gap:16px}
-
-    /* ─── FACEBOOK ─── */
     .fb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;align-items:center;justify-content:center;padding:16px}
     .fb-overlay.open{display:flex}
     .fb-box{background:#fff;border-radius:8px;width:100%;max-width:396px;box-shadow:0 8px 40px rgba(0,0,0,.3);overflow:hidden;animation:gPop .2s ease;font-family:Helvetica,Arial,sans-serif}
@@ -163,20 +149,14 @@
   </div>
 </div>
 
-<!-- ════════════════════════════════
-  GOOGLE SIGN-IN MODAL
-════════════════════════════════ -->
+<!-- GOOGLE MODAL -->
 <div class="g-overlay" id="gOverlay" onclick="if(event.target.id==='gOverlay')closeGoogle()">
   <div class="g-box">
-
     <div class="g-topbar">
       <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Sign in with Google
     </div>
-
     <div class="g-content">
-
-      <!-- SCREEN 1: Account picker -->
       <div id="gScreenPicker" class="g-screen active">
         <div class="g-pick-title">Choose an account</div>
         <div class="g-pick-sub">to continue to Frank Electronics</div>
@@ -187,8 +167,6 @@
           <span class="g-use-another-text">Use another account</span>
         </div>
       </div>
-
-      <!-- SCREEN 2: Email input -->
       <div id="gScreenEmail" class="g-screen">
         <div class="g-screen-title">Sign in</div>
         <div class="g-screen-sub">to continue to <span>Frank Electronics</span></div>
@@ -203,8 +181,6 @@
           <a class="g-link" onclick="showToast('Forgot email? Please create a new account.')">Forgot email?</a>
         </div>
       </div>
-
-      <!-- SCREEN 3: Password input -->
       <div id="gScreenPw" class="g-screen">
         <div id="gEmailChip" class="g-chip" onclick="goToEmailScreen()">
           <div class="g-chip-avatar" id="gChipAvatar">?</div>
@@ -221,17 +197,13 @@
         </div>
         <div class="g-err" id="gPwErr"></div>
       </div>
-
-    </div><!-- /g-content -->
-
-    <!-- FOOTER (changes per screen) -->
+    </div>
     <div class="g-footer" id="gFooterPicker">
       <span></span>
       <div class="g-btns">
         <button class="g-btn g-btn-primary" onclick="goToEmailScreen()">Use another account</button>
       </div>
     </div>
-
     <div class="g-footer" id="gFooterEmail" style="display:none">
       <button class="g-link" onclick="window.location.href='/register'">Create account</button>
       <div class="g-btns">
@@ -239,22 +211,19 @@
         <button class="g-btn g-btn-primary" onclick="submitEmail()">Next</button>
       </div>
     </div>
-
     <div class="g-footer" id="gFooterPw" style="display:none">
-      <button class="g-link" onclick="showToast('Password reset coming soon!')">Forgot password?</button>
+      <button class="g-link" onclick="showToast('Forgot password? Use the forgot password link.')">Forgot password?</button>
       <div class="g-btns">
         <button class="g-btn g-btn-secondary" onclick="goToEmailScreen()">Back</button>
         <button class="g-btn g-btn-primary" onclick="submitPassword()">Sign in</button>
       </div>
     </div>
-
     <div class="g-bottom">
       <span>English (Rwanda)</span>
       <div class="g-bottom-links">
         <a href="#">Help</a><a href="#">Privacy</a><a href="#">Terms</a>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -268,7 +237,7 @@
     <div class="fb-body">
       <p style="font-size:14px;color:#606770;margin-bottom:14px;line-height:1.5">Log in to Frank Electronics using your Facebook account.</p>
       <input class="fb-inp" id="fbEmail" type="email" placeholder="Email or phone number"/>
-      <input class="fb-inp" id="fbPw"    type="password" placeholder="Password" onkeydown="if(event.key==='Enter')confirmFacebook()"/>
+      <input class="fb-inp" id="fbPw" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')confirmFacebook()"/>
       <div class="fb-err" id="fbErr">Please fill in your email and password.</div>
       <button class="fb-btn" onclick="confirmFacebook()">Log in</button>
       <div class="fb-sep"></div>
@@ -280,8 +249,16 @@
 <div class="auth-footer">© 2026 Frank Electronics · <a href="/contact">Support</a> · <a href="#">Privacy</a></div>
 <div class="toast" id="toast"></div>
 
+<script src="backend_api.js"></script>
 <script>
-// ── HELPERS ──
+const ADMIN_EMAILS = [
+  'admin@frankelectronics.rw',
+  'frank@frankelectronics.rw',
+  'manager@frankelectronics.rw',
+  'ntwarifranklin66@gmail.com'
+];
+function isAdmin(email) { return ADMIN_EMAILS.includes((email||'').toLowerCase()); }
+
 function togglePw() {
   const i = document.getElementById('lpw');
   i.type = i.type === 'password' ? 'text' : 'password';
@@ -298,10 +275,6 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 function getNext() { return new URLSearchParams(window.location.search).get('next') || ''; }
-
-// ── EMAIL LOGIN ──
-const ADMIN_EMAILS = ['admin@frankelectronics.rw','frank@frankelectronics.rw','manager@frankelectronics.rw'];
-function isAdmin(email) { return ADMIN_EMAILS.includes((email||'').toLowerCase()); }
 
 async function doLogin() {
   const email = document.getElementById('lemail').value.trim();
@@ -322,11 +295,10 @@ async function doLogin() {
 
   try {
     const data = await Auth.login(email, pw);
-    // Redirect admin to admin panel, others to homepage
-    if (data.user.is_staff) {
+    const next = getNext();
+    if (data.user.is_staff || isAdmin(data.user.email)) {
       window.location.href = '/admin';
     } else {
-      const next = getNext();
       window.location.href = next || '/';
     }
   } catch(err) {
@@ -342,27 +314,16 @@ let gEmail = '';
 
 function openGoogle() {
   renderAccounts();
-  if (gAccounts.length > 0) {
-    showGScreen('picker');
-  } else {
-    showGScreen('email');
-  }
+  if (gAccounts.length > 0) showGScreen('picker');
+  else showGScreen('email');
   document.getElementById('gOverlay').classList.add('open');
   if (gAccounts.length === 0) setTimeout(() => document.getElementById('gEmailInp').focus(), 200);
 }
-function closeGoogle() {
-  document.getElementById('gOverlay').classList.remove('open');
-}
+function closeGoogle() { document.getElementById('gOverlay').classList.remove('open'); }
 
 function showGScreen(name) {
-  // Hide all screens + footers
-  ['gScreenPicker','gScreenEmail','gScreenPw'].forEach(id => {
-    document.getElementById(id).classList.remove('active');
-  });
-  ['gFooterPicker','gFooterEmail','gFooterPw'].forEach(id => {
-    document.getElementById(id).style.display = 'none';
-  });
-  // Show selected
+  ['gScreenPicker','gScreenEmail','gScreenPw'].forEach(id => document.getElementById(id).classList.remove('active'));
+  ['gFooterPicker','gFooterEmail','gFooterPw'].forEach(id => document.getElementById(id).style.display = 'none');
   document.getElementById('gScreen' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
   document.getElementById('gFooter' + name.charAt(0).toUpperCase() + name.slice(1)).style.display = 'flex';
 }
@@ -401,7 +362,6 @@ function submitEmail() {
     return;
   }
   gEmail = email;
-  // Go to password screen
   document.getElementById('gChipAvatar').textContent = email[0].toUpperCase();
   document.getElementById('gChipEmail').textContent  = email;
   document.getElementById('gPwInp').value = '';
@@ -413,16 +373,11 @@ function submitEmail() {
 
 function submitPassword() {
   const pw = document.getElementById('gPwInp').value;
-  if (!pw) {
-    document.getElementById('gPwErr').textContent = 'Enter your password.';
-    return;
-  }
-  // Build name from email
+  if (!pw) { document.getElementById('gPwErr').textContent = 'Enter your password.'; return; }
   const name    = gEmail.split('@')[0].replace(/[._-]/g,' ').replace(/\b\w/g, c => c.toUpperCase());
   const initial = name[0].toUpperCase();
   const color   = COLORS[gAccounts.length % COLORS.length];
   const joined  = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
-  // Save to accounts list
   if (!gAccounts.find(a => a.email === gEmail)) {
     gAccounts.push({ name, email: gEmail, initial, color, joined });
     localStorage.setItem('fe_google_accounts', JSON.stringify(gAccounts));
@@ -471,6 +426,5 @@ function confirmFacebook() {
   setTimeout(() => window.location.href = '/otp?action=login&method=email', 900);
 }
 </script>
-<script src="backend_api.js"></script>
 </body>
 </html>
